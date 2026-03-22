@@ -52,7 +52,7 @@ function App() {
               <h3 className="hand-drawn-label text-sm font-semibold mb-4 text-neutral-600 dark:text-neutral-400">
                 Connect with me
               </h3>
-              <div className="flex flex-wrap gap-3">
+              <div className="social-links-grid">
                 <Link
                   target="_blank"
                   href={siteConfig.links.instagram}

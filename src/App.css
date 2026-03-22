@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+/* Import brutalist fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
 
 :root {
   --hand-drawn-primary: #2c3e50;
@@ -76,9 +79,11 @@
 
 /* Title styling */
 .hand-drawn-title {
+  font-family: 'Space Mono', monospace;
   color: var(--hand-drawn-primary);
   letter-spacing: -1px;
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+  font-weight: 700;
 }
 
 .dark .hand-drawn-title {
@@ -88,15 +93,18 @@
 
 /* Subtitle */
 .hand-drawn-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
 }
 
 /* Label styling */
 .hand-drawn-label {
+  font-family: 'Space Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 0.85rem;
+  font-weight: 700;
 }
 
 /* Portrait with hand-drawn frame effect */
@@ -113,6 +121,36 @@
   box-shadow: 
     0 6px 12px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Social Links Grid */
+.social-links-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: max-content;
+}
+
+/* Large screens - 1 row */
+@media (min-width: 1024px) {
+  .social-links-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Medium screens - 2 rows, 3 columns */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .social-links-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Small screens - symmetric 3x2 grid */
+@media (max-width: 767px) {
+  .social-links-grid {
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+  }
 }
 
 /* Icon button styling */
@@ -151,8 +189,9 @@
   color: white;
   border: 2px solid var(--hand-drawn-primary);
   border-radius: 8px;
+  font-family: 'Space Mono', monospace;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 12px 24px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -177,8 +216,9 @@
   color: var(--hand-drawn-primary);
   border: 2px solid var(--hand-drawn-primary);
   border-radius: 8px;
+  font-family: 'Space Mono', monospace;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 10px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -232,8 +272,8 @@
 }
 
 .hand-drawn-dropdown-arrow {
-position: absolute;
-left: -9px;
+  position: absolute;
+  left: -9px;
   width: 0;
   height: 0;
   border-top: 6px solid transparent;
@@ -255,6 +295,41 @@ left: -9px;
   animation: fadeInScaleUp 0.6s ease 0.2s both;
 }
 
+/* Mobile dropdown - opens downwards */
+@media (max-width: 640px) {
+  .hand-drawn-dropdown-menu {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    flex-direction: column;
+    animation: slideInGrowDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hand-drawn-dropdown-menu.closing {
+    animation: slideOutShrinkUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hand-drawn-dropdown-arrow {
+    position: absolute;
+    left: 50%;
+    top: -8px;
+    transform: translateX(-50%);
+    border-top: none;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-bottom: 8px solid var(--hand-drawn-primary);
+  }
+
+  .dark .hand-drawn-dropdown-arrow {
+    border-bottom-color: #5a5a5a;
+  }
+
+  .hand-drawn-dropdown-menu > button {
+    width: 100%;
+  }
+}
+
 @keyframes slideInGrow {
   from {
     opacity: 0;
@@ -274,6 +349,28 @@ left: -9px;
   to {
     opacity: 0;
     transform: translateY(-50%) translateX(-30px) scale(0.8);
+  }
+}
+
+@keyframes slideInGrowDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOutShrinkUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.8);
   }
 }
 
