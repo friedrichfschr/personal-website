@@ -6,7 +6,7 @@ export const siteConfig = {
     youtube: "https://www.youtube.com/@FAF",
     github: "https://github.com/friedrichfschr",
     twitter: "https://twitter.com/friedrichfschr",
-    discord: "https://discord.gg/9b6yyZKmH4",
+    linkedIn: "https://www.linkedin.com/in/friedrich-fischer-a51b2a333",
     // palabra: "https://palabra.fschr.me",
     instagram: "https://www.instagram.com/friedrich.fschr",
     mail: "mailto:friedrich.riesel@outlook.de",

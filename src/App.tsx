@@ -87,7 +87,7 @@ function App() {
                 </Link>
                 <Link
                   target="_blank"
-                  href={siteConfig.links.discord}
+                  href={siteConfig.links.linkedIn}
                   aria-label="LinkedIn"
                   className="hand-drawn-icon-button"
                 >
