@@ -7,11 +7,11 @@ interface CVFile {
 
 const cvFiles: Record<CVLanguage, CVFile> = {
   en: {
-    filename: "Friedrich-Fischer-CV-EN.pdf",
+    filename: "Friedrich-Fischer-CV.pdf",
     path: "/Friedrich Fischer CV.pdf",
   },
   de: {
-    filename: "Friedrich-Fischer-Lebenslauf-DE.pdf",
+    filename: "Friedrich-Fischer-Lebenslauf.pdf",
     path: "/Friedrich Fischer Lebenslauf.pdf",
   },
 };
