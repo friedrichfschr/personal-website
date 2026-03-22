@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { Button, Link } from "@heroui/react";
 import {
@@ -15,11 +15,40 @@ import { downloadCV } from "./utils/cvDownload";
 
 function App() {
   const [showCVOptions, setShowCVOptions] = useState(false);
+  const cvDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleCVDownload = (language: "en" | "de") => {
     downloadCV(language);
     setShowCVOptions(false);
   };
+
+  const handleCVHover = () => {
+    setShowCVOptions(true);
+  };
+
+  const handleCVLeave = () => {
+    setShowCVOptions(false);
+  };
+
+  // Close dropdown when clicking anywhere outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        cvDropdownRef.current &&
+        !cvDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCVOptions(false);
+      }
+    };
+
+    if (showCVOptions) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCVOptions]);
 
   return (
     <div className="hand-drawn-bg min-h-screen flex items-center justify-center p-4 sm:p-8">
@@ -105,7 +134,12 @@ function App() {
             </div>
 
             {/* CV Download */}
-            <div className="relative">
+            <div
+              className="relative"
+              ref={cvDropdownRef}
+              onMouseEnter={handleCVHover}
+              onMouseLeave={handleCVLeave}
+            >
               <Button
                 className="hand-drawn-button w-full sm:w-auto"
                 onPress={() => setShowCVOptions(!showCVOptions)}
