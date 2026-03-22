@@ -91,14 +91,20 @@ function App() {
           {/* Portrait */}
           <div className="w-48 h-48 sm:w-56 sm:h-56">
             <img
+              draggable={false}
+              style={{
+                userSelect: "none",
+              }}
               src="/PortraitNoBackground.PNG"
               alt="Portrait of Friedrich Fischer"
               className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
             />
             <img
               src="/PortraitPencil.png"
+              draggable={false}
               style={{
                 filter: "opacity(0.88)",
+                userSelect: "none",
               }}
               alt="Portrait of Friedrich Fischer"
               className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
