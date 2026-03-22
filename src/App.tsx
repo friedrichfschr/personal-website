@@ -98,7 +98,7 @@ function App() {
             <img
               src="/PortraitPencil.png"
               style={{
-                filter: "opacity(0.80)",
+                filter: "opacity(0.88)",
               }}
               alt="Portrait of Friedrich Fischer"
               className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
