@@ -1,1 +1,333 @@
 @import "tailwindcss";
+@import "@heroui/styles";
+
+/* Import hand-drawn font */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Indie+Flower&display=swap');
+
+:root {
+  --hand-drawn-primary: #2c3e50;
+  --hand-drawn-accent: #e74c3c;
+  --hand-drawn-light: #ecf0f1;
+  --hand-drawn-border: #bdc3c7;
+}
+
+/* Hand-drawn background with subtle pattern */
+.hand-drawn-bg {
+  background-color: var(--hand-drawn-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .hand-drawn-bg {
+  background-color: #1a1a1a;
+}
+
+/* Hand-drawn border effect using box-shadow */
+.hand-drawn-border {
+  box-shadow: 
+    -2px -2px 0 rgba(0, 0, 0, 0.1),
+    2px -2px 0 rgba(0, 0, 0, 0.1),
+    -2px 2px 0 rgba(0, 0, 0, 0.1),
+    2px 2px 0 rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Main container with hand-drawn card effect */
+.hand-drawn-container {
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card styling */
+.hand-drawn-card {
+  background-color: white;
+  border: 2px solid var(--hand-drawn-primary);
+  border-radius: 12px;
+  box-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.1),
+    -1px -1px 0 rgba(255, 255, 255, 0.5) inset,
+    3px 3px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transform: perspective(1000px) rotateX(0deg);
+}
+
+.dark .hand-drawn-card {
+  background-color: #2a2a2a;
+  border-color: #4a4a4a;
+}
+
+/* Slightly uneven edges for hand-drawn effect */
+.hand-drawn-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* Title styling */
+.hand-drawn-title {
+  font-family: 'Caveat', cursive;
+  color: var(--hand-drawn-primary);
+  letter-spacing: -1px;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.dark .hand-drawn-title {
+  color: #f0f0f0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtitle */
+.hand-drawn-subtitle {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Label styling */
+.hand-drawn-label {
+  font-family: 'Indie Flower', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+}
+
+/* Portrait with hand-drawn frame effect */
+.hand-drawn-portrait {
+  border: 3px solid var(--hand-drawn-primary);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hand-drawn-portrait:hover {
+  transform: rotate(-1deg) scale(1.02);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Icon button styling */
+.hand-drawn-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--hand-drawn-primary);
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.dark .hand-drawn-icon-button {
+  background-color: #3a3a3a;
+  border-color: #5a5a5a;
+}
+
+.hand-drawn-icon-button:hover {
+  transform: translateY(-3px) rotate(2deg);
+  box-shadow: 3px 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: var(--hand-drawn-accent);
+}
+
+.hand-drawn-icon-button:active {
+  transform: translateY(-1px);
+}
+
+/* Button styling */
+.hand-drawn-button {
+  background-color: var(--hand-drawn-primary);
+  color: white;
+  border: 2px solid var(--hand-drawn-primary);
+  border-radius: 8px;
+  font-family: 'Indie Flower', cursive;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.hand-drawn-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+  background-color: #34495e;
+}
+
+.hand-drawn-button:active {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Secondary button */
+.hand-drawn-button-secondary {
+  background-color: transparent;
+  color: var(--hand-drawn-primary);
+  border: 2px solid var(--hand-drawn-primary);
+  border-radius: 8px;
+  font-family: 'Indie Flower', cursive;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .hand-drawn-button-secondary {
+  color: #f0f0f0;
+  border-color: #5a5a5a;
+}
+
+.hand-drawn-button-secondary:hover {
+  background-color: var(--hand-drawn-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.hand-drawn-button-secondary:active {
+  transform: translateY(0);
+}
+
+/* Dropdown menu styling */
+.hand-drawn-dropdown-menu {
+  position: absolute;
+  top: 50%;
+  left: 44%;
+  transform: translateY(-50%);
+  width: auto;
+  background-color: white;
+  border: 2px solid lightgray;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
+  z-index: 50;
+  animation: slideInGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hand-drawn-dropdown-menu.closing {
+  animation: slideOutShrink 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark .hand-drawn-dropdown-menu {
+  background-color: #3a3a3a;
+  border-color: #5a5a5a;
+  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+}
+
+.hand-drawn-dropdown-arrow {
+position: absolute;
+left: -9px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid var(--hand-drawn-primary);
+  flex-shrink: 0;
+  animation: fadeInArrow 0.6s ease 0.05s both;
+}
+
+.dark .hand-drawn-dropdown-arrow {
+  border-right-color: #5a5a5a;
+}
+
+.hand-drawn-dropdown-menu > button:nth-child(2) {
+  animation: fadeInScaleUp 0.6s ease 0.1s both;
+}
+
+.hand-drawn-dropdown-menu > button:nth-child(3) {
+  animation: fadeInScaleUp 0.6s ease 0.2s both;
+}
+
+@keyframes slideInGrow {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-30px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutShrink {
+  from {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-30px) scale(0.8);
+  }
+}
+
+@keyframes fadeInArrow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  .hand-drawn-title {
+    font-size: 2.5rem;
+  }
+
+  .hand-drawn-subtitle {
+    font-size: 1rem;
+  }
+
+  .hand-drawn-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* Light mode specific */
+@media (prefers-color-scheme: light) {
+  .hand-drawn-card {
+    background: linear-color-stop(white, white);
+  }
+}
+
+/* Dark mode specific */
+.dark .hand-drawn-border {
+  border-color: #4a4a4a;
+}
+ 
