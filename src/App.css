@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
-/* Import hand-drawn font */
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Indie+Flower&display=swap');
 
 :root {
   --hand-drawn-primary: #2c3e50;
@@ -78,7 +76,6 @@
 
 /* Title styling */
 .hand-drawn-title {
-  font-family: 'Caveat', cursive;
   color: var(--hand-drawn-primary);
   letter-spacing: -1px;
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
@@ -91,14 +88,12 @@
 
 /* Subtitle */
 .hand-drawn-subtitle {
-  font-family: 'Indie Flower', cursive;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
 }
 
 /* Label styling */
 .hand-drawn-label {
-  font-family: 'Indie Flower', cursive;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 0.85rem;
@@ -156,7 +151,6 @@
   color: white;
   border: 2px solid var(--hand-drawn-primary);
   border-radius: 8px;
-  font-family: 'Indie Flower', cursive;
   font-size: 1rem;
   font-weight: 600;
   padding: 12px 24px;
@@ -183,7 +177,6 @@
   color: var(--hand-drawn-primary);
   border: 2px solid var(--hand-drawn-primary);
   border-radius: 8px;
-  font-family: 'Indie Flower', cursive;
   font-size: 0.95rem;
   font-weight: 600;
   padding: 10px 20px;
