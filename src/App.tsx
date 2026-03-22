@@ -15,6 +15,7 @@ import { downloadCV } from "./utils/cvDownload";
 
 function App() {
   const [showCVOptions, setShowCVOptions] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const cvDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleCVDownload = (language: "en" | "de") => {
@@ -23,12 +24,34 @@ function App() {
   };
 
   const handleCVHover = () => {
-    setShowCVOptions(true);
+    // Only open on hover if not a touch device
+    if (!isTouchDevice) {
+      setShowCVOptions(true);
+    }
   };
 
   const handleCVLeave = () => {
-    setShowCVOptions(false);
+    // Only close on leave if not a touch device
+    if (!isTouchDevice) {
+      setShowCVOptions(false);
+    }
   };
+
+  const handleCVClick = () => {
+    // On touch devices, toggle immediately
+    if (isTouchDevice) {
+      setShowCVOptions(!showCVOptions);
+    }
+  };
+
+  // Detect touch device on mount
+  useEffect(() => {
+    const hasTouchCapability = () =>
+      typeof window !== "undefined" &&
+      (navigator.maxTouchPoints > 0 || "ontouchstart" in window);
+
+    setIsTouchDevice(hasTouchCapability());
+  }, []);
 
   // Close dropdown when clicking anywhere outside
   useEffect(() => {
@@ -66,11 +89,19 @@ function App() {
         {/* Main Content */}
         <div className="hand-drawn-card flex flex-col sm:flex-row items-center gap-8 sm:gap-12 p-8 sm:p-10">
           {/* Portrait */}
-          <div className="flex-shrink-0 w-48 h-48 sm:w-56 sm:h-56">
+          <div className="w-48 h-48 sm:w-56 sm:h-56">
             <img
               src="/PortraitNoBackground.PNG"
               alt="Portrait of Friedrich Fischer"
-              className="hand-drawn-portrait w-full h-full object-contain rounded-3xl"
+              className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
+            />
+            <img
+              src="/PortraitPencil.png"
+              style={{
+                filter: "opacity(0.80)",
+              }}
+              alt="Portrait of Friedrich Fischer"
+              className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
             />
           </div>
 
@@ -142,7 +173,7 @@ function App() {
             >
               <Button
                 className="hand-drawn-button w-full sm:w-auto"
-                onPress={() => setShowCVOptions(!showCVOptions)}
+                onPress={handleCVClick}
               >
                 Get my CV
               </Button>
