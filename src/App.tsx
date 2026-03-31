@@ -13,7 +13,7 @@ import {
 import { siteConfig } from "../site";
 import { downloadCV, type CVLanguage } from "./utils/cvDownload";
 
-const uiLanguages = ["en", "de", "fr"] as const;
+const uiLanguages = ["en", "de", "fr", "zh"] as const;
 type UiLanguage = (typeof uiLanguages)[number];
 
 function App() {

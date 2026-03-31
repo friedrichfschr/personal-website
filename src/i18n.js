@@ -26,11 +26,13 @@ const resources = {
           en: "EN",
           de: "DE",
           fr: "FR",
+          zh: "ZH",
         },
         aria: {
           en: "Switch language to English",
           de: "Switch language to German",
           fr: "Switch language to French",
+          zh: "Switch language to Mandarin Chinese",
         },
       },
       accessibility: {
@@ -62,11 +64,13 @@ const resources = {
           en: "EN",
           de: "DE",
           fr: "FR",
+          zh: "ZH",
         },
         aria: {
           en: "Sprache auf Englisch umstellen",
           de: "Sprache auf Deutsch umstellen",
           fr: "Sprache auf Französisch umstellen",
+          zh: "Sprache auf Mandarin-Chinesisch umstellen",
         },
       },
       accessibility: {
@@ -98,11 +102,13 @@ const resources = {
           en: "EN",
           de: "DE",
           fr: "FR",
+          zh: "ZH",
         },
         aria: {
           en: "Passer la langue en anglais",
           de: "Passer la langue en allemand",
           fr: "Passer la langue en français",
+          zh: "Passer la langue en chinois mandarin",
         },
       },
       accessibility: {
@@ -110,10 +116,48 @@ const resources = {
       },
     },
   },
+  zh: {
+    translation: {
+      hero: {
+        title: "Friedrich Fischer",
+        subtitle: "有抱负、好奇且善于沟通",
+      },
+      social: {
+        label: "联系我",
+      },
+      cv: {
+        button: "我的简历",
+        label: "选择版本",
+        availableLabel: "可选语言",
+        languages: {
+          en: "英语",
+          de: "德语",
+        },
+      },
+      languageSwitcher: {
+        label: "语言选择器",
+        options: {
+          en: "EN",
+          de: "DE",
+          fr: "FR",
+          zh: "ZH",
+        },
+        aria: {
+          en: "切换语言为英语",
+          de: "切换语言为德语",
+          fr: "切换语言为法语",
+          zh: "切换语言为普通话中文",
+        },
+      },
+      accessibility: {
+        portraitAlt: "Friedrich Fischer 的肖像",
+      },
+    },
+  },
 };
 
 const storageKey = "preferred-language";
-const supportedLanguages = ["en", "de", "fr"];
+const supportedLanguages = ["en", "de", "fr", "zh"];
 
 const normalizeLanguage = (language) => language?.split("-")[0];
 
