@@ -571,18 +571,17 @@
 }
 
 .now-carousel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(18rem, 30rem);
+  display: flex;
   gap: 1.5rem;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: 0.45rem;
   padding: 0.45rem;
   scrollbar-width: none;
-  touch-action: pan-y pinch-zoom;
+  touch-action: auto;
   cursor: grab;
 }
 
@@ -599,6 +598,8 @@
 .now-card {
   --now-accent: #2c3e50;
   position: relative;
+  flex: 0 0 min(30rem, calc(100% - 2rem));
+  min-width: 18rem;
   min-height: 29rem;
   display: flex;
   flex-direction: column;
@@ -913,11 +914,11 @@
   }
 
   .now-carousel {
-    grid-auto-columns: 88%;
     gap: 1rem;
   }
 
   .now-card {
+    flex-basis: 88%;
     min-height: 27.5rem;
     padding: 1.15rem;
     border-radius: 24px;
@@ -964,8 +965,8 @@
     height: 2.7rem;
   }
 
-  .now-carousel {
-    grid-auto-columns: calc(100% - 0.35rem);
+  .now-card {
+    flex-basis: calc(100% - 0.35rem);
   }
 
   .now-card-meta-row {

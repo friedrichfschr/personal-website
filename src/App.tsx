@@ -124,8 +124,12 @@ function NowSection() {
       return;
     }
 
+    const inlineStartPadding = Number.parseFloat(
+      window.getComputedStyle(carousel).paddingInlineStart,
+    ) || 0;
+
     carousel.scrollTo({
-      left: nextCard.offsetLeft,
+      left: Math.max(nextCard.offsetLeft - inlineStartPadding, 0),
       behavior: "smooth",
     });
   };
