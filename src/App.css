@@ -1215,7 +1215,7 @@ html {
 .now-card:not(.is-expanded) .now-card-title,
 .now-card:not(.is-expanded) .now-card-body,
 .now-card:not(.is-expanded) .now-card-actions {
-  transform: translateY(-0.14rem);
+  transform: translateY(-0.07rem);
 }
 
 .now-card.is-expanded.is-open .now-card-title,
