@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
 } from "react";
 import { createPortal } from "react-dom";
 import "./App.css";
@@ -277,6 +278,7 @@ function App() {
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition | null>(null);
   const cvDropdownRef = useRef<HTMLDivElement>(null);
   const cvTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const cvCloseTimeoutRef = useRef<number | null>(null);
   const currentLanguage =
     (i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) ||
     "en";
@@ -303,24 +305,58 @@ function App() {
     });
   }, []);
 
+  const clearCVCloseTimeout = useCallback(() => {
+    if (cvCloseTimeoutRef.current !== null) {
+      window.clearTimeout(cvCloseTimeoutRef.current);
+      cvCloseTimeoutRef.current = null;
+    }
+  }, []);
+
+  const scheduleCVClose = useCallback(() => {
+    if (isTouchDevice) {
+      return;
+    }
+
+    clearCVCloseTimeout();
+    cvCloseTimeoutRef.current = window.setTimeout(() => {
+      setShowCVOptions(false);
+      cvCloseTimeoutRef.current = null;
+    }, 120);
+  }, [clearCVCloseTimeout, isTouchDevice]);
+
+  const isWithinCVControls = useCallback((node: EventTarget | null) => {
+    if (!(node instanceof Node)) {
+      return false;
+    }
+
+    return Boolean(
+      cvTriggerRef.current?.contains(node) || cvDropdownRef.current?.contains(node),
+    );
+  }, []);
+
   const handleCVDownload = (language: CVLanguage) => {
+    clearCVCloseTimeout();
     downloadCV(language);
     setShowCVOptions(false);
   };
 
   const handleCVHover = () => {
     if (!isTouchDevice) {
+      clearCVCloseTimeout();
       setShowCVOptions(true);
     }
   };
 
-  const handleCVLeave = () => {
-    if (!isTouchDevice) {
-      setShowCVOptions(false);
+  const handleCVLeave = (event: ReactMouseEvent<HTMLElement>) => {
+    if (isTouchDevice || isWithinCVControls(event.relatedTarget)) {
+      return;
     }
+
+    scheduleCVClose();
   };
 
   const handleCVClick = () => {
+    clearCVCloseTimeout();
     setShowCVOptions((current) => !current);
   };
 
@@ -353,6 +389,12 @@ function App() {
       window.removeEventListener("scroll", syncPosition, true);
     };
   }, [showCVOptions, updateDropdownPosition]);
+
+  useEffect(() => {
+    return () => {
+      clearCVCloseTimeout();
+    };
+  }, [clearCVCloseTimeout]);
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
@@ -526,6 +568,8 @@ function App() {
             className="hand-drawn-dropdown-menu cv-portal-dropdown"
             aria-label={t("cv.label")}
             role="menu"
+            onMouseEnter={handleCVHover}
+            onMouseLeave={handleCVLeave}
             style={{
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
