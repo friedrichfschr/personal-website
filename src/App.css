@@ -8,6 +8,10 @@
   --hand-drawn-border: #bdc3c7;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 .hand-drawn-bg {
   background:
     radial-gradient(circle at top left, rgba(255, 219, 171, 0.35), transparent 22%),
