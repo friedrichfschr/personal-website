@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,7 +10,6 @@ import {
   type MouseEvent as ReactDomMouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { createPortal } from "react-dom";
 import "./App.css";
 import { Button, Link } from "@heroui/react";
 import { useTranslation } from "react-i18next";
@@ -37,8 +35,10 @@ type DropdownPosition = {
   arrowLeft: number;
 };
 
-type ModalOrigin = {
-  rect: DOMRect;
+type ExpandedCardState = {
+  entryId: string;
+  sourceRect: DOMRect;
+  phase: "entering" | "open" | "closing";
 };
 
 const spanToStyle = (span: NowRichTextSpan) => ({
@@ -85,152 +85,159 @@ const renderRichBlocks = (entry: NowEntry, className = "now-card-body") => (
   </div>
 );
 
-function NowEntryModal({
+function NowCard({
   entry,
-  origin,
+  isExpanded = false,
+  isHidden = false,
+  expansionState = null,
+  onExpand,
   onClose,
 }: {
   entry: NowEntry;
-  origin: ModalOrigin | null;
-  onClose: () => void;
+  isExpanded?: boolean;
+  isHidden?: boolean;
+  expansionState?: ExpandedCardState | null;
+  onExpand?: (entry: NowEntry, card: HTMLElement) => void;
+  onClose?: () => void;
 }) {
   const { t } = useTranslation();
+  const cardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
-  const modalRef = useRef<HTMLElement | null>(null);
-  const titleId = useId();
-  const descriptionId = useId();
-  const [openingStyle, setOpeningStyle] = useState<CSSProperties | null>(null);
-  const modalBlocks = useMemo(
-    () => [...entry.blocks, ...(entry.expandable?.blocks ?? [])],
-    [entry],
-  );
+  const expandableBlocks = entry.expandable?.blocks ?? [];
 
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    closeButtonRef.current?.focus();
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [onClose]);
-
-  useLayoutEffect(() => {
-    const modal = modalRef.current;
-
-    if (!origin || !modal || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setOpeningStyle(null);
-      return;
+  const expandedStyle = useMemo(() => {
+    if (!isExpanded || !expansionState) {
+      return undefined;
     }
 
-    const modalRect = modal.getBoundingClientRect();
-    const originRect = origin.rect;
-    const originCenterX = originRect.left + originRect.width / 2;
-    const originCenterY = originRect.top + originRect.height / 2;
-    const modalCenterX = modalRect.left + modalRect.width / 2;
-    const modalCenterY = modalRect.top + modalRect.height / 2;
+    return {
+      "--now-source-top": `${expansionState.sourceRect.top}px`,
+      "--now-source-left": `${expansionState.sourceRect.left}px`,
+      "--now-source-width": `${expansionState.sourceRect.width}px`,
+      "--now-source-height": `${expansionState.sourceRect.height}px`,
+    } as CSSProperties;
+  }, [expansionState, isExpanded]);
 
-    setOpeningStyle({
-      "--modal-origin-x": `${originCenterX - modalCenterX}px`,
-      "--modal-origin-y": `${originCenterY - modalCenterY}px`,
-      "--modal-origin-scale-x": String(originRect.width / modalRect.width),
-      "--modal-origin-scale-y": String(originRect.height / modalRect.height),
-    } as CSSProperties);
-  }, [origin]);
+  useEffect(() => {
+    if (isExpanded && expansionState?.phase === "open") {
+      closeButtonRef.current?.focus();
+    }
+  }, [expansionState?.phase, isExpanded]);
 
-  return createPortal(
-    <div className="now-modal-layer" role="presentation">
-      <button
-        type="button"
-        className="now-modal-backdrop"
-        aria-label={t("now.close")}
-        onClick={onClose}
-      />
-      <div className="now-modal-shell" role="presentation">
-        <article
-          ref={modalRef}
-          className={`now-modal ${openingStyle ? "is-from-card" : ""}`}
-          style={{ "--now-accent": entry.accent, ...openingStyle } as CSSProperties}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          aria-describedby={descriptionId}
-        >
-          <div className="now-modal-topbar">
-            <div className="now-card-meta-row now-modal-meta-row">
-              <span className="now-card-date">{entry.date}</span>
-              {entry.originalLanguage && (
-                <span
-                  className="now-card-language-pill"
-                  aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                  title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                >
-                  {entry.originalLanguage}
-                </span>
-              )}
-            </div>
+  return (
+    <article
+      ref={cardRef}
+      className={[
+        "now-card",
+        entry.expandable && !isExpanded ? "is-selectable" : "",
+        isExpanded ? "is-expanded" : "",
+        expansionState ? `is-${expansionState.phase}` : "",
+        isHidden ? "is-hidden-placeholder" : "",
+      ].filter(Boolean).join(" ")}
+      data-now-card
+      style={{ "--now-accent": entry.accent, ...expandedStyle } as CSSProperties}
+      aria-expanded={isExpanded || undefined}
+      aria-hidden={isHidden || undefined}
+      onClick={(event) => {
+        if (
+          isExpanded ||
+          !entry.expandable ||
+          (event.target instanceof Element && event.target.closest("a, button"))
+        ) {
+          return;
+        }
+
+        if (cardRef.current) {
+          onExpand?.(entry, cardRef.current);
+        }
+      }}
+    >
+      <div className="now-card-meta-row">
+        <span className="now-card-date">{entry.date}</span>
+        <div className="now-card-meta-actions">
+          {entry.originalLanguage && (
+            <span
+              className="now-card-language-pill"
+              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+            >
+              {entry.originalLanguage}
+            </span>
+          )}
+          {isExpanded && onClose && (
             <button
               ref={closeButtonRef}
               type="button"
-              className="now-modal-close"
+              className="now-card-close"
               aria-label={t("now.close")}
               onClick={onClose}
             >
               ×
             </button>
-          </div>
-
-          <div className="now-modal-scroll">
-            <div className="now-modal-intro">
-              <p className="hand-drawn-label now-modal-kicker">{t("now.modalKicker")}</p>
-              <h3 id={titleId} className="now-card-title now-modal-title">{entry.title}</h3>
-              {entry.expandable?.summary && (
-                <p id={descriptionId} className="now-card-footnote now-modal-summary">
-                  {entry.expandable.summary}
-                </p>
-              )}
-            </div>
-
-            {entry.image && (
-              <figure className="now-card-image-wrap now-modal-image-wrap">
-                <img
-                  src={entry.image.src}
-                  alt={entry.image.alt}
-                  className="now-card-image now-modal-image"
-                  draggable={false}
-                />
-                {entry.image.caption && (
-                  <figcaption className="now-card-image-caption">
-                    {entry.image.caption}
-                  </figcaption>
-                )}
-              </figure>
-            )}
-
-            <div className="now-modal-body">
-              {modalBlocks.map((block, blockIndex) => (
-                <p
-                  key={`${entry.id}-modal-${blockIndex}`}
-                  className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
-                >
-                  {block.spans.map(renderRichSpan)}
-                </p>
-              ))}
-            </div>
-          </div>
-        </article>
+          )}
+        </div>
       </div>
-    </div>,
-    document.body,
+
+      {isExpanded && (
+        <p className="hand-drawn-label now-expanded-kicker">{t("now.modalKicker")}</p>
+      )}
+
+      <h3 className="now-card-title">{entry.title}</h3>
+
+      {entry.image && (
+        <figure className="now-card-image-wrap">
+          <img
+            src={entry.image.src}
+            alt={entry.image.alt}
+            className="now-card-image"
+            draggable={false}
+          />
+          {entry.image.caption && (
+            <figcaption className="now-card-image-caption">
+              {entry.image.caption}
+            </figcaption>
+          )}
+        </figure>
+      )}
+
+      {renderRichBlocks(entry)}
+
+      {isExpanded && entry.expandable?.summary && (
+        <p className="now-card-footnote now-expanded-summary">{entry.expandable.summary}</p>
+      )}
+
+      {isExpanded && expandableBlocks.length > 0 && (
+        <div className="now-card-body now-expanded-body">
+          {expandableBlocks.map((block, blockIndex) => (
+            <p
+              key={`${entry.id}-expanded-${blockIndex}`}
+              className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
+            >
+              {block.spans.map(renderRichSpan)}
+            </p>
+          ))}
+        </div>
+      )}
+
+      {!isExpanded && entry.expandable && (
+        <div className="now-card-footer">
+          <span className="now-card-footnote">{entry.expandable.summary}</span>
+          <button
+            type="button"
+            className="now-expand-button"
+            onClick={(event) => {
+              const card = event.currentTarget.closest("[data-now-card]");
+              if (card instanceof HTMLElement) {
+                onExpand?.(entry, card);
+              }
+            }}
+            aria-haspopup="dialog"
+          >
+            {t("now.readMore")}
+          </button>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -244,17 +251,18 @@ function NowSection() {
     didDrag: boolean;
   } | null>(null);
   const suppressClickRef = useRef(false);
+  const openFrameRef = useRef<number | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
   const [isDragging, setIsDragging] = useState(false);
-  const [activeModalEntryId, setActiveModalEntryId] = useState<string | null>(null);
-  const [activeModalOrigin, setActiveModalOrigin] = useState<ModalOrigin | null>(null);
+  const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(null);
 
   const totalCards = nowEntries.length;
-  const activeModalEntry = useMemo(
-    () => nowEntries.find((entry) => entry.id === activeModalEntryId) ?? null,
-    [activeModalEntryId],
+  const expandedEntry = useMemo(
+    () => nowEntries.find((entry) => entry.id === expandedCard?.entryId) ?? null,
+    [expandedCard],
   );
 
   const getCardElements = () => {
@@ -266,6 +274,18 @@ function NowSection() {
 
     return Array.from(carousel.querySelectorAll<HTMLElement>("[data-now-card]"));
   };
+
+  const clearAnimationTimers = useCallback(() => {
+    if (openFrameRef.current !== null) {
+      window.cancelAnimationFrame(openFrameRef.current);
+      openFrameRef.current = null;
+    }
+
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
 
   const getNearestIndex = useCallback(() => {
     const carousel = carouselRef.current;
@@ -321,6 +341,39 @@ function NowSection() {
     };
   }, [syncCarouselState]);
 
+  useEffect(() => {
+    return () => {
+      clearAnimationTimers();
+    };
+  }, [clearAnimationTimers]);
+
+  useEffect(() => {
+    if (!expandedCard) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setExpandedCard((current) => current
+          ? {
+              ...current,
+              phase: current.phase === "closing" ? current.phase : "closing",
+            }
+          : null);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [expandedCard]);
+
   const scrollToIndex = (index: number) => {
     const carousel = carouselRef.current;
     const cards = getCardElements();
@@ -353,6 +406,7 @@ function NowSection() {
 
     if (
       !carousel ||
+      expandedCard ||
       event.pointerType !== "mouse" ||
       event.button !== 0 ||
       (event.target instanceof Element &&
@@ -418,6 +472,28 @@ function NowSection() {
     }
   };
 
+  const handleExpand = (entry: NowEntry, card: HTMLElement) => {
+    clearAnimationTimers();
+    const sourceRect = card.getBoundingClientRect();
+    setExpandedCard({ entryId: entry.id, sourceRect, phase: "entering" });
+    openFrameRef.current = window.requestAnimationFrame(() => {
+      openFrameRef.current = window.requestAnimationFrame(() => {
+        setExpandedCard((current) => (current && current.entryId === entry.id
+          ? { ...current, phase: "open" }
+          : current));
+      });
+    });
+  };
+
+  const handleCloseExpanded = useCallback(() => {
+    clearAnimationTimers();
+    setExpandedCard((current) => (current ? { ...current, phase: "closing" } : null));
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setExpandedCard(null);
+      closeTimeoutRef.current = null;
+    }, 560);
+  }, [clearAnimationTimers]);
+
   return (
     <section className="now-section" aria-labelledby="now-section-title">
       <div className="now-section-shell">
@@ -435,7 +511,7 @@ function NowSection() {
               type="button"
               className="now-arrow-button"
               onClick={() => scrollByDirection("prev")}
-              disabled={!canScrollPrev}
+              disabled={!canScrollPrev || Boolean(expandedCard)}
               aria-label={t("now.previous")}
             >
               ←
@@ -444,7 +520,7 @@ function NowSection() {
               type="button"
               className="now-arrow-button"
               onClick={() => scrollByDirection("next")}
-              disabled={!canScrollNext}
+              disabled={!canScrollNext || Boolean(expandedCard)}
               aria-label={t("now.next")}
             >
               →
@@ -454,9 +530,9 @@ function NowSection() {
 
         <div
           ref={carouselRef}
-          className={`now-carousel ${isDragging ? "is-dragging" : ""}`}
+          className={`now-carousel ${isDragging ? "is-dragging" : ""} ${expandedCard ? "has-expanded-card" : ""}`}
           aria-label={t("now.carouselLabel")}
-          tabIndex={0}
+          tabIndex={expandedCard ? -1 : 0}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={finishPointerDrag}
@@ -465,70 +541,15 @@ function NowSection() {
           onClickCapture={handleClickCapture}
         >
           {nowEntries.map((entry: NowEntry) => {
-            const isExpandable = Boolean(entry.expandable);
+            const isExpandedEntry = expandedCard?.entryId === entry.id;
 
             return (
-              <article
+              <NowCard
                 key={entry.id}
-                className="now-card"
-                data-now-card
-                style={{ "--now-accent": entry.accent } as CSSProperties}
-              >
-                <div className="now-card-meta-row">
-                  <span className="now-card-date">{entry.date}</span>
-                  {entry.originalLanguage && (
-                    <span
-                      className="now-card-language-pill"
-                      aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                      title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                    >
-                      {entry.originalLanguage}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="now-card-title">{entry.title}</h3>
-
-                {entry.image && (
-                  <figure className="now-card-image-wrap">
-                    <img
-                      src={entry.image.src}
-                      alt={entry.image.alt}
-                      className="now-card-image"
-                      draggable={false}
-                    />
-                    {entry.image.caption && (
-                      <figcaption className="now-card-image-caption">
-                        {entry.image.caption}
-                      </figcaption>
-                    )}
-                  </figure>
-                )}
-
-                {renderRichBlocks(entry)}
-
-                {isExpandable && (
-                  <div className="now-card-footer">
-                    <span className="now-card-footnote">{entry.expandable?.summary}</span>
-                    <button
-                      type="button"
-                      className="now-expand-button"
-                      onClick={(event) => {
-                        const card = event.currentTarget.closest("[data-now-card]");
-                        setActiveModalOrigin(
-                          card instanceof HTMLElement
-                            ? { rect: card.getBoundingClientRect() }
-                            : null,
-                        );
-                        setActiveModalEntryId(entry.id);
-                      }}
-                      aria-haspopup="dialog"
-                    >
-                      {t("now.readMore")}
-                    </button>
-                  </div>
-                )}
-              </article>
+                entry={entry}
+                isHidden={isExpandedEntry}
+                onExpand={handleExpand}
+              />
             );
           })}
         </div>
@@ -542,20 +563,29 @@ function NowSection() {
               onClick={() => scrollToIndex(index)}
               aria-label={t("now.jumpTo", { index: index + 1, title: entry.title })}
               aria-pressed={index === activeIndex}
+              disabled={Boolean(expandedCard)}
             />
           ))}
         </div>
       </div>
 
-      {activeModalEntry && (
-        <NowEntryModal
-          entry={activeModalEntry}
-          origin={activeModalOrigin}
-          onClose={() => {
-            setActiveModalEntryId(null);
-            setActiveModalOrigin(null);
-          }}
-        />
+      {expandedCard && expandedEntry && (
+        <>
+          <button
+            type="button"
+            className={`now-expanded-backdrop is-${expandedCard.phase}`}
+            aria-label={t("now.close")}
+            onClick={handleCloseExpanded}
+          />
+          <div className="now-expanded-shell" aria-hidden="true">
+            <NowCard
+              entry={expandedEntry}
+              isExpanded
+              expansionState={expandedCard}
+              onClose={handleCloseExpanded}
+            />
+          </div>
+        </>
       )}
     </section>
   );
@@ -852,7 +882,7 @@ function App() {
           </div>
         </section>
 
-        {showCVOptions && dropdownPosition && createPortal(
+        {showCVOptions && dropdownPosition && (
           <div
             ref={cvDropdownRef}
             className="hand-drawn-dropdown-menu cv-portal-dropdown"
@@ -885,8 +915,7 @@ function App() {
                 {t("cv.languages.de")}
               </Button>
             </div>
-          </div>,
-          document.body,
+          </div>
         )}
 
         <NowSection />
