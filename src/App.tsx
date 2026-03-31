@@ -110,7 +110,7 @@ function App() {
           </div>
         </div>
 
-        <div className="text-center mb-10 sm:mb-12">
+        <div className="hero-block text-center mb-10 sm:mb-12">
           <h1 className="hand-drawn-title text-6xl sm:text-7xl font-bold mb-2">
             {t("hero.title")}
           </h1>
@@ -190,13 +190,13 @@ function App() {
             </div>
 
             <div
-              className="relative"
+              className="cv-dropdown-wrap relative"
               ref={cvDropdownRef}
               onMouseEnter={handleCVHover}
               onMouseLeave={handleCVLeave}
             >
               <Button
-                className="hand-drawn-button w-full sm:w-auto"
+                className="hand-drawn-button cv-trigger-button"
                 onPress={handleCVClick}
               >
                 {t("cv.button")}

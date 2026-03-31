@@ -12,7 +12,7 @@ const resources = {
         label: "Connect with me",
       },
       cv: {
-        button: "Get my CV",
+        button: "My CV",
         label: "Choose a version",
         availableLabel: "Available in",
         languages: {
@@ -45,10 +45,10 @@ const resources = {
         subtitle: "Ehrgeizig, neugierig & kommunikativ",
       },
       social: {
-        label: "Vernetze dich mit mir",
+        label: "Kontakt",
       },
       cv: {
-        button: "Meinen Lebenslauf holen",
+        button: "Mein Lebenslauf",
         label: "Version auswählen",
         availableLabel: "Verfügbar in",
         languages: {
@@ -84,7 +84,7 @@ const resources = {
         label: "Retrouve-moi ici",
       },
       cv: {
-        button: "Télécharger mon CV",
+        button: "Mon CV",
         label: "Choisir une version",
         availableLabel: "Disponible en",
         languages: {
