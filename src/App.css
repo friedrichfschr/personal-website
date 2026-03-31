@@ -1212,6 +1212,12 @@ html {
   transition: opacity 0.42s ease 0.12s, transform 0.42s ease 0.12s;
 }
 
+.now-card:not(.is-expanded) .now-card-title,
+.now-card:not(.is-expanded) .now-card-body,
+.now-card:not(.is-expanded) .now-card-actions {
+  transform: translateY(-0.14rem);
+}
+
 .now-card.is-expanded.is-open .now-card-title,
 .now-card.is-expanded.is-open .now-card-body,
 .now-card.is-expanded.is-open .now-card-actions {
