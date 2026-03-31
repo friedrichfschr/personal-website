@@ -1230,7 +1230,7 @@ html {
 .now-card.is-expanded.is-closing .now-card-title,
 .now-card.is-expanded.is-closing .now-card-body,
 .now-card.is-expanded.is-closing .now-card-actions {
-  transform: translateY(0.14rem);
+  transform: translateY(0);
 }
 
 .now-card.is-expanded.is-open .now-card-title {
@@ -1348,6 +1348,7 @@ html {
   z-index: 10000;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable both-edges;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   pointer-events: auto;
