@@ -38,6 +38,7 @@ type DropdownPosition = {
 type ExpandedCardState = {
   entryId: string;
   sourceRect: DOMRect;
+  sourceTransform: string;
   phase: "entering" | "open" | "closing";
 };
 
@@ -115,6 +116,7 @@ function NowCard({
       "--now-source-left": `${expansionState.sourceRect.left}px`,
       "--now-source-width": `${expansionState.sourceRect.width}px`,
       "--now-source-height": `${expansionState.sourceRect.height}px`,
+      "--now-source-transform": expansionState.sourceTransform,
     } as CSSProperties;
   }, [expansionState, isExpanded]);
 
@@ -152,19 +154,9 @@ function NowCard({
         }
       }}
     >
-      <div className="now-card-meta-row">
-        <span className="now-card-date">{entry.date}</span>
-        <div className="now-card-meta-actions">
-          {entry.originalLanguage && (
-            <span
-              className="now-card-language-pill"
-              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-            >
-              {entry.originalLanguage}
-            </span>
-          )}
-          {isExpanded && onClose && (
+      <div className={`now-card-meta-row ${isExpanded ? "is-expanded-header" : ""}`}>
+        {isExpanded ? (
+          <>
             <button
               ref={closeButtonRef}
               type="button"
@@ -174,13 +166,36 @@ function NowCard({
             >
               ×
             </button>
-          )}
-        </div>
+            <div className="now-card-meta-actions">
+              <span className="now-card-date">{entry.date}</span>
+              {entry.originalLanguage && (
+                <span
+                  className="now-card-language-pill"
+                  aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                  title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                >
+                  {entry.originalLanguage}
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <span className="now-card-date">{entry.date}</span>
+            <div className="now-card-meta-actions">
+              {entry.originalLanguage && (
+                <span
+                  className="now-card-language-pill"
+                  aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                  title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                >
+                  {entry.originalLanguage}
+                </span>
+              )}
+            </div>
+          </>
+        )}
       </div>
-
-      {isExpanded && (
-        <p className="hand-drawn-label now-expanded-kicker">{t("now.modalKicker")}</p>
-      )}
 
       <h3 className="now-card-title">{entry.title}</h3>
 
@@ -475,7 +490,13 @@ function NowSection() {
   const handleExpand = (entry: NowEntry, card: HTMLElement) => {
     clearAnimationTimers();
     const sourceRect = card.getBoundingClientRect();
-    setExpandedCard({ entryId: entry.id, sourceRect, phase: "entering" });
+    const sourceTransform = window.getComputedStyle(card).transform;
+    setExpandedCard({
+      entryId: entry.id,
+      sourceRect,
+      sourceTransform: sourceTransform === "none" ? "rotate(0deg)" : sourceTransform,
+      phase: "entering",
+    });
     openFrameRef.current = window.requestAnimationFrame(() => {
       openFrameRef.current = window.requestAnimationFrame(() => {
         setExpandedCard((current) => (current && current.entryId === entry.id
