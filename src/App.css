@@ -1127,7 +1127,6 @@
   scroll-snap-stop: normal;
 }
 
-.now-card.is-expanded.is-entering,
 .now-card.is-expanded.is-open {
   top: clamp(0.85rem, 5vh, 2.75rem);
   left: 50%;
@@ -1140,6 +1139,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+.now-card.is-expanded.is-entering,
 .now-card.is-expanded.is-closing {
   transform: rotate(0deg);
 }
