@@ -298,7 +298,7 @@ function App() {
     );
 
     setDropdownPosition({
-      top: rect.bottom + 14,
+      top: rect.bottom + 2,
       left,
       width,
       arrowLeft: rect.left + rect.width / 2 - left,
