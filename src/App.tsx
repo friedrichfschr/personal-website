@@ -98,6 +98,7 @@ function NowCard({
   entry,
   isExpanded = false,
   isHidden = false,
+  isRestoring = false,
   expansionState = null,
   onExpand,
   onClose,
@@ -105,6 +106,7 @@ function NowCard({
   entry: NowEntry;
   isExpanded?: boolean;
   isHidden?: boolean;
+  isRestoring?: boolean;
   expansionState?: ExpandedCardState | null;
   onExpand?: (entry: NowEntry, card: HTMLElement) => void;
   onClose?: () => void;
@@ -145,6 +147,7 @@ function NowCard({
         "now-card",
         entry.expandable && !isExpanded ? "is-selectable" : "",
         isExpanded ? "is-expanded" : "",
+        isRestoring ? "is-restoring" : "",
         expansionState ? `is-${expansionState.phase}` : "",
         isHidden ? "is-hidden-placeholder" : "",
       ].filter(Boolean).join(" ")}
@@ -275,11 +278,13 @@ function NowSection() {
   const suppressClickRef = useRef(false);
   const openFrameRef = useRef<number | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
+  const restoreTimeoutRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(null);
+  const [restoringEntryId, setRestoringEntryId] = useState<string | null>(null);
 
   const totalCards = nowEntries.length;
   const expandedEntry = useMemo(
@@ -306,6 +311,11 @@ function NowSection() {
     if (closeTimeoutRef.current !== null) {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
+    }
+
+    if (restoreTimeoutRef.current !== null) {
+      window.clearTimeout(restoreTimeoutRef.current);
+      restoreTimeoutRef.current = null;
     }
   }, []);
 
@@ -516,6 +526,7 @@ function NowSection() {
 
   const handleExpand = (entry: NowEntry, card: HTMLElement) => {
     clearAnimationTimers();
+    setRestoringEntryId(null);
     const sourceRect = card.getBoundingClientRect();
     const sourceTransform = window.getComputedStyle(card).transform;
     setExpandedCard({
@@ -557,12 +568,24 @@ function NowSection() {
 
   const handleCloseExpanded = useCallback(() => {
     clearAnimationTimers();
+    const closingEntryId = expandedCard?.entryId ?? null;
+
     setExpandedCard((current) => (current ? { ...current, phase: "closing" } : null));
     closeTimeoutRef.current = window.setTimeout(() => {
       setExpandedCard(null);
       closeTimeoutRef.current = null;
+
+      if (closingEntryId) {
+        setRestoringEntryId(closingEntryId);
+        restoreTimeoutRef.current = window.setTimeout(() => {
+          setRestoringEntryId((current) => (
+            current === closingEntryId ? null : current
+          ));
+          restoreTimeoutRef.current = null;
+        }, 520);
+      }
     }, 560);
-  }, [clearAnimationTimers]);
+  }, [clearAnimationTimers, expandedCard?.entryId]);
 
   return (
     <section className="now-section" aria-labelledby="now-section-title">
@@ -612,12 +635,14 @@ function NowSection() {
         >
           {nowEntries.map((entry: NowEntry) => {
             const isExpandedEntry = expandedCard?.entryId === entry.id;
+            const isRestoringEntry = restoringEntryId === entry.id;
 
             return (
               <NowCard
                 key={entry.id}
                 entry={entry}
                 isHidden={isExpandedEntry}
+                isRestoring={isRestoringEntry}
                 onExpand={handleExpand}
               />
             );

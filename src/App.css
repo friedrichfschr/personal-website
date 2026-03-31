@@ -846,6 +846,7 @@
   border-radius: 22px;
   border: 1px dashed color-mix(in srgb, var(--now-accent) 32%, transparent);
   pointer-events: none;
+  transform-origin: center;
 }
 
 .now-card::after {
@@ -858,6 +859,15 @@
   border-radius: 999px;
   background: var(--now-accent);
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--now-accent) 18%, transparent);
+  transform-origin: center;
+}
+
+.now-card.is-restoring::before {
+  animation: nowCardBorderRestore 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.now-card.is-restoring::after {
+  animation: nowCardAccentRestore 0.44s cubic-bezier(0.2, 0.95, 0.32, 1.18) 0.06s both;
 }
 
 .dark .now-card {
@@ -1177,6 +1187,10 @@
   transform: translateY(-1px);
   background: color-mix(in srgb, var(--now-accent) 16%, white);
   box-shadow: 0 12px 22px color-mix(in srgb, var(--now-accent) 18%, transparent);
+}
+
+.now-card.is-restoring .now-expand-button {
+  animation: nowCardButtonRestore 0.44s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
 }
 
 .dark .now-expand-button {
@@ -1673,10 +1687,65 @@
   }
 }
 
+@keyframes nowCardBorderRestore {
+  from {
+    opacity: 0;
+    transform: scale(0.965) rotate(-1.5deg);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.012) rotate(0.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes nowCardAccentRestore {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--now-accent) 12%, transparent);
+  }
+  68% {
+    opacity: 1;
+    transform: scale(1.08);
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--now-accent) 16%, transparent);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--now-accent) 18%, transparent);
+  }
+}
+
+@keyframes nowCardButtonRestore {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.92);
+    filter: blur(3px);
+  }
+  64% {
+    opacity: 1;
+    transform: translateY(-0.08rem) scale(1.02);
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .now-expanded-backdrop,
-  .now-card.is-expanded {
+  .now-card.is-expanded,
+  .now-card.is-restoring::before,
+  .now-card.is-restoring::after,
+  .now-card.is-restoring .now-expand-button {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
 
