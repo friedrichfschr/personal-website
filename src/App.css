@@ -251,7 +251,7 @@
 .social-links-block {
   width: fit-content;
   max-width: 100%;
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 .hero-panel-label {
@@ -1106,6 +1106,10 @@
 
   .hero-side-panel {
     gap: 1.2rem;
+  }
+
+  .social-links-block {
+    margin-inline: auto;
   }
 
   .cv-trigger-button {
