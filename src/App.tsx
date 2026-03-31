@@ -483,7 +483,7 @@ function App() {
               </div>
 
               <div className="hero-side-panel">
-                <div>
+                <div className="social-links-block">
                   <h3 className="hand-drawn-label hero-panel-label">
                     {t("social.label")}
                   </h3>
