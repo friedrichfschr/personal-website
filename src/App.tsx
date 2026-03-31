@@ -37,6 +37,10 @@ type DropdownPosition = {
   arrowLeft: number;
 };
 
+type ModalOrigin = {
+  rect: DOMRect;
+};
+
 const spanToStyle = (span: NowRichTextSpan) => ({
   fontWeight: span.bold ? 700 : undefined,
   fontStyle: span.italic ? "italic" : undefined,
@@ -83,15 +87,19 @@ const renderRichBlocks = (entry: NowEntry, className = "now-card-body") => (
 
 function NowEntryModal({
   entry,
+  origin,
   onClose,
 }: {
   entry: NowEntry;
+  origin: ModalOrigin | null;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const modalRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
+  const [openingStyle, setOpeningStyle] = useState<CSSProperties | null>(null);
   const modalBlocks = useMemo(
     () => [...entry.blocks, ...(entry.expandable?.blocks ?? [])],
     [entry],
@@ -116,6 +124,29 @@ function NowEntryModal({
     };
   }, [onClose]);
 
+  useLayoutEffect(() => {
+    const modal = modalRef.current;
+
+    if (!origin || !modal || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOpeningStyle(null);
+      return;
+    }
+
+    const modalRect = modal.getBoundingClientRect();
+    const originRect = origin.rect;
+    const originCenterX = originRect.left + originRect.width / 2;
+    const originCenterY = originRect.top + originRect.height / 2;
+    const modalCenterX = modalRect.left + modalRect.width / 2;
+    const modalCenterY = modalRect.top + modalRect.height / 2;
+
+    setOpeningStyle({
+      "--modal-origin-x": `${originCenterX - modalCenterX}px`,
+      "--modal-origin-y": `${originCenterY - modalCenterY}px`,
+      "--modal-origin-scale-x": String(originRect.width / modalRect.width),
+      "--modal-origin-scale-y": String(originRect.height / modalRect.height),
+    } as CSSProperties);
+  }, [origin]);
+
   return createPortal(
     <div className="now-modal-layer" role="presentation">
       <button
@@ -126,8 +157,9 @@ function NowEntryModal({
       />
       <div className="now-modal-shell" role="presentation">
         <article
-          className="now-modal"
-          style={{ "--now-accent": entry.accent } as CSSProperties}
+          ref={modalRef}
+          className={`now-modal ${openingStyle ? "is-from-card" : ""}`}
+          style={{ "--now-accent": entry.accent, ...openingStyle } as CSSProperties}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
@@ -217,6 +249,7 @@ function NowSection() {
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
   const [isDragging, setIsDragging] = useState(false);
   const [activeModalEntryId, setActiveModalEntryId] = useState<string | null>(null);
+  const [activeModalOrigin, setActiveModalOrigin] = useState<ModalOrigin | null>(null);
 
   const totalCards = nowEntries.length;
   const activeModalEntry = useMemo(
@@ -480,7 +513,15 @@ function NowSection() {
                     <button
                       type="button"
                       className="now-expand-button"
-                      onClick={() => setActiveModalEntryId(entry.id)}
+                      onClick={(event) => {
+                        const card = event.currentTarget.closest("[data-now-card]");
+                        setActiveModalOrigin(
+                          card instanceof HTMLElement
+                            ? { rect: card.getBoundingClientRect() }
+                            : null,
+                        );
+                        setActiveModalEntryId(entry.id);
+                      }}
                       aria-haspopup="dialog"
                     >
                       {t("now.readMore")}
@@ -507,7 +548,14 @@ function NowSection() {
       </div>
 
       {activeModalEntry && (
-        <NowEntryModal entry={activeModalEntry} onClose={() => setActiveModalEntryId(null)} />
+        <NowEntryModal
+          entry={activeModalEntry}
+          origin={activeModalOrigin}
+          onClose={() => {
+            setActiveModalEntryId(null);
+            setActiveModalOrigin(null);
+          }}
+        />
       )}
     </section>
   );

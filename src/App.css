@@ -1049,6 +1049,7 @@
     rgba(24, 31, 40, 0.58);
   backdrop-filter: blur(10px);
   cursor: pointer;
+  animation: nowModalBackdropIn 0.3s ease-out;
 }
 
 .now-modal-shell {
@@ -1062,6 +1063,10 @@
 
 .now-modal {
   --now-accent: #2c3e50;
+  --modal-origin-x: 0px;
+  --modal-origin-y: 0px;
+  --modal-origin-scale-x: 0.94;
+  --modal-origin-scale-y: 0.94;
   position: relative;
   width: min(100%, 46rem);
   max-height: min(88dvh, 52rem);
@@ -1072,7 +1077,12 @@
   box-shadow:
     0 28px 70px rgba(15, 23, 42, 0.26),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform-origin: center center;
   animation: nowModalIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.now-modal.is-from-card {
+  animation: nowModalCardExpand 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .now-modal::before {
@@ -1552,6 +1562,43 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nowModalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nowModalCardExpand {
+  0% {
+    opacity: 0.6;
+    transform:
+      translate(var(--modal-origin-x), var(--modal-origin-y))
+      scale(var(--modal-origin-scale-x), var(--modal-origin-scale-y));
+  }
+  58% {
+    opacity: 1;
+    transform:
+      translate(0, 0)
+      scale(var(--modal-origin-scale-x), var(--modal-origin-scale-y));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .now-modal-backdrop,
+  .now-modal,
+  .now-modal.is-from-card {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
