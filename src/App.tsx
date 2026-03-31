@@ -168,6 +168,20 @@ function NowCard({
     >
       <div className={`now-card-meta-row ${isExpanded ? "is-expanded-header" : ""}`}>
         <div className="now-card-meta-leading">
+          <span className="now-card-date">{entry.date}</span>
+        </div>
+        <div className="now-card-meta-actions">
+          {entry.originalLanguage && (
+            <span
+              className="now-card-language-pill"
+              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+            >
+              {entry.originalLanguage}
+            </span>
+          )}
+        </div>
+        <div className="now-card-meta-trailing">
           {isExpanded ? (
             <button
               ref={closeButtonRef}
@@ -182,52 +196,42 @@ function NowCard({
             <span className="now-card-close-placeholder" aria-hidden="true" />
           )}
         </div>
-        <span className="now-card-date">{entry.date}</span>
-        <div className="now-card-meta-actions">
-          {entry.originalLanguage && (
-            <span
-              className="now-card-language-pill"
-              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-            >
-              {entry.originalLanguage}
-            </span>
-          )}
-        </div>
       </div>
 
-      <h3 className="now-card-title">{entry.title}</h3>
+      <div className={`now-card-content ${isExpanded ? "is-expanded-content" : ""}`}>
+        <h3 className="now-card-title">{entry.title}</h3>
 
-      {entry.image && (
-        <figure className="now-card-image-wrap">
-          <img
-            src={entry.image.src}
-            alt={entry.image.alt}
-            className="now-card-image"
-            draggable={false}
-          />
-          {entry.image.caption && (
-            <figcaption className="now-card-image-caption">
-              {entry.image.caption}
-            </figcaption>
-          )}
-        </figure>
-      )}
+        {entry.image && (
+          <figure className="now-card-image-wrap">
+            <img
+              src={entry.image.src}
+              alt={entry.image.alt}
+              className="now-card-image"
+              draggable={false}
+            />
+            {entry.image.caption && (
+              <figcaption className="now-card-image-caption">
+                {entry.image.caption}
+              </figcaption>
+            )}
+          </figure>
+        )}
 
-      {renderRichBlocks(entry)}
+        {renderRichBlocks(entry)}
 
-      {isExpanded && expandableBlocks.length > 0 && (
-        <div className="now-card-body now-expanded-body">
-          {expandableBlocks.map((block, blockIndex) => (
-            <p
-              key={`${entry.id}-expanded-${blockIndex}`}
-              className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
-            >
-              {block.spans.map(renderRichSpan)}
-            </p>
-          ))}
-        </div>
-      )}
+        {isExpanded && expandableBlocks.length > 0 && (
+          <div className="now-card-body now-expanded-body">
+            {expandableBlocks.map((block, blockIndex) => (
+              <p
+                key={`${entry.id}-expanded-${blockIndex}`}
+                className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
+              >
+                {block.spans.map(renderRichSpan)}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
 
       {entry.expandable && (
         <div className={`now-card-footer ${isExpanded ? "is-expanded-footer" : ""}`}>
