@@ -6,6 +6,8 @@ import {
   useState,
   type CSSProperties,
   type MouseEvent as ReactMouseEvent,
+  type MouseEvent as ReactDomMouseEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { createPortal } from "react-dom";
 import "./App.css";
@@ -67,9 +69,17 @@ const renderRichSpan = (span: NowRichTextSpan, index: number) => {
 function NowSection() {
   const { t } = useTranslation();
   const carouselRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startScrollLeft: number;
+    didDrag: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
+  const [isDragging, setIsDragging] = useState(false);
 
   const totalCards = nowEntries.length;
 
@@ -83,18 +93,19 @@ function NowSection() {
     return Array.from(carousel.querySelectorAll<HTMLElement>("[data-now-card]"));
   };
 
-  const syncCarouselState = useCallback(() => {
+  const getNearestIndex = useCallback(() => {
     const carousel = carouselRef.current;
-    if (!carousel) {
-      return;
+    const cards = getCardElements();
+
+    if (!carousel || cards.length === 0) {
+      return 0;
     }
 
-    const cards = getCardElements();
     const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
     const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
     const viewportCenter = currentScrollLeft + carousel.clientWidth / 2;
 
-    const nearestIndex = cards.reduce((closestIndex, card, index) => {
+    return cards.reduce((closestIndex, card, index) => {
       const closestCard = cards[closestIndex];
       const currentCardCenter = card.offsetLeft + card.clientWidth / 2;
       const closestCardCenter = closestCard.offsetLeft + closestCard.clientWidth / 2;
@@ -103,11 +114,22 @@ function NowSection() {
 
       return currentDistance < closestDistance ? index : closestIndex;
     }, 0);
+  }, []);
+
+  const syncCarouselState = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) {
+      return;
+    }
+
+    const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
+    const nearestIndex = getNearestIndex();
 
     setActiveIndex(nearestIndex);
     setCanScrollPrev(currentScrollLeft > 8 && nearestIndex > 0);
     setCanScrollNext(currentScrollLeft < maxScrollLeft - 8 && nearestIndex < totalCards - 1);
-  }, [totalCards]);
+  }, [getNearestIndex, totalCards]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -152,6 +174,76 @@ function NowSection() {
     scrollToIndex(nextIndex);
   };
 
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+
+    if (
+      !carousel ||
+      event.pointerType !== "mouse" ||
+      event.button !== 0 ||
+      (event.target instanceof Element &&
+        event.target.closest("a, button, input, textarea, select, summary"))
+    ) {
+      return;
+    }
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScrollLeft: carousel.scrollLeft,
+      didDrag: false,
+    };
+
+    setIsDragging(true);
+    carousel.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    const dragState = dragStateRef.current;
+
+    if (!carousel || !dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - dragState.startX;
+
+    if (!dragState.didDrag && Math.abs(deltaX) > 6) {
+      dragState.didDrag = true;
+    }
+
+    carousel.scrollLeft = dragState.startScrollLeft - deltaX;
+  };
+
+  const finishPointerDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    const dragState = dragStateRef.current;
+
+    if (!carousel || !dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    if (carousel.hasPointerCapture(event.pointerId)) {
+      carousel.releasePointerCapture(event.pointerId);
+    }
+
+    dragStateRef.current = null;
+    setIsDragging(false);
+    suppressClickRef.current = dragState.didDrag;
+
+    if (dragState.didDrag) {
+      scrollToIndex(getNearestIndex());
+    }
+  };
+
+  const handleClickCapture = (event: ReactDomMouseEvent<HTMLDivElement>) => {
+    if (suppressClickRef.current) {
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClickRef.current = false;
+    }
+  };
+
   return (
     <section className="now-section" aria-labelledby="now-section-title">
       <div className="now-section-shell">
@@ -188,9 +280,15 @@ function NowSection() {
 
         <div
           ref={carouselRef}
-          className="now-carousel"
+          className={`now-carousel ${isDragging ? "is-dragging" : ""}`}
           aria-label={t("now.carouselLabel")}
           tabIndex={0}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishPointerDrag}
+          onPointerCancel={finishPointerDrag}
+          onLostPointerCapture={finishPointerDrag}
+          onClickCapture={handleClickCapture}
         >
           {nowEntries.map((entry: NowEntry) => (
             <article
@@ -258,11 +356,15 @@ function NowSection() {
           ))}
         </div>
 
-        <div className="now-carousel-progress" aria-hidden="true">
+        <div className="now-carousel-progress" aria-label={t("now.progressLabel")}>
           {nowEntries.map((entry, index) => (
-            <span
+            <button
               key={entry.id}
+              type="button"
               className={`now-progress-dot ${index === activeIndex ? "is-active" : ""}`}
+              onClick={() => scrollToIndex(index)}
+              aria-label={t("now.jumpTo", { index: index + 1, title: entry.title })}
+              aria-pressed={index === activeIndex}
             />
           ))}
         </div>
