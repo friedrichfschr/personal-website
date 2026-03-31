@@ -25,6 +25,7 @@ export type NowEntry = {
   blocks: NowRichTextBlock[];
   expandable?: {
     summary: string;
+    blocks?: NowRichTextBlock[];
   };
 };
 
@@ -62,6 +63,20 @@ export const nowEntries: NowEntry[] = [
     ],
     expandable: {
       summary: "Reserved for future modal expansion or a longer journal-style continuation.",
+      blocks: [
+        {
+          type: "paragraph",
+          spans: [
+            { text: "When there is more to say, the card can unfold into a longer studio note without changing how the content is authored. Add a few extra paragraphs here and the modal will pick them up automatically." },
+          ],
+        },
+        {
+          type: "paragraph",
+          spans: [
+            { text: "That keeps the section light in the carousel while still leaving room for process, context, or a more reflective continuation." },
+          ],
+        },
+      ],
     },
   },
   {
@@ -94,6 +109,14 @@ export const nowEntries: NowEntry[] = [
     ],
     expandable: {
       summary: "Structured so this can later open into translations, notes or extra media.",
+      blocks: [
+        {
+          type: "paragraph",
+          spans: [
+            { text: "A good continuation area for this card would be a short translation, a second-language aside, or a tiny note about why the fragment mattered enough to keep." },
+          ],
+        },
+      ],
     },
   },
   {
@@ -122,6 +145,14 @@ export const nowEntries: NowEntry[] = [
     ],
     expandable: {
       summary: "Ready for a future ‘read more’ interaction without changing the card schema.",
+      blocks: [
+        {
+          type: "paragraph",
+          spans: [
+            { text: "This is intentionally still the same rich-text structure: paragraphs and quotes with light inline emphasis. No special modal-only content type required." },
+          ],
+        },
+      ],
     },
   },
 ];

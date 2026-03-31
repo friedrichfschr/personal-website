@@ -32,7 +32,9 @@ const resources = {
         next: "Show next entry",
         jumpTo: "Jump to entry {{index}}: {{title}}",
         originalLanguage: "Original",
-        readMore: "Read more soon",
+        readMore: "Read more",
+        close: "Close entry",
+        modalKicker: "Expanded note",
       },
       languageSwitcher: {
         label: "Language selector",
@@ -84,7 +86,9 @@ const resources = {
         next: "Nächsten Eintrag anzeigen",
         jumpTo: "Zu Eintrag {{index}} springen: {{title}}",
         originalLanguage: "Originalsprache",
-        readMore: "Mehr folgt",
+        readMore: "Mehr lesen",
+        close: "Eintrag schließen",
+        modalKicker: "Erweiterte Notiz",
       },
       languageSwitcher: {
         label: "Sprachauswahl",
@@ -136,7 +140,9 @@ const resources = {
         next: "Afficher l’entrée suivante",
         jumpTo: "Aller à l’entrée {{index}} : {{title}}",
         originalLanguage: "Langue d’origine",
-        readMore: "À développer bientôt",
+        readMore: "Lire la suite",
+        close: "Fermer l’entrée",
+        modalKicker: "Note développée",
       },
       languageSwitcher: {
         label: "Sélecteur de langue",
@@ -188,7 +194,9 @@ const resources = {
         next: "显示下一条",
         jumpTo: "跳转到第 {{index}} 条：{{title}}",
         originalLanguage: "原文语言",
-        readMore: "稍后展开",
+        readMore: "阅读更多",
+        close: "关闭条目",
+        modalKicker: "展开笔记",
       },
       languageSwitcher: {
         label: "语言选择器",
