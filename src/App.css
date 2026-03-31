@@ -130,8 +130,143 @@
   animation: subtitleFadeIn 0.6s ease-out;
 }
 
-.hero-block {
-  padding-top: 2rem;
+.hero-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  padding-top: 3.75rem;
+}
+
+.hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 2rem auto auto -1rem;
+  width: 11rem;
+  height: 11rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(231, 76, 60, 0.16) 0%, rgba(231, 76, 60, 0) 72%);
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.hero-copy-block {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 38rem;
+  padding-left: 0.35rem;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(3.4rem, 8vw, 5.5rem);
+  line-height: 0.94;
+}
+
+.hero-subtitle {
+  margin: 0;
+  max-width: 30rem;
+  color: rgba(44, 62, 80, 0.72);
+}
+
+.dark .hero-subtitle {
+  color: rgba(240, 240, 240, 0.76);
+}
+
+.hero-spotlight-card {
+  overflow: visible;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  z-index: 1;
+}
+
+.hero-spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 1.5rem 1.25rem auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 24px;
+  border: 1px dashed rgba(44, 62, 80, 0.14);
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.hero-portrait-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 18rem;
+}
+
+.hero-orbit {
+  position: absolute;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(44, 62, 80, 0.18);
+  pointer-events: none;
+}
+
+.hero-orbit-one {
+  width: 14rem;
+  height: 14rem;
+  transform: rotate(12deg);
+}
+
+.hero-orbit-two {
+  width: 16.8rem;
+  height: 12.2rem;
+  border-color: rgba(231, 76, 60, 0.22);
+  transform: rotate(-10deg);
+}
+
+.hero-portrait-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 15rem;
+  height: 15rem;
+  padding: 0.8rem;
+  border-radius: 36px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 241, 232, 0.95));
+  border: 2px solid rgba(44, 62, 80, 0.2);
+  box-shadow: 0 20px 34px rgba(44, 62, 80, 0.12);
+  transform: rotate(-3deg);
+}
+
+.dark .hero-portrait-frame {
+  background: linear-gradient(180deg, rgba(53, 53, 53, 0.96), rgba(34, 34, 34, 0.96));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.hero-portrait-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 28px;
+}
+
+.hero-side-panel {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.hero-panel-label {
+  margin-bottom: 0.9rem;
+  color: rgba(44, 62, 80, 0.62);
+}
+
+.dark .hero-panel-label {
+  color: rgba(240, 240, 240, 0.56);
 }
 
 .hand-drawn-language-switcher {
@@ -335,9 +470,39 @@
 }
 
 .cv-trigger-button {
-  width: min(100%, 13rem);
-  min-width: min(100%, 13rem);
+  width: min(100%, 14rem);
+  min-width: min(100%, 14rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  box-shadow:
+    0 12px 24px rgba(44, 62, 80, 0.16),
+    3px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+.cv-trigger-button[data-hover="true"],
+.cv-trigger-button:hover {
+  background: linear-gradient(135deg, #34495e, #22313f);
+}
+
+.cv-trigger-chevron {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 0.95rem;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.cv-trigger-chevron.is-open {
+  transform: rotate(180deg);
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .hand-drawn-button:hover {
@@ -403,17 +568,17 @@
   left: 0;
   transform: none;
   width: auto;
-  background-color: white;
-  border: 2px solid lightgray;
-  border-radius: 8px;
-  padding: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 242, 236, 0.98));
+  border: 2px solid rgba(44, 62, 80, 0.16);
+  border-radius: 22px;
+  padding: 1rem;
   display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
-  z-index: 50;
-  animation: slideInGrowDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-direction: column;
+  gap: 0.9rem;
+  align-items: stretch;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22);
+  z-index: 9999;
+  animation: dropdownFloatIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hand-drawn-dropdown-menu.closing {
@@ -421,21 +586,21 @@
 }
 
 .dark .hand-drawn-dropdown-menu {
-  background-color: #3a3a3a;
-  border-color: #5a5a5a;
-  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(180deg, rgba(52, 52, 52, 0.98), rgba(32, 32, 32, 0.98));
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.42);
 }
 
 .hand-drawn-dropdown-arrow {
   position: absolute;
-  left: 28px;
-  top: -8px;
+  left: 50%;
+  top: -10px;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-right: 6px solid transparent;
-  border-left: 6px solid transparent;
-  border-bottom: 8px solid var(--hand-drawn-primary);
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+  border-bottom: 10px solid rgba(44, 62, 80, 0.92);
   flex-shrink: 0;
   animation: fadeInArrow 0.6s ease 0.05s both;
 }
@@ -444,12 +609,29 @@
   border-bottom-color: #5a5a5a;
 }
 
-.hand-drawn-dropdown-menu > button:nth-child(3) {
-  animation: fadeInScaleUp 0.6s ease 0.1s both;
+.cv-portal-dropdown {
+  position: fixed;
+  inset: auto auto auto 0;
 }
 
-.hand-drawn-dropdown-menu > button:nth-child(4) {
-  animation: fadeInScaleUp 0.6s ease 0.2s both;
+.cv-dropdown-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.cv-option-button {
+  width: 100%;
+  min-height: 2.8rem;
+  border-radius: 14px;
+}
+
+.cv-dropdown-actions > :nth-child(1) {
+  animation: fadeInScaleUp 0.24s ease both;
+}
+
+.cv-dropdown-actions > :nth-child(2) {
+  animation: fadeInScaleUp 0.24s ease 0.06s both;
 }
 
 .now-section {
@@ -848,6 +1030,49 @@
     right: 0;
   }
 
+  .hero-shell {
+    gap: 1.25rem;
+    padding-top: 3.25rem;
+  }
+
+  .hero-copy-block {
+    padding-left: 0;
+  }
+
+  .hero-spotlight-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.35rem;
+  }
+
+  .hero-portrait-stack {
+    min-height: 14.5rem;
+  }
+
+  .hero-orbit-one {
+    width: 11.5rem;
+    height: 11.5rem;
+  }
+
+  .hero-orbit-two {
+    width: 13.5rem;
+    height: 10rem;
+  }
+
+  .hero-portrait-frame {
+    width: 12.5rem;
+    height: 12.5rem;
+  }
+
+  .hero-side-panel {
+    gap: 1.2rem;
+  }
+
+  .cv-trigger-button {
+    width: 100%;
+    min-width: 0;
+  }
+
   .hand-drawn-language-switcher {
     transform: none;
   }
@@ -857,41 +1082,9 @@
     padding-inline: 7px;
   }
 
-  .hand-drawn-dropdown-menu {
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 8px;
-    flex-direction: column;
-    animation: slideInGrowDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .hand-drawn-dropdown-menu.closing {
-    animation: slideOutShrinkUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .hand-drawn-dropdown-arrow {
-    position: absolute;
-    left: 50%;
-    top: -8px;
-    transform: translateX(-50%);
-    border-right: 6px solid transparent;
-    border-left: 6px solid transparent;
-    border-bottom: 8px solid var(--hand-drawn-primary);
-  }
-
-  .dark .hand-drawn-dropdown-arrow {
-    border-bottom-color: #5a5a5a;
-  }
-
   .hand-drawn-dropdown-label {
-    margin-right: 0;
     white-space: normal;
     text-align: center;
-  }
-
-  .hand-drawn-dropdown-menu > button {
-    width: 100%;
   }
 
   .page-stack {
@@ -942,6 +1135,14 @@
 @media (max-width: 640px) {
   .hand-drawn-title {
     font-size: 2.5rem;
+  }
+
+  .hero-title {
+    font-size: 2.9rem;
+  }
+
+  .cv-dropdown-actions {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .hand-drawn-subtitle {
@@ -1004,6 +1205,17 @@
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdownFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
