@@ -1007,6 +1007,10 @@ html {
   overflow: visible;
 }
 
+.now-card-body-viewport.has-inline-highlight {
+  display: flow-root;
+}
+
 .now-card-body-viewport.has-overflow::after {
   content: "";
   position: absolute;
@@ -1069,6 +1073,16 @@ html {
     0 0 0 1px rgba(255, 255, 255, 0.72) inset;
   transform: rotate(8deg);
   z-index: 1;
+}
+
+.now-card-image-wrap.is-inline-highlight {
+  float: right;
+  clear: right;
+  align-self: auto;
+  width: clamp(8.75rem, 42%, 11rem);
+  margin: -0.05rem 0 0.55rem 1rem;
+  shape-outside: inset(0 round 22px);
+  shape-margin: 0.75rem;
 }
 
 .now-card-image-wrap.is-highlight::before,
@@ -1219,6 +1233,11 @@ html {
   width: min(13rem, 52%);
   margin-top: 0.2rem;
   transform: rotate(4deg) scale(1.02) translateY(0.05rem);
+}
+
+.now-card.is-expanded.is-open .now-card-image-wrap.is-inline-highlight {
+  margin: 0.2rem 0 0.8rem 1.2rem;
+  transform: rotate(5deg) scale(1.02) translateY(0.05rem);
 }
 
 .now-card.is-expanded.is-open .now-expanded-body {
@@ -1578,6 +1597,12 @@ html {
     width: min(9.4rem, 74%);
     margin-bottom: 0.2rem;
     transform: rotate(6deg);
+  }
+
+  .now-card-image-wrap.is-inline-highlight {
+    width: min(8.6rem, 48%);
+    margin-left: 0.85rem;
+    shape-margin: 0.55rem;
   }
 
   .now-card-image-wrap.is-highlight::before,

@@ -115,6 +115,7 @@ function NowCard({
   onExpand?: (entry: NowEntry, card: HTMLElement) => void;
   onClose?: () => void;
 }) {
+  const isHighlightEntry = entry.id === "openclaw";
   const { t } = useTranslation();
   const cardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -247,12 +248,12 @@ function NowCard({
       <div className={`now-card-content ${isExpanded ? "is-expanded-content" : ""}`}>
         <h3 className="now-card-title">{entry.title}</h3>
 
-        {entry.image && (
-          <figure className={`now-card-image-wrap ${entry.id === "openclaw" ? "is-highlight" : ""}`}>
+        {entry.image && !isHighlightEntry && (
+          <figure className="now-card-image-wrap">
             <img
               src={entry.image.src}
               alt={entry.image.alt}
-              className={`now-card-image ${entry.id === "openclaw" ? "is-highlight" : ""}`}
+              className="now-card-image"
               draggable={false}
             />
             {entry.image.caption && (
@@ -265,8 +266,23 @@ function NowCard({
 
         <div
           ref={staticBodyRef}
-          className={`now-card-body-viewport ${shouldShowReadMore ? "has-overflow" : ""} ${isExpanded ? "is-expanded" : ""}`}
+          className={`now-card-body-viewport ${shouldShowReadMore ? "has-overflow" : ""} ${isExpanded ? "is-expanded" : ""} ${isHighlightEntry ? "has-inline-highlight" : ""}`}
         >
+          {entry.image && isHighlightEntry && (
+            <figure className="now-card-image-wrap is-highlight is-inline-highlight">
+              <img
+                src={entry.image.src}
+                alt={entry.image.alt}
+                className="now-card-image is-highlight"
+                draggable={false}
+              />
+              {entry.image.caption && (
+                <figcaption className="now-card-image-caption">
+                  {entry.image.caption}
+                </figcaption>
+              )}
+            </figure>
+          )}
           {renderRichBlocks(entry)}
         </div>
 
