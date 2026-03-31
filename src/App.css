@@ -411,8 +411,11 @@
 
 @media (max-width: 750px) {
   .social-links-grid {
-    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    grid-template-columns: repeat(3, max-content);
+    justify-content: center;
     justify-items: center;
+    gap: 8px;
   }
 }
 
@@ -496,7 +499,8 @@
   height: 1.5rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
+  line-height: 1;
   transition: transform 0.25s ease, background-color 0.25s ease;
 }
 
@@ -593,7 +597,7 @@
 
 .hand-drawn-dropdown-arrow {
   position: absolute;
-  left: 50%;
+  left: var(--dropdown-arrow-left, 50%);
   top: -10px;
   transform: translateX(-50%);
   width: 0;
@@ -1069,8 +1073,24 @@
   }
 
   .cv-trigger-button {
-    width: 100%;
+    width: auto;
     min-width: 0;
+    align-self: center;
+    font-size: 0.9rem;
+    padding: 0.7rem 0.95rem;
+    gap: 0.55rem;
+  }
+
+  .cv-trigger-chevron {
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 0.72rem;
+  }
+
+  .cv-dropdown-wrap {
+    min-width: 0;
+    display: flex;
+    justify-content: center;
   }
 
   .hand-drawn-language-switcher {
@@ -1172,6 +1192,10 @@
 
   .now-card-meta-row {
     flex-wrap: wrap;
+  }
+
+  .social-links-grid {
+    gap: 7px;
   }
 }
 

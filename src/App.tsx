@@ -29,6 +29,7 @@ type DropdownPosition = {
   top: number;
   left: number;
   width: number;
+  arrowLeft: number;
 };
 
 const spanToStyle = (span: NowRichTextSpan) => ({
@@ -298,6 +299,7 @@ function App() {
       top: rect.bottom + 14,
       left,
       width,
+      arrowLeft: rect.left + rect.width / 2 - left,
     });
   }, []);
 
@@ -528,7 +530,8 @@ function App() {
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
               width: `${dropdownPosition.width}px`,
-            }}
+              "--dropdown-arrow-left": `${dropdownPosition.arrowLeft}px`,
+            } as CSSProperties}
           >
             <div className="hand-drawn-dropdown-arrow"></div>
             <span className="hand-drawn-dropdown-label">{t("cv.availableLabel")}</span>
