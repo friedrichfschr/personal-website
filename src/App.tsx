@@ -35,9 +35,17 @@ type DropdownPosition = {
   arrowLeft: number;
 };
 
+type ExpandedCardRect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
 type ExpandedCardState = {
   entryId: string;
   sourceRect: DOMRect;
+  targetRect: ExpandedCardRect;
   sourceTransform: string;
   phase: "entering" | "open" | "closing";
 };
@@ -116,6 +124,10 @@ function NowCard({
       "--now-source-left": `${expansionState.sourceRect.left}px`,
       "--now-source-width": `${expansionState.sourceRect.width}px`,
       "--now-source-height": `${expansionState.sourceRect.height}px`,
+      "--now-target-top": `${expansionState.targetRect.top}px`,
+      "--now-target-left": `${expansionState.targetRect.left}px`,
+      "--now-target-width": `${expansionState.targetRect.width}px`,
+      "--now-target-height": `${expansionState.targetRect.height}px`,
       "--now-source-transform": expansionState.sourceTransform,
     } as CSSProperties;
   }, [expansionState, isExpanded]);
@@ -155,8 +167,8 @@ function NowCard({
       }}
     >
       <div className={`now-card-meta-row ${isExpanded ? "is-expanded-header" : ""}`}>
-        {isExpanded ? (
-          <>
+        <div className="now-card-meta-leading">
+          {isExpanded ? (
             <button
               ref={closeButtonRef}
               type="button"
@@ -166,35 +178,22 @@ function NowCard({
             >
               ×
             </button>
-            <div className="now-card-meta-actions">
-              <span className="now-card-date">{entry.date}</span>
-              {entry.originalLanguage && (
-                <span
-                  className="now-card-language-pill"
-                  aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                  title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                >
-                  {entry.originalLanguage}
-                </span>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="now-card-date">{entry.date}</span>
-            <div className="now-card-meta-actions">
-              {entry.originalLanguage && (
-                <span
-                  className="now-card-language-pill"
-                  aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                  title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-                >
-                  {entry.originalLanguage}
-                </span>
-              )}
-            </div>
-          </>
-        )}
+          ) : (
+            <span className="now-card-close-placeholder" aria-hidden="true" />
+          )}
+        </div>
+        <span className="now-card-date">{entry.date}</span>
+        <div className="now-card-meta-actions">
+          {entry.originalLanguage && (
+            <span
+              className="now-card-language-pill"
+              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+            >
+              {entry.originalLanguage}
+            </span>
+          )}
+        </div>
       </div>
 
       <h3 className="now-card-title">{entry.title}</h3>
@@ -217,10 +216,6 @@ function NowCard({
 
       {renderRichBlocks(entry)}
 
-      {isExpanded && entry.expandable?.summary && (
-        <p className="now-card-footnote now-expanded-summary">{entry.expandable.summary}</p>
-      )}
-
       {isExpanded && expandableBlocks.length > 0 && (
         <div className="now-card-body now-expanded-body">
           {expandableBlocks.map((block, blockIndex) => (
@@ -234,19 +229,27 @@ function NowCard({
         </div>
       )}
 
-      {!isExpanded && entry.expandable && (
-        <div className="now-card-footer">
+      {entry.expandable && (
+        <div className={`now-card-footer ${isExpanded ? "is-expanded-footer" : ""}`}>
           <span className="now-card-footnote">{entry.expandable.summary}</span>
           <button
             type="button"
             className="now-expand-button"
             onClick={(event) => {
+              if (isExpanded) {
+                event.preventDefault();
+                return;
+              }
+
               const card = event.currentTarget.closest("[data-now-card]");
               if (card instanceof HTMLElement) {
                 onExpand?.(entry, card);
               }
             }}
             aria-haspopup="dialog"
+            aria-hidden={isExpanded || undefined}
+            tabIndex={isExpanded ? -1 : undefined}
+            disabled={isExpanded}
           >
             {t("now.readMore")}
           </button>
@@ -389,6 +392,26 @@ function NowSection() {
     };
   }, [expandedCard]);
 
+  const getExpandedTargetRect = useCallback((): ExpandedCardRect => {
+    const isMobile = window.innerWidth <= 768;
+    const gutter = isMobile ? 8 : 14;
+    const top = isMobile ? 12 : Math.min(Math.max(window.innerHeight * 0.05, 14), 44);
+    const width = Math.min(
+      isMobile ? window.innerWidth - gutter * 2 : 736,
+      window.innerWidth - gutter * 2,
+    );
+    const heightLimit = isMobile
+      ? window.innerHeight - top - 12
+      : Math.min(window.innerHeight * 0.84, 832);
+
+    return {
+      top,
+      left: Math.max((window.innerWidth - width) / 2, gutter),
+      width,
+      height: Math.max(heightLimit, 320),
+    };
+  }, []);
+
   const scrollToIndex = (index: number) => {
     const carousel = carouselRef.current;
     const cards = getCardElements();
@@ -494,6 +517,7 @@ function NowSection() {
     setExpandedCard({
       entryId: entry.id,
       sourceRect,
+      targetRect: getExpandedTargetRect(),
       sourceTransform: sourceTransform === "none" ? "rotate(0deg)" : sourceTransform,
       phase: "entering",
     });
@@ -505,6 +529,27 @@ function NowSection() {
       });
     });
   };
+
+  useEffect(() => {
+    if (!expandedCard) {
+      return;
+    }
+
+    const syncExpandedTarget = () => {
+      setExpandedCard((current) => (current
+        ? {
+            ...current,
+            targetRect: getExpandedTargetRect(),
+          }
+        : null));
+    };
+
+    window.addEventListener("resize", syncExpandedTarget);
+
+    return () => {
+      window.removeEventListener("resize", syncExpandedTarget);
+    };
+  }, [expandedCard, getExpandedTargetRect]);
 
   const handleCloseExpanded = useCallback(() => {
     clearAnimationTimers();
