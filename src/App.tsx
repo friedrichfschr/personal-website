@@ -646,32 +646,33 @@ function NowSection() {
     <section className="now-section" aria-labelledby="now-section-title">
       <div className="now-section-shell">
         <div className="now-section-header">
-          <div>
-            <p className="hand-drawn-label now-section-kicker">{t("now.kicker")}</p>
+          <p className="hand-drawn-label now-section-kicker">{t("now.kicker")}</p>
+
+          <div className="now-section-title-row">
             <h2 id="now-section-title" className="now-section-title">
               {t("now.title")}
             </h2>
-          </div>
 
-          <div className="now-carousel-controls" aria-label={t("now.controlsLabel")}>
-            <button
-              type="button"
-              className="now-arrow-button"
-              onClick={() => scrollByDirection("prev")}
-              disabled={!canScrollPrev || Boolean(expandedCard)}
-              aria-label={t("now.previous")}
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              className="now-arrow-button"
-              onClick={() => scrollByDirection("next")}
-              disabled={!canScrollNext || Boolean(expandedCard)}
-              aria-label={t("now.next")}
-            >
-              →
-            </button>
+            <div className="now-carousel-controls" aria-label={t("now.controlsLabel")}>
+              <button
+                type="button"
+                className="now-arrow-button"
+                onClick={() => scrollByDirection("prev")}
+                disabled={!canScrollPrev || Boolean(expandedCard)}
+                aria-label={t("now.previous")}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className="now-arrow-button"
+                onClick={() => scrollByDirection("next")}
+                disabled={!canScrollNext || Boolean(expandedCard)}
+                aria-label={t("now.next")}
+              >
+                →
+              </button>
+            </div>
           </div>
         </div>
 

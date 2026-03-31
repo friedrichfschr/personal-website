@@ -695,16 +695,23 @@ html {
 
 .now-section-header {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.25rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
   margin-bottom: 1.4rem;
   padding: 0 0.45rem;
 }
 
+.now-section-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
 .now-section-kicker {
   color: var(--hand-drawn-accent);
-  margin-bottom: 0.55rem;
+  margin: 0;
 }
 
 .now-section-title {
@@ -1060,29 +1067,28 @@ html {
 
 .now-card-image-wrap.is-highlight {
   position: relative;
-  align-self: flex-end;
-  width: min(11.25rem, 72%);
-  margin: -0.15rem 0 0.35rem auto;
-  padding: 0.8rem 0.8rem 0.55rem;
-  border-radius: 22px;
+  width: clamp(8rem, 40%, 10rem);
+  margin: 0.05rem 0 0.45rem auto;
+  padding: 0.7rem 0.7rem 0.5rem;
+  border-radius: 20px;
   border-color: color-mix(in srgb, var(--now-accent) 24%, rgba(44, 62, 80, 0.12));
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 240, 0.94));
   box-shadow:
-    0 16px 28px rgba(44, 62, 80, 0.12),
+    0 14px 24px rgba(44, 62, 80, 0.12),
     0 0 0 1px rgba(255, 255, 255, 0.72) inset;
-  transform: rotate(8deg);
+  transform: rotate(6deg);
   z-index: 1;
 }
 
 .now-card-image-wrap.is-inline-highlight {
   float: right;
-  clear: right;
-  align-self: auto;
-  width: clamp(8.75rem, 42%, 11rem);
-  margin: -0.05rem 0 0.55rem 1rem;
-  shape-outside: inset(0 round 22px);
-  shape-margin: 0.75rem;
+  clear: none;
+  display: inline-flex;
+  width: clamp(8rem, 40%, 10rem);
+  margin: 0.05rem 0 0.6rem 1rem;
+  shape-outside: margin-box;
+  shape-margin: 0.7rem;
 }
 
 .now-card-image-wrap.is-highlight::before,
@@ -1136,9 +1142,9 @@ html {
   height: auto;
   aspect-ratio: 1 / 1;
   min-height: 0;
-  max-height: 10.2rem;
+  max-height: 9.1rem;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: 0 10px 18px rgba(44, 62, 80, 0.12);
 }
 
@@ -1153,11 +1159,13 @@ html {
 }
 
 .now-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+  display: block;
   margin-top: 0.1rem;
-  transition: gap 0.36s ease, transform 0.42s ease, opacity 0.32s ease;
+  transition: transform 0.42s ease, opacity 0.32s ease;
+}
+
+.now-card-body > .now-card-text + .now-card-text {
+  margin-top: 0.85rem;
 }
 
 .now-card-actions {
@@ -1216,28 +1224,28 @@ html {
 .now-card.is-expanded.is-closing .now-card-title,
 .now-card.is-expanded.is-closing .now-card-body,
 .now-card.is-expanded.is-closing .now-card-actions {
-  transform: translateY(0.45rem);
+  transform: translateY(0.14rem);
 }
 
 .now-card.is-expanded.is-open .now-card-title {
-  max-width: 26ch;
+  max-width: 22ch;
 }
 
 .now-card.is-expanded.is-open .now-card-image-wrap {
-  transform: scale(1.02) translateY(0.05rem);
+  transform: translateY(0);
   border-radius: 20px;
   box-shadow: 0 14px 24px rgba(44, 62, 80, 0.1);
 }
 
 .now-card.is-expanded.is-open .now-card-image-wrap.is-highlight {
-  width: min(13rem, 52%);
-  margin-top: 0.2rem;
-  transform: rotate(4deg) scale(1.02) translateY(0.05rem);
+  width: clamp(8.4rem, 42%, 10.4rem);
+  margin-top: 0.05rem;
+  transform: rotate(5deg);
 }
 
 .now-card.is-expanded.is-open .now-card-image-wrap.is-inline-highlight {
-  margin: 0.2rem 0 0.8rem 1.2rem;
-  transform: rotate(5deg) scale(1.02) translateY(0.05rem);
+  margin: 0.05rem 0 0.7rem 1rem;
+  transform: rotate(5deg);
 }
 
 .now-card.is-expanded.is-open .now-expanded-body {
@@ -1564,13 +1572,16 @@ html {
   }
 
   .now-section-header {
-    flex-direction: column;
-    align-items: stretch;
     padding: 0 0.25rem;
   }
 
+  .now-section-title-row {
+    align-items: center;
+    gap: 0.9rem;
+  }
+
   .now-carousel-controls {
-    align-self: flex-end;
+    align-self: auto;
   }
 
   .now-carousel {
@@ -1594,15 +1605,15 @@ html {
   }
 
   .now-card-image-wrap.is-highlight {
-    width: min(9.4rem, 74%);
+    width: clamp(7rem, 41%, 8.4rem);
     margin-bottom: 0.2rem;
-    transform: rotate(6deg);
+    transform: rotate(5deg);
   }
 
   .now-card-image-wrap.is-inline-highlight {
-    width: min(8.6rem, 48%);
-    margin-left: 0.85rem;
-    shape-margin: 0.55rem;
+    width: clamp(7rem, 41%, 8.4rem);
+    margin-left: 0.8rem;
+    shape-margin: 0.5rem;
   }
 
   .now-card-image-wrap.is-highlight::before,
@@ -1611,7 +1622,7 @@ html {
   }
 
   .now-card-image.is-highlight {
-    max-height: 8.2rem;
+    max-height: 7.2rem;
   }
 
   .now-card.is-expanded.is-open {
@@ -1648,6 +1659,10 @@ html {
 
   .now-section-title {
     font-size: 1.5rem;
+  }
+
+  .now-section-title-row {
+    gap: 0.7rem;
   }
 
   .now-section-copy {
