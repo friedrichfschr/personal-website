@@ -80,14 +80,14 @@
 /* Top toolbar */
 .top-toolbar {
   position: absolute;
-  top: -1.75rem;
+  top: -1.9rem;
   right: 0;
   z-index: 20;
   animation: subtitleFadeIn 0.6s ease-out;
 }
 
 .hero-block {
-  padding-top: 1.5rem;
+  padding-top: 2rem;
 }
 
 .hand-drawn-language-switcher {
