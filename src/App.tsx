@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { Button, Link } from "@heroui/react";
+import { useTranslation } from "react-i18next";
 import {
-  DiscordIcon,
   GithubIcon,
   InstagramIcon,
   LinkedInIcon,
@@ -11,40 +11,47 @@ import {
   YoutubeIcon,
 } from "./icons";
 import { siteConfig } from "../site";
-import { downloadCV } from "./utils/cvDownload";
+import { downloadCV, type CVLanguage } from "./utils/cvDownload";
+
+const uiLanguages = ["en", "de", "fr"] as const;
+type UiLanguage = (typeof uiLanguages)[number];
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [showCVOptions, setShowCVOptions] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const cvDropdownRef = useRef<HTMLDivElement>(null);
+  const currentLanguage =
+    (i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) ||
+    "en";
 
-  const handleCVDownload = (language: "en" | "de") => {
+  const handleCVDownload = (language: CVLanguage) => {
     downloadCV(language);
     setShowCVOptions(false);
   };
 
   const handleCVHover = () => {
-    // Only open on hover if not a touch device
     if (!isTouchDevice) {
       setShowCVOptions(true);
     }
   };
 
   const handleCVLeave = () => {
-    // Only close on leave if not a touch device
     if (!isTouchDevice) {
       setShowCVOptions(false);
     }
   };
 
   const handleCVClick = () => {
-    // On touch devices, toggle immediately
     if (isTouchDevice) {
       setShowCVOptions(!showCVOptions);
     }
   };
 
-  // Detect touch device on mount
+  const changeLanguage = (language: UiLanguage) => {
+    i18n.changeLanguage(language);
+  };
+
   useEffect(() => {
     const hasTouchCapability = () =>
       typeof window !== "undefined" &&
@@ -53,7 +60,6 @@ function App() {
     setIsTouchDevice(hasTouchCapability());
   }, []);
 
-  // Close dropdown when clicking anywhere outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -76,19 +82,45 @@ function App() {
   return (
     <div className="hand-drawn-bg min-h-screen flex items-center justify-center p-4 sm:p-8">
       <div className="hand-drawn-container max-w-3xl w-full">
-        {/* Header */}
+        <div className="top-toolbar mb-6 flex justify-end">
+          <div
+            className="hand-drawn-language-switcher"
+            role="group"
+            aria-label={t("languageSwitcher.label")}
+          >
+            <span className="hand-drawn-language-label">
+              {t("languageSwitcher.label")}
+            </span>
+            <div className="hand-drawn-language-options">
+              {uiLanguages.map((language) => {
+                const isActive = currentLanguage === language;
+
+                return (
+                  <button
+                    key={language}
+                    type="button"
+                    className={`hand-drawn-language-pill ${isActive ? "is-active" : ""}`}
+                    onClick={() => changeLanguage(language)}
+                    aria-pressed={isActive}
+                  >
+                    {t(`languageSwitcher.options.${language}`)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         <div className="text-center mb-12">
           <h1 className="hand-drawn-title text-6xl sm:text-7xl font-bold mb-2">
-            Friedrich Fischer
+            {t("hero.title")}
           </h1>
           <p className="hand-drawn-subtitle text-lg sm:text-xl text-neutral-700 dark:text-neutral-300">
-            Ambitious, Curious & Communicative
+            {t("hero.subtitle")}
           </p>
         </div>
 
-        {/* Main Content */}
         <div className="hand-drawn-card flex flex-col sm:flex-row items-center gap-8 sm:gap-12 p-8 sm:p-10">
-          {/* Portrait */}
           <div className="w-48 h-48 sm:w-56 sm:h-56">
             <img
               draggable={false}
@@ -96,17 +128,15 @@ function App() {
                 userSelect: "none",
               }}
               src="/Portrait.png"
-              alt="Portrait of Friedrich Fischer"
+              alt={t("accessibility.portraitAlt")}
               className="hand-drawn-portrait w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-3xl absolute"
             />
           </div>
 
-          {/* Content */}
           <div className="flex-1 flex flex-col gap-8">
-            {/* Social Links */}
             <div>
               <h3 className="hand-drawn-label text-sm font-semibold mb-4 text-neutral-600 dark:text-neutral-400">
-                Connect with me
+                {t("social.label")}
               </h3>
               <div className="social-links-grid">
                 <Link
@@ -160,7 +190,6 @@ function App() {
               </div>
             </div>
 
-            {/* CV Download */}
             <div
               className="relative"
               ref={cvDropdownRef}
@@ -171,25 +200,28 @@ function App() {
                 className="hand-drawn-button w-full sm:w-auto"
                 onPress={handleCVClick}
               >
-                Get my CV
+                {t("cv.button")}
               </Button>
 
               {showCVOptions && (
-                <div className="hand-drawn-dropdown-menu">
+                <div className="hand-drawn-dropdown-menu" aria-label={t("cv.label")}>
                   <div className="hand-drawn-dropdown-arrow"></div>
+                  <span className="hand-drawn-dropdown-label">
+                    {t("cv.availableLabel")}
+                  </span>
                   <Button
                     size="sm"
                     className="hand-drawn-button-secondary"
                     onPress={() => handleCVDownload("en")}
                   >
-                    English
+                    {t("cv.languages.en")}
                   </Button>
                   <Button
                     size="sm"
                     className="hand-drawn-button-secondary"
                     onPress={() => handleCVDownload("de")}
                   >
-                    Deutsch
+                    {t("cv.languages.de")}
                   </Button>
                 </div>
               )}
