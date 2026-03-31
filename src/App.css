@@ -995,6 +995,40 @@ html {
   transition: gap 0.38s ease, transform 0.42s ease, opacity 0.32s ease;
 }
 
+.now-card-body-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.now-card-body-viewport.is-expanded {
+  overflow: visible;
+}
+
+.now-card-body-viewport.has-overflow::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 4.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 246, 240, 0),
+    rgba(249, 246, 240, 0.96) 72%,
+    rgba(249, 246, 240, 1)
+  );
+}
+
+.dark .now-card-body-viewport.has-overflow::after {
+  background: linear-gradient(
+    180deg,
+    rgba(31, 31, 31, 0),
+    rgba(31, 31, 31, 0.94) 72%,
+    rgba(31, 31, 31, 0.98)
+  );
+}
+
 .now-card.is-expanded.is-open .now-card-content {
   gap: 1.1rem;
 }
@@ -1019,6 +1053,11 @@ html {
     border-color 0.42s ease;
 }
 
+.now-card-image-wrap.is-highlight {
+  align-self: stretch;
+  padding: 1rem;
+}
+
 .dark .now-card-image-wrap {
   background: rgba(55, 55, 55, 0.88);
   border-color: rgba(255, 255, 255, 0.08);
@@ -1029,6 +1068,13 @@ html {
   height: 3rem;
   object-fit: contain;
   user-select: none;
+}
+
+.now-card-image.is-highlight {
+  width: 100%;
+  height: auto;
+  min-height: 8rem;
+  max-height: 11rem;
 }
 
 .now-card-image-caption {
@@ -1047,6 +1093,13 @@ html {
   gap: 0.85rem;
   margin-top: 0.1rem;
   transition: gap 0.36s ease, transform 0.42s ease, opacity 0.32s ease;
+}
+
+.now-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 0.15rem;
 }
 
 .now-card-text {
@@ -1079,34 +1132,6 @@ html {
   color: var(--now-accent);
 }
 
-.now-card-footer {
-  margin-top: auto;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-top: 0.9rem;
-  border-top: 1px dashed rgba(44, 62, 80, 0.18);
-  overflow: clip;
-  transition: gap 0.36s ease, padding-top 0.36s ease, border-color 0.36s ease, transform 0.42s ease;
-}
-
-.now-card-footer.is-expanded-footer {
-  align-items: flex-start;
-}
-
-.now-card-footnote {
-  color: rgba(44, 62, 80, 0.6);
-  font-size: 0.76rem;
-  line-height: 1.55;
-  max-width: 18rem;
-  transition: max-width 0.38s ease, opacity 0.28s ease, transform 0.38s ease;
-}
-
-.dark .now-card-footnote {
-  color: rgba(240, 240, 240, 0.52);
-}
-
 .now-expanded-body {
   padding-top: 0.4rem;
   opacity: 0;
@@ -1116,19 +1141,16 @@ html {
 
 .now-card.is-expanded.is-open .now-card-title,
 .now-card.is-expanded.is-open .now-card-body,
-.now-card.is-expanded.is-open .now-card-footer,
-.now-card.is-expanded.is-open .now-card-footnote {
+.now-card.is-expanded.is-open .now-card-actions {
   transform: translateY(0);
 }
 
 .now-card.is-expanded.is-entering .now-card-title,
 .now-card.is-expanded.is-entering .now-card-body,
-.now-card.is-expanded.is-entering .now-card-footer,
-.now-card.is-expanded.is-entering .now-card-footnote,
+.now-card.is-expanded.is-entering .now-card-actions,
 .now-card.is-expanded.is-closing .now-card-title,
 .now-card.is-expanded.is-closing .now-card-body,
-.now-card.is-expanded.is-closing .now-card-footer,
-.now-card.is-expanded.is-closing .now-card-footnote {
+.now-card.is-expanded.is-closing .now-card-actions {
   transform: translateY(0.45rem);
 }
 
@@ -1140,10 +1162,6 @@ html {
   transform: scale(1.02) translateY(0.05rem);
   border-radius: 20px;
   box-shadow: 0 14px 24px rgba(44, 62, 80, 0.1);
-}
-
-.now-card.is-expanded.is-open .now-card-footnote {
-  max-width: 22rem;
 }
 
 .now-card.is-expanded.is-open .now-expanded-body {
@@ -1173,18 +1191,6 @@ html {
     filter 0.28s ease;
   max-width: 9rem;
   overflow: hidden;
-}
-
-.now-card-footer.is-expanded-footer .now-expand-button {
-  opacity: 0;
-  transform: translateX(1rem) scale(0.9);
-  max-width: 0;
-  padding-inline: 0;
-  margin-inline-start: -0.15rem;
-  border-width: 0;
-  pointer-events: none;
-  box-shadow: none;
-  filter: blur(3px);
 }
 
 .now-expand-button:hover {
@@ -1509,11 +1515,6 @@ html {
   .now-card-title {
     font-size: 1.22rem;
     max-width: none;
-  }
-
-  .now-card-footer {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .now-card.is-expanded.is-open {

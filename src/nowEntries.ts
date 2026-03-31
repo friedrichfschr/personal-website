@@ -31,125 +31,173 @@ export type NowEntry = {
 
 export const nowEntries: NowEntry[] = [
   {
-    id: "placeholder-studio-note",
-    title: "Placeholder: studio note / current focus",
-    date: "31 Mar 2026",
-    originalLanguage: "EN",
-    accent: "#2c3e50",
+    id: "openclaw",
+    title: "OpenClaw",
+    date: "31.03.2026",
+    accent: "#e74c3c",
     image: {
-      src: "/sun.png",
-      alt: "A small sketched sun icon",
-      caption: "optional visual accent",
+      src: "/openclaw-logo-text-dark.svg",
+      alt: "OpenClaw logo",
+      caption: "OpenClaw",
     },
     blocks: [
       {
         type: "paragraph",
         spans: [
-          { text: "Use this card for a short snapshot of what Friedrich is building, exploring or refining right now. Keep it personal, specific and not too polished. " },
-          { text: "Bold details", bold: true },
-          { text: ", " },
-          { text: "soft emphasis", italic: true },
-          { text: ", and " },
-          { text: "underlined highlights", underline: true },
-          { text: " already work here." },
+          {
+            text: "A few weeks ago, I setup OpenClaw. Honestly, I'm impressed.",
+          },
         ],
       },
       {
         type: "paragraph",
         spans: [
-          { text: "The layout is meant for quick copy-paste from notes first, then light cleanup later." },
+          {
+            text: "After configuring safe access to my calendar and email as well as notes and reminders, I had found myself with my own personal secretary at the hand of a telegram message.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "I had now remote lazy access to my computer from everywhere in the world.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "Understandably, the AI hype evokes a lot of skepticism, however, seeing the potential of this, I don't believe this is a bubble.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "The groundbreaking thing with this is the ease of setting it up. You can let the robot configure itself.",
+          },
         ],
       },
     ],
     expandable: {
-      summary: "Reserved for future modal expansion or a longer journal-style continuation.",
+      summary: "",
+    },
+  },
+  {
+    id: "studio-note",
+    title: "Website rebuild",
+    date: "29.03.2026",
+    originalLanguage: "EN",
+    accent: "#2c3e50",
+    blocks: [
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "I want the site to feel personal without looking sloppy. Hand-drawn energy, but still deliberate.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "The challenge is restraint: just enough motion, just enough texture, and no fake polish.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "It should be easy to feed from notes instead of turning every update into a design project.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "If the section feels too curated, it stops feeling alive. If it feels too messy, it stops feeling intentional. That balance is the whole point.",
+          },
+        ],
+      },
+    ],
+    expandable: {
+      summary: "",
       blocks: [
         {
           type: "paragraph",
           spans: [
-            { text: "When there is more to say, the card can unfold into a longer studio note without changing how the content is authored. Add a few extra paragraphs here and the modal will pick them up automatically." },
+            {
+              text: "That probably means keeping the content model brutally simple: title, date, optional image, rich text, done.",
+            },
           ],
         },
         {
           type: "paragraph",
           spans: [
-            { text: "That keeps the section light in the carousel while still leaving room for process, context, or a more reflective continuation." },
+            {
+              text: "If adding a new card feels annoying, the section will die. If it feels like pasting a note and tightening a few lines, it will stay alive.",
+            },
           ],
         },
       ],
     },
   },
   {
-    id: "placeholder-language-note",
-    title: "Placeholder: language, travel or thought fragment",
-    date: "28 Mar 2026",
+    id: "language-fragment",
+    title: "Language fragment",
+    date: "27.03.2026",
     originalLanguage: "DE",
     accent: "#8b5cf6",
     blocks: [
       {
         type: "quote",
         spans: [
-          { text: "Insert one original-language sentence here to set the mood of the entry.", italic: true },
+          {
+            text: "Sometimes a short sentence says more about a week than a full summary.",
+            italic: true,
+          },
         ],
       },
       {
         type: "paragraph",
         spans: [
-          { text: "This version is good for a quote, an observation, a translation note or a small cultural detail that says something about Friedrich’s perspective." },
+          {
+            text: "I like keeping room for fragments too — not everything needs to become a polished essay before it earns a place here.",
+          },
         ],
       },
       {
         type: "paragraph",
         spans: [
-          { text: "Links can be embedded inline too — for example " },
-          { text: "send an email", href: "mailto:friedrich.riesel@outlook.de", underline: true },
-          { text: " or point to a project later." },
+          {
+            text: "The useful test is whether it still feels true a few days later.",
+          },
+        ],
+      },
+      {
+        type: "paragraph",
+        spans: [
+          {
+            text: "I want the section to have room for these smaller notes too, because they often carry more mood than the bigger updates.",
+          },
         ],
       },
     ],
     expandable: {
-      summary: "Structured so this can later open into translations, notes or extra media.",
+      summary: "",
       blocks: [
         {
           type: "paragraph",
           spans: [
-            { text: "A good continuation area for this card would be a short translation, a second-language aside, or a tiny note about why the fragment mattered enough to keep." },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    id: "placeholder-garden-note",
-    title: "Placeholder: project fragment / digital garden entry",
-    date: "24 Mar 2026",
-    originalLanguage: "FR",
-    accent: "#e67e22",
-    blocks: [
-      {
-        type: "paragraph",
-        spans: [
-          { text: "Use the final card for something looser: a project fragment, a mood, a reading note, a half-formed idea, or a tiny update with more atmosphere than explanation." },
-        ],
-      },
-      {
-        type: "paragraph",
-        spans: [
-          { text: "The important part is that the content model stays simple: title, date, optional image, original-language marker, and rich text with just the formatting you actually need." },
-        ],
-      },
-      {
-        type: "paragraph",
-        spans: [{ text: "That keeps the section easy to feed from Joplin or anywhere else." }],
-      },
-    ],
-    expandable: {
-      summary: "Ready for a future ‘read more’ interaction without changing the card schema.",
-      blocks: [
-        {
-          type: "paragraph",
-          spans: [
-            { text: "This is intentionally still the same rich-text structure: paragraphs and quotes with light inline emphasis. No special modal-only content type required." },
+            {
+              text: "That is why I want these cards to expand naturally. Short on the surface, but with enough room underneath when a thought actually deserves it.",
+            },
           ],
         },
       ],

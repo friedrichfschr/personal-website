@@ -22,9 +22,8 @@ const resources = {
       },
       now: {
         kicker: "Now",
-        title: "What currently has Friedrich’s attention",
-        description:
-          "A swipeable stream of recent thoughts, projects and in-progress notes — designed so fresh entries can be dropped in without rebuilding the page.",
+        title: "What I’m into right now",
+        description: "",
         controlsLabel: "Now carousel controls",
         carouselLabel: "Now page entries",
         progressLabel: "Now carousel navigation",
@@ -76,9 +75,8 @@ const resources = {
       },
       now: {
         kicker: "Now",
-        title: "Woran Friedrich gerade arbeitet und denkt",
-        description:
-          "Ein horizontaler Strom aus aktuellen Gedanken, Projekten und Notizen — so aufgebaut, dass neue Einträge schnell ergänzt werden können.",
+        title: "Was mich gerade beschäftigt",
+        description: "",
         controlsLabel: "Steuerung für das Now-Karussell",
         carouselLabel: "Now-Einträge",
         progressLabel: "Navigation des Now-Karussells",
@@ -130,9 +128,8 @@ const resources = {
       },
       now: {
         kicker: "Now",
-        title: "Ce qui occupe Friedrich en ce moment",
-        description:
-          "Un flux horizontal d’idées récentes, de projets et de notes en cours — pensé pour accueillir facilement de nouvelles entrées.",
+        title: "Ce qui m’occupe en ce moment",
+        description: "",
         controlsLabel: "Contrôles du carrousel Now",
         carouselLabel: "Entrées de la page Now",
         progressLabel: "Navigation du carrousel Now",
@@ -184,9 +181,8 @@ const resources = {
       },
       now: {
         kicker: "Now",
-        title: "Friedrich 最近在关注什么",
-        description:
-          "一个可横向滑动的近况流，放最近的想法、项目和进行中的笔记，也方便之后继续补充新内容。",
+        title: "我最近在折腾什么",
+        description: "",
         controlsLabel: "Now 轮播控制",
         carouselLabel: "Now 页面条目",
         progressLabel: "Now 轮播导航",

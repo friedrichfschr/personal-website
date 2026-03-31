@@ -81,11 +81,15 @@ const renderRichSpan = (span: NowRichTextSpan, index: number) => {
   );
 };
 
-const renderRichBlocks = (entry: NowEntry, className = "now-card-body") => (
+const renderRichBlocks = (
+  entry: NowEntry,
+  className = "now-card-body",
+  blocks = entry.blocks,
+) => (
   <div className={className}>
-    {entry.blocks.map((block, blockIndex) => (
+    {blocks.map((block, blockIndex) => (
       <p
-        key={`${entry.id}-${blockIndex}`}
+        key={`${entry.id}-${className}-${blockIndex}`}
         className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
       >
         {block.spans.map(renderRichSpan)}
@@ -114,7 +118,11 @@ function NowCard({
   const { t } = useTranslation();
   const cardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const staticBodyRef = useRef<HTMLDivElement | null>(null);
+  const [isStaticBodyOverflowing, setIsStaticBodyOverflowing] = useState(false);
   const expandableBlocks = entry.expandable?.blocks ?? [];
+  const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
+  const shouldShowReadMore = !isExpanded && isStaticBodyOverflowing && hasExpandedContent;
 
   const expandedStyle = useMemo(() => {
     if (!isExpanded || !expansionState) {
@@ -140,12 +148,46 @@ function NowCard({
     }
   }, [expansionState?.phase, isExpanded]);
 
+  useLayoutEffect(() => {
+    if (isExpanded) {
+      setIsStaticBodyOverflowing(false);
+      return;
+    }
+
+    const body = staticBodyRef.current;
+    if (!body) {
+      return;
+    }
+
+    const updateOverflow = () => {
+      const nextIsOverflowing = body.scrollHeight - body.clientHeight > 1;
+      setIsStaticBodyOverflowing((current) => (
+        current === nextIsOverflowing ? current : nextIsOverflowing
+      ));
+    };
+
+    updateOverflow();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateOverflow();
+    });
+
+    resizeObserver.observe(body);
+    Array.from(body.querySelectorAll("img")).forEach((image) => resizeObserver.observe(image));
+    window.addEventListener("resize", updateOverflow);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateOverflow);
+    };
+  }, [entry.blocks, entry.image, isExpanded]);
+
   return (
     <article
       ref={cardRef}
       className={[
         "now-card",
-        entry.expandable && !isExpanded ? "is-selectable" : "",
+        shouldShowReadMore && !isExpanded ? "is-selectable" : "",
         isExpanded ? "is-expanded" : "",
         isRestoring ? "is-restoring" : "",
         expansionState ? `is-${expansionState.phase}` : "",
@@ -158,7 +200,7 @@ function NowCard({
       onClick={(event) => {
         if (
           isExpanded ||
-          !entry.expandable ||
+          !shouldShowReadMore ||
           (event.target instanceof Element && event.target.closest("a, button"))
         ) {
           return;
@@ -205,11 +247,11 @@ function NowCard({
         <h3 className="now-card-title">{entry.title}</h3>
 
         {entry.image && (
-          <figure className="now-card-image-wrap">
+          <figure className={`now-card-image-wrap ${entry.id === "openclaw" ? "is-highlight" : ""}`}>
             <img
               src={entry.image.src}
               alt={entry.image.alt}
-              className="now-card-image"
+              className={`now-card-image ${entry.id === "openclaw" ? "is-highlight" : ""}`}
               draggable={false}
             />
             {entry.image.caption && (
@@ -220,7 +262,12 @@ function NowCard({
           </figure>
         )}
 
-        {renderRichBlocks(entry)}
+        <div
+          ref={staticBodyRef}
+          className={`now-card-body-viewport ${shouldShowReadMore ? "has-overflow" : ""} ${isExpanded ? "is-expanded" : ""}`}
+        >
+          {renderRichBlocks(entry)}
+        </div>
 
         {isExpanded && expandableBlocks.length > 0 && (
           <div className="now-card-body now-expanded-body">
@@ -234,34 +281,25 @@ function NowCard({
             ))}
           </div>
         )}
+
+        {shouldShowReadMore && (
+          <div className="now-card-actions">
+            <button
+              type="button"
+              className="now-expand-button"
+              onClick={(event) => {
+                const card = event.currentTarget.closest("[data-now-card]");
+                if (card instanceof HTMLElement) {
+                  onExpand?.(entry, card);
+                }
+              }}
+              aria-haspopup="dialog"
+            >
+              {t("now.readMore")}
+            </button>
+          </div>
+        )}
       </div>
-
-      {entry.expandable && (
-        <div className={`now-card-footer ${isExpanded ? "is-expanded-footer" : ""}`}>
-          <span className="now-card-footnote">{entry.expandable.summary}</span>
-          <button
-            type="button"
-            className="now-expand-button"
-            onClick={(event) => {
-              if (isExpanded) {
-                event.preventDefault();
-                return;
-              }
-
-              const card = event.currentTarget.closest("[data-now-card]");
-              if (card instanceof HTMLElement) {
-                onExpand?.(entry, card);
-              }
-            }}
-            aria-haspopup="dialog"
-            aria-hidden={isExpanded || undefined}
-            tabIndex={isExpanded ? -1 : undefined}
-            disabled={isExpanded}
-          >
-            {t("now.readMore")}
-          </button>
-        </div>
-      )}
     </article>
   );
 }
@@ -596,7 +634,6 @@ function NowSection() {
             <h2 id="now-section-title" className="now-section-title">
               {t("now.title")}
             </h2>
-            <p className="now-section-copy">{t("now.description")}</p>
           </div>
 
           <div className="now-carousel-controls" aria-label={t("now.controlsLabel")}>
