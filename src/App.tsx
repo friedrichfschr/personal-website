@@ -82,15 +82,12 @@ function App() {
   return (
     <div className="hand-drawn-bg min-h-screen flex items-center justify-center p-4 sm:p-8">
       <div className="hand-drawn-container max-w-3xl w-full">
-        <div className="top-toolbar mb-6 flex justify-end">
+        <div className="top-toolbar">
           <div
             className="hand-drawn-language-switcher"
             role="group"
             aria-label={t("languageSwitcher.label")}
           >
-            <span className="hand-drawn-language-label">
-              {t("languageSwitcher.label")}
-            </span>
             <div className="hand-drawn-language-options">
               {uiLanguages.map((language) => {
                 const isActive = currentLanguage === language;
@@ -102,6 +99,8 @@ function App() {
                     className={`hand-drawn-language-pill ${isActive ? "is-active" : ""}`}
                     onClick={() => changeLanguage(language)}
                     aria-pressed={isActive}
+                    aria-label={t(`languageSwitcher.aria.${language}`)}
+                    title={t(`languageSwitcher.aria.${language}`)}
                   >
                     {t(`languageSwitcher.options.${language}`)}
                   </button>
@@ -111,7 +110,7 @@ function App() {
           </div>
         </div>
 
-        <div className="text-center mb-12">
+        <div className="text-center mb-10 sm:mb-12">
           <h1 className="hand-drawn-title text-6xl sm:text-7xl font-bold mb-2">
             {t("hero.title")}
           </h1>

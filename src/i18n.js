@@ -21,11 +21,16 @@ const resources = {
         },
       },
       languageSwitcher: {
-        label: "Language",
+        label: "Language selector",
         options: {
           en: "EN",
           de: "DE",
           fr: "FR",
+        },
+        aria: {
+          en: "Switch language to English",
+          de: "Switch language to German",
+          fr: "Switch language to French",
         },
       },
       accessibility: {
@@ -52,11 +57,16 @@ const resources = {
         },
       },
       languageSwitcher: {
-        label: "Sprache",
+        label: "Sprachauswahl",
         options: {
           en: "EN",
           de: "DE",
           fr: "FR",
+        },
+        aria: {
+          en: "Sprache auf Englisch umstellen",
+          de: "Sprache auf Deutsch umstellen",
+          fr: "Sprache auf Französisch umstellen",
         },
       },
       accessibility: {
@@ -83,11 +93,16 @@ const resources = {
         },
       },
       languageSwitcher: {
-        label: "Langue",
+        label: "Sélecteur de langue",
         options: {
           en: "EN",
           de: "DE",
           fr: "FR",
+        },
+        aria: {
+          en: "Passer la langue en anglais",
+          de: "Passer la langue en allemand",
+          fr: "Passer la langue en français",
         },
       },
       accessibility: {
@@ -100,22 +115,32 @@ const resources = {
 const storageKey = "preferred-language";
 const supportedLanguages = ["en", "de", "fr"];
 
+const normalizeLanguage = (language) => language?.split("-")[0];
+
 const detectLanguage = () => {
   if (typeof window === "undefined") {
     return "en";
   }
 
-  const storedLanguage = window.localStorage.getItem(storageKey);
+  const storedLanguage = normalizeLanguage(
+    window.localStorage.getItem(storageKey),
+  );
   if (storedLanguage && supportedLanguages.includes(storedLanguage)) {
     return storedLanguage;
   }
 
-  const browserLanguage = window.navigator.language?.split("-")[0];
-  if (browserLanguage && supportedLanguages.includes(browserLanguage)) {
-    return browserLanguage;
-  }
+  const browserLanguages = [
+    ...(window.navigator.languages ?? []),
+    window.navigator.language,
+  ]
+    .map(normalizeLanguage)
+    .filter(Boolean);
 
-  return "en";
+  const preferredLanguage = browserLanguages.find((language) =>
+    supportedLanguages.includes(language),
+  );
+
+  return preferredLanguage ?? "en";
 };
 
 i18n.use(initReactI18next).init({

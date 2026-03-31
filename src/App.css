@@ -31,6 +31,8 @@
 
 /* Main container with hand-drawn card effect */
 .hand-drawn-container {
+  position: relative;
+  padding-top: 0.5rem;
   animation: slideIn 0.6s ease-out;
 }
 
@@ -76,14 +78,17 @@
 
 /* Top toolbar */
 .top-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 20;
   animation: subtitleFadeIn 0.6s ease-out;
 }
 
 .hand-drawn-language-switcher {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  padding: 6px;
   border: 2px solid var(--hand-drawn-primary);
   border-radius: 999px;
   background-color: rgba(255, 255, 255, 0.88);
@@ -99,35 +104,23 @@
   border-color: #5a5a5a;
 }
 
-.hand-drawn-language-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--hand-drawn-primary);
-}
-
-.dark .hand-drawn-language-label {
-  color: #f0f0f0;
-}
-
 .hand-drawn-language-options {
   display: inline-flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .hand-drawn-language-pill {
-  min-width: 42px;
-  padding: 7px 10px;
-  border: 2px solid transparent;
+  min-width: 38px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
   border-radius: 999px;
   background-color: transparent;
   color: var(--hand-drawn-primary);
   font-family: 'Space Mono', monospace;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  line-height: 1;
   transition: all 0.25s ease;
   cursor: pointer;
 }
@@ -136,6 +129,11 @@
   transform: translateY(-1px) rotate(1deg);
   border-color: rgba(44, 62, 80, 0.2);
   background-color: rgba(44, 62, 80, 0.06);
+}
+
+.hand-drawn-language-pill:focus-visible {
+  outline: 2px solid rgba(231, 76, 60, 0.45);
+  outline-offset: 2px;
 }
 
 .hand-drawn-language-pill.is-active {
@@ -408,19 +406,18 @@
 
 /* Mobile dropdown - opens downwards */
 @media (max-width: 640px) {
+  .top-toolbar {
+    top: -6px;
+    right: 0;
+  }
+
   .hand-drawn-language-switcher {
-    width: 100%;
-    justify-content: space-between;
     transform: none;
   }
 
-  .hand-drawn-language-label {
-    font-size: 0.72rem;
-  }
-
   .hand-drawn-language-pill {
-    min-width: 40px;
-    padding-inline: 8px;
+    min-width: 36px;
+    padding-inline: 7px;
   }
 
   .hand-drawn-dropdown-menu {
