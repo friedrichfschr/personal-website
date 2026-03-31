@@ -1,10 +1,9 @@
 import {
+  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
-  type TouchEvent,
 } from "react";
 import "./App.css";
 import { Button, Link } from "@heroui/react";
@@ -58,12 +57,6 @@ const renderRichSpan = (span: NowRichTextSpan, index: number) => {
 function NowSection() {
   const { t } = useTranslation();
   const carouselRef = useRef<HTMLDivElement>(null);
-  const touchStateRef = useRef<{
-    startX: number;
-    startY: number;
-    startScrollLeft: number;
-    axis: "x" | "y" | null;
-  } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
@@ -80,31 +73,31 @@ function NowSection() {
     return Array.from(carousel.querySelectorAll<HTMLElement>("[data-now-card]"));
   };
 
-  const syncCarouselState = useMemo(
-    () => () => {
-      const carousel = carouselRef.current;
-      if (!carousel) {
-        return;
-      }
+  const syncCarouselState = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) {
+      return;
+    }
 
-      const cards = getCardElements();
-      const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
-      const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
+    const cards = getCardElements();
+    const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
+    const viewportCenter = currentScrollLeft + carousel.clientWidth / 2;
 
-      const nearestIndex = cards.reduce((closestIndex, card, index) => {
-        const closestCard = cards[closestIndex];
-        const currentDistance = Math.abs(card.offsetLeft - currentScrollLeft);
-        const closestDistance = Math.abs(closestCard.offsetLeft - currentScrollLeft);
+    const nearestIndex = cards.reduce((closestIndex, card, index) => {
+      const closestCard = cards[closestIndex];
+      const currentCardCenter = card.offsetLeft + card.clientWidth / 2;
+      const closestCardCenter = closestCard.offsetLeft + closestCard.clientWidth / 2;
+      const currentDistance = Math.abs(currentCardCenter - viewportCenter);
+      const closestDistance = Math.abs(closestCardCenter - viewportCenter);
 
-        return currentDistance < closestDistance ? index : closestIndex;
-      }, 0);
+      return currentDistance < closestDistance ? index : closestIndex;
+    }, 0);
 
-      setActiveIndex(nearestIndex);
-      setCanScrollPrev(currentScrollLeft > 8 && nearestIndex > 0);
-      setCanScrollNext(currentScrollLeft < maxScrollLeft - 8 && nearestIndex < totalCards - 1);
-    },
-    [totalCards],
-  );
+    setActiveIndex(nearestIndex);
+    setCanScrollPrev(currentScrollLeft > 8 && nearestIndex > 0);
+    setCanScrollNext(currentScrollLeft < maxScrollLeft - 8 && nearestIndex < totalCards - 1);
+  }, [totalCards]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -143,54 +136,6 @@ function NowSection() {
       : Math.max(activeIndex - 1, 0);
 
     scrollToIndex(nextIndex);
-  };
-
-  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
-    const carousel = carouselRef.current;
-    const touch = event.touches[0];
-
-    if (!carousel || !touch) {
-      return;
-    }
-
-    touchStateRef.current = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      startScrollLeft: carousel.scrollLeft,
-      axis: null,
-    };
-  };
-
-  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
-    const carousel = carouselRef.current;
-    const touch = event.touches[0];
-    const touchState = touchStateRef.current;
-
-    if (!carousel || !touch || !touchState) {
-      return;
-    }
-
-    const deltaX = touch.clientX - touchState.startX;
-    const deltaY = touch.clientY - touchState.startY;
-
-    if (!touchState.axis) {
-      if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) {
-        return;
-      }
-
-      touchState.axis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
-    }
-
-    if (touchState.axis !== "x") {
-      return;
-    }
-
-    event.preventDefault();
-    carousel.scrollLeft = touchState.startScrollLeft - deltaX;
-  };
-
-  const handleTouchEnd = () => {
-    touchStateRef.current = null;
   };
 
   return (
@@ -232,10 +177,6 @@ function NowSection() {
           className="now-carousel"
           aria-label={t("now.carouselLabel")}
           tabIndex={0}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
         >
           {nowEntries.map((entry: NowEntry) => (
             <article
