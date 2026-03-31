@@ -36,8 +36,8 @@ export const nowEntries: NowEntry[] = [
     date: "31.03.2026",
     accent: "#e74c3c",
     image: {
-      src: "/openclaw-logo-text-dark.svg",
-      alt: "OpenClaw logo",
+      src: "/assets/now/openclaw-bot.jpg",
+      alt: "Red OpenClaw mascot illustration",
       caption: "OpenClaw",
     },
     blocks: [

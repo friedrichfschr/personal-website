@@ -123,6 +123,7 @@ function NowCard({
   const expandableBlocks = entry.expandable?.blocks ?? [];
   const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
   const shouldShowReadMore = !isExpanded && isStaticBodyOverflowing && hasExpandedContent;
+  const isExpandableCard = !isExpanded && hasExpandedContent;
 
   const expandedStyle = useMemo(() => {
     if (!isExpanded || !expansionState) {
@@ -187,7 +188,7 @@ function NowCard({
       ref={cardRef}
       className={[
         "now-card",
-        shouldShowReadMore && !isExpanded ? "is-selectable" : "",
+        isExpandableCard ? "is-selectable" : "",
         isExpanded ? "is-expanded" : "",
         isRestoring ? "is-restoring" : "",
         expansionState ? `is-${expansionState.phase}` : "",
@@ -200,7 +201,7 @@ function NowCard({
       onClick={(event) => {
         if (
           isExpanded ||
-          !shouldShowReadMore ||
+          !hasExpandedContent ||
           (event.target instanceof Element && event.target.closest("a, button"))
         ) {
           return;
