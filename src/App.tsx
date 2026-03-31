@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent,
+} from "react";
 import "./App.css";
 import { Button, Link } from "@heroui/react";
 import { useTranslation } from "react-i18next";
@@ -51,11 +58,27 @@ const renderRichSpan = (span: NowRichTextSpan, index: number) => {
 function NowSection() {
   const { t } = useTranslation();
   const carouselRef = useRef<HTMLDivElement>(null);
+  const touchStateRef = useRef<{
+    startX: number;
+    startY: number;
+    startScrollLeft: number;
+    axis: "x" | "y" | null;
+  } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
 
   const totalCards = nowEntries.length;
+
+  const getCardElements = () => {
+    const carousel = carouselRef.current;
+
+    if (!carousel) {
+      return [] as HTMLElement[];
+    }
+
+    return Array.from(carousel.querySelectorAll<HTMLElement>("[data-now-card]"));
+  };
 
   const syncCarouselState = useMemo(
     () => () => {
@@ -64,16 +87,21 @@ function NowSection() {
         return;
       }
 
-      const card = carousel.querySelector<HTMLElement>("[data-now-card]");
-      const cardWidth = card?.offsetWidth ?? carousel.clientWidth;
-      const gap = 24;
-      const step = Math.max(cardWidth + gap, 1);
-      const nextIndex = Math.round(carousel.scrollLeft / step);
-      const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+      const cards = getCardElements();
+      const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+      const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
 
-      setActiveIndex(Math.min(Math.max(nextIndex, 0), totalCards - 1));
-      setCanScrollPrev(carousel.scrollLeft > 8);
-      setCanScrollNext(carousel.scrollLeft < maxScrollLeft - 8);
+      const nearestIndex = cards.reduce((closestIndex, card, index) => {
+        const closestCard = cards[closestIndex];
+        const currentDistance = Math.abs(card.offsetLeft - currentScrollLeft);
+        const closestDistance = Math.abs(closestCard.offsetLeft - currentScrollLeft);
+
+        return currentDistance < closestDistance ? index : closestIndex;
+      }, 0);
+
+      setActiveIndex(nearestIndex);
+      setCanScrollPrev(currentScrollLeft > 8 && nearestIndex > 0);
+      setCanScrollNext(currentScrollLeft < maxScrollLeft - 8 && nearestIndex < totalCards - 1);
     },
     [totalCards],
   );
@@ -94,19 +122,75 @@ function NowSection() {
     };
   }, [syncCarouselState]);
 
-  const scrollByDirection = (direction: "prev" | "next") => {
+  const scrollToIndex = (index: number) => {
     const carousel = carouselRef.current;
-    if (!carousel) {
+    const cards = getCardElements();
+    const nextCard = cards[index];
+
+    if (!carousel || !nextCard) {
       return;
     }
 
-    const card = carousel.querySelector<HTMLElement>("[data-now-card]");
-    const amount = (card?.offsetWidth ?? carousel.clientWidth * 0.82) + 24;
-
-    carousel.scrollBy({
-      left: direction === "next" ? amount : -amount,
+    carousel.scrollTo({
+      left: nextCard.offsetLeft,
       behavior: "smooth",
     });
+  };
+
+  const scrollByDirection = (direction: "prev" | "next") => {
+    const nextIndex = direction === "next"
+      ? Math.min(activeIndex + 1, totalCards - 1)
+      : Math.max(activeIndex - 1, 0);
+
+    scrollToIndex(nextIndex);
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    const touch = event.touches[0];
+
+    if (!carousel || !touch) {
+      return;
+    }
+
+    touchStateRef.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startScrollLeft: carousel.scrollLeft,
+      axis: null,
+    };
+  };
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    const touch = event.touches[0];
+    const touchState = touchStateRef.current;
+
+    if (!carousel || !touch || !touchState) {
+      return;
+    }
+
+    const deltaX = touch.clientX - touchState.startX;
+    const deltaY = touch.clientY - touchState.startY;
+
+    if (!touchState.axis) {
+      if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) {
+        return;
+      }
+
+      touchState.axis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
+    }
+
+    if (touchState.axis !== "x") {
+      return;
+    }
+
+    event.preventDefault();
+    carousel.scrollLeft = touchState.startScrollLeft - deltaX;
+  };
+
+  const handleTouchEnd = () => {
+    touchStateRef.current = null;
   };
 
   return (
@@ -148,6 +232,10 @@ function NowSection() {
           className="now-carousel"
           aria-label={t("now.carouselLabel")}
           tabIndex={0}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
         >
           {nowEntries.map((entry: NowEntry) => (
             <article
@@ -159,8 +247,12 @@ function NowSection() {
               <div className="now-card-meta-row">
                 <span className="now-card-date">{entry.date}</span>
                 {entry.originalLanguage && (
-                  <span className="now-card-language-pill">
-                    {t("now.originalLanguage")}: {entry.originalLanguage}
+                  <span
+                    className="now-card-language-pill"
+                    aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                    title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+                  >
+                    {entry.originalLanguage}
                   </span>
                 )}
               </div>
