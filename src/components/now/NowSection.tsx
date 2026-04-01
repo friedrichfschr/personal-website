@@ -27,6 +27,7 @@ export function NowSection() {
   const closeTimeoutRef = useRef<number | null>(null);
   const restoreTimeoutRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [nearestIndex, setNearestIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
   const [isDragging, setIsDragging] = useState(false);
@@ -125,9 +126,10 @@ export function NowSection() {
 
     const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
     const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
-    const nearestIndex = getNearestIndex();
-    const resolvedActiveIndex = getDisplayActiveIndex(nearestIndex);
+    const resolvedNearestIndex = getNearestIndex();
+    const resolvedActiveIndex = getDisplayActiveIndex(resolvedNearestIndex);
 
+    setNearestIndex(resolvedNearestIndex);
     setActiveIndex(resolvedActiveIndex);
     setCanScrollPrev(currentScrollLeft > 8);
     setCanScrollNext(currentScrollLeft < maxScrollLeft - 8);
@@ -221,8 +223,8 @@ export function NowSection() {
 
   const scrollByDirection = (direction: "prev" | "next") => {
     const nextIndex = direction === "next"
-      ? Math.min(activeIndex + 1, totalCards - 1)
-      : Math.max(activeIndex - 1, 0);
+      ? Math.min(nearestIndex + 1, totalCards - 1)
+      : Math.max(nearestIndex - 1, 0);
 
     scrollToIndex(nextIndex);
   };
@@ -286,7 +288,8 @@ export function NowSection() {
     suppressClickRef.current = dragState.didDrag;
 
     if (dragState.didDrag) {
-      scrollToIndex(getNearestIndex());
+      const snappedIndex = getNearestIndex();
+      scrollToIndex(snappedIndex);
     }
   };
 
