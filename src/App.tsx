@@ -33,6 +33,13 @@ import {
 const uiLanguages = ["en", "de", "fr", "zh"] as const;
 type UiLanguage = (typeof uiLanguages)[number];
 
+const nowDateLocales: Record<UiLanguage, string> = {
+  en: "en-US",
+  de: "de-DE",
+  fr: "fr-FR",
+  zh: "zh-CN",
+};
+
 type DropdownPosition = {
   top: number;
   left: number;
@@ -103,6 +110,20 @@ const renderRichBlocks = (
   </div>
 );
 
+const formatNowDate = (date: string, locale: UiLanguage) => {
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat(nowDateLocales[locale], {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(parsedDate);
+};
+
 function NowCard({
   entry,
   isExpanded = false,
@@ -121,7 +142,8 @@ function NowCard({
   onClose?: () => void;
 }) {
   const isHighlightEntry = entry.id === "openclaw";
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLocale = ((i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) || "en") as UiLanguage;
   const cardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const staticBodyRef = useRef<HTMLDivElement | null>(null);
@@ -220,7 +242,7 @@ function NowCard({
     >
       <div className={`now-card-meta-row ${isExpanded ? "is-expanded-header" : ""}`}>
         <div className="now-card-meta-leading">
-          <span className="now-card-date">{entry.date}</span>
+          <span className="now-card-date">{formatNowDate(entry.date, currentLocale)}</span>
         </div>
         <div className="now-card-meta-actions">
           {entry.isTranslated && (
