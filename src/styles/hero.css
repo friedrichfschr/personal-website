@@ -200,6 +200,11 @@
     grid-row: 1;
   }
 
+  .hero-contact-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .hero-portrait-stack {
     grid-column: 2;
     grid-row: 1;

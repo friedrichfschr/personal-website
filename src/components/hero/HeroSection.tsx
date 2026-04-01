@@ -109,12 +109,12 @@ export function HeroSection({
               >
                 <Button
                   ref={cvTriggerRef}
-                  className="hand-drawn-button cv-trigger-button"
+                  className={`hand-drawn-button cv-trigger-button ${currentLanguage === "de" ? "is-german" : ""}`}
                   onPress={onCVClick}
                   aria-haspopup="menu"
                   aria-expanded={showCVOptions}
                 >
-                  <span>{t("cv.button")}</span>
+                  <span className="cv-trigger-label">{t("cv.button")}</span>
                   <span
                     className={`cv-trigger-chevron ${showCVOptions ? "is-open" : ""}`}
                     aria-hidden="true"

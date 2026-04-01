@@ -27,6 +27,30 @@
     3px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
+.cv-trigger-label {
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+@media (min-width: 900px) {
+  .cv-trigger-button.is-german {
+    align-items: flex-start;
+    padding-block: 0.8rem;
+  }
+
+  .cv-trigger-button.is-german .cv-trigger-label {
+    max-width: 8.6rem;
+    white-space: normal;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .cv-trigger-button.is-german .cv-trigger-chevron {
+    align-self: center;
+  }
+}
+
 .cv-trigger-button[data-hover="true"],
 .cv-trigger-button:hover {
   background: linear-gradient(135deg, #34495e, #22313f);
