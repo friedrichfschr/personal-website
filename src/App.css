@@ -979,7 +979,6 @@ body::before {
   justify-content: flex-end;
   gap: 0.35rem;
   min-width: 0;
-  max-width: 42%;
 }
 
 .now-card-date,
@@ -1010,11 +1009,11 @@ body::before {
   border: 1px solid color-mix(in srgb, var(--now-accent) 10%, transparent);
   background: color-mix(in srgb, var(--now-accent) 2%, white);
   color: color-mix(in srgb, var(--now-accent) 24%, black);
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   font-weight: 500;
   letter-spacing: 0.04em;
   opacity: 0.62;
-  padding: 0.14rem 0.34rem;
+  padding: 0.16rem 0.42rem;
   white-space: nowrap;
 }
 
