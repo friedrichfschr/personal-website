@@ -94,6 +94,29 @@ export function NowSection() {
     }, 0);
   }, []);
 
+  const getDisplayActiveIndex = useCallback((nearestIndex: number) => {
+    const carousel = carouselRef.current;
+
+    if (!carousel) {
+      return nearestIndex;
+    }
+
+    const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
+    const isAtEnd = currentScrollLeft >= maxScrollLeft - 8;
+    const isAtStart = currentScrollLeft <= 8;
+
+    if (isAtEnd) {
+      return Math.max(totalCards - 1, 0);
+    }
+
+    if (isAtStart) {
+      return 0;
+    }
+
+    return nearestIndex;
+  }, [totalCards]);
+
   const syncCarouselState = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel) {
@@ -103,18 +126,12 @@ export function NowSection() {
     const maxScrollLeft = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
     const currentScrollLeft = Math.min(Math.max(carousel.scrollLeft, 0), maxScrollLeft);
     const nearestIndex = getNearestIndex();
-    const isAtEnd = currentScrollLeft >= maxScrollLeft - 8;
-    const isAtStart = currentScrollLeft <= 8;
-    const resolvedActiveIndex = isAtEnd
-      ? Math.max(totalCards - 1, 0)
-      : isAtStart
-        ? 0
-        : nearestIndex;
+    const resolvedActiveIndex = getDisplayActiveIndex(nearestIndex);
 
     setActiveIndex(resolvedActiveIndex);
-    setCanScrollPrev(currentScrollLeft > 8 && resolvedActiveIndex > 0);
-    setCanScrollNext(currentScrollLeft < maxScrollLeft - 8 && resolvedActiveIndex < totalCards - 1);
-  }, [getNearestIndex, totalCards]);
+    setCanScrollPrev(currentScrollLeft > 8);
+    setCanScrollNext(currentScrollLeft < maxScrollLeft - 8);
+  }, [getDisplayActiveIndex, getNearestIndex]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
