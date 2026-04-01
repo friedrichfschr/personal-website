@@ -1,0 +1,91 @@
+import { Button } from "@heroui/react";
+import type { MouseEvent as ReactMouseEvent, RefObject } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { SocialLinks } from "./SocialLinks";
+import type { UiLanguage } from "../../constants/ui";
+
+type HeroSectionProps = {
+  currentLanguage: string;
+  showCVOptions: boolean;
+  cvTriggerRef: RefObject<HTMLButtonElement | null>;
+  onChangeLanguage: (language: UiLanguage) => void;
+  onCVHover: () => void;
+  onCVLeave: (event: ReactMouseEvent<HTMLElement>) => void;
+  onCVClick: () => void;
+};
+
+export function HeroSection({
+  currentLanguage,
+  showCVOptions,
+  cvTriggerRef,
+  onChangeLanguage,
+  onCVHover,
+  onCVLeave,
+  onCVClick,
+}: HeroSectionProps) {
+  const { t } = useTranslation();
+
+  return (
+    <section className="intro-section">
+      <div className="top-toolbar">
+        <LanguageSwitcher
+          currentLanguage={currentLanguage}
+          onChange={onChangeLanguage}
+        />
+      </div>
+
+      <div className="hero-shell">
+        <div className="hero-copy-block">
+          <h1 className="hand-drawn-title hero-title">{t("hero.title")}</h1>
+          <p className="hand-drawn-subtitle hero-subtitle">{t("hero.subtitle")}</p>
+        </div>
+
+        <div className="hero-spotlight-card hand-drawn-card">
+          <div className="hero-portrait-stack">
+            <span className="hero-orbit hero-orbit-one" aria-hidden="true"></span>
+            <span className="hero-orbit hero-orbit-two" aria-hidden="true"></span>
+            <div className="hero-portrait-frame">
+              <img
+                draggable={false}
+                style={{ userSelect: "none" }}
+                src="/Portrait.png"
+                alt={t("accessibility.portraitAlt")}
+                className="hand-drawn-portrait hero-portrait-image"
+              />
+            </div>
+          </div>
+
+          <div className="hero-side-panel">
+            <div className="social-links-block">
+              <h3 className="hand-drawn-label hero-panel-label">{t("social.label")}</h3>
+              <SocialLinks />
+            </div>
+
+            <div
+              className="cv-dropdown-wrap"
+              onMouseEnter={onCVHover}
+              onMouseLeave={onCVLeave}
+            >
+              <Button
+                ref={cvTriggerRef}
+                className="hand-drawn-button cv-trigger-button"
+                onPress={onCVClick}
+                aria-haspopup="menu"
+                aria-expanded={showCVOptions}
+              >
+                <span>{t("cv.button")}</span>
+                <span
+                  className={`cv-trigger-chevron ${showCVOptions ? "is-open" : ""}`}
+                  aria-hidden="true"
+                >
+                  ▾
+                </span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

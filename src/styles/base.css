@@ -1,0 +1,254 @@
+:root {
+  --hand-drawn-primary: #2c3e50;
+  --hand-drawn-accent: #e74c3c;
+  --hand-drawn-light: #ecf0f1;
+  --hand-drawn-border: #bdc3c7;
+  color-scheme: light;
+}
+
+html {
+  scrollbar-gutter: stable;
+  background: transparent;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: transparent;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(255, 219, 171, 0.35), transparent 22%),
+    radial-gradient(circle at top right, rgba(253, 237, 178, 0.5), transparent 24%),
+    linear-gradient(180deg, #f8f5ef 0%, #f0ece4 100%);
+}
+
+@supports (padding: env(safe-area-inset-top)) {
+  html,
+  body {
+    background: transparent;
+  }
+}
+
+.hand-drawn-bg {
+  background:
+    radial-gradient(circle at top left, rgba(255, 219, 171, 0.35), transparent 22%),
+    radial-gradient(circle at top right, rgba(253, 237, 178, 0.5), transparent 24%),
+    linear-gradient(180deg, #f8f5ef 0%, #f0ece4 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hand-drawn-bg::before,
+.hand-drawn-bg::after {
+  content: "";
+  position: absolute;
+  inset: auto;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.hand-drawn-bg::before {
+  top: 7rem;
+  left: -2rem;
+  width: 12rem;
+  height: 12rem;
+  border: 2px dashed rgba(44, 62, 80, 0.12);
+  border-radius: 48% 52% 45% 55%;
+  transform: rotate(-14deg);
+}
+
+.hand-drawn-bg::after {
+  right: -1.5rem;
+  bottom: 8rem;
+  width: 10rem;
+  height: 10rem;
+  border: 2px dashed rgba(231, 76, 60, 0.12);
+  border-radius: 57% 43% 62% 38%;
+  transform: rotate(18deg);
+}
+
+.dark .hand-drawn-bg {
+  background:
+    radial-gradient(circle at top left, rgba(231, 126, 34, 0.18), transparent 22%),
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.12), transparent 24%),
+    linear-gradient(180deg, #171717 0%, #121212 100%);
+}
+
+.dark body::before {
+  background:
+    radial-gradient(circle at top left, rgba(231, 126, 34, 0.18), transparent 22%),
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.12), transparent 24%),
+    linear-gradient(180deg, #171717 0%, #121212 100%);
+}
+
+.hand-drawn-border {
+  box-shadow:
+    -2px -2px 0 rgba(0, 0, 0, 0.1),
+    2px -2px 0 rgba(0, 0, 0, 0.1),
+    -2px 2px 0 rgba(0, 0, 0, 0.1),
+    2px 2px 0 rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.page-shell {
+  display: block;
+}
+
+.hand-drawn-container {
+  position: relative;
+  padding-top: 0;
+  padding-bottom: 5.5rem;
+  animation: slideIn 0.6s ease-out;
+}
+
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4.75rem;
+}
+
+.intro-section {
+  position: relative;
+}
+
+.hand-drawn-card {
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 2px solid var(--hand-drawn-primary);
+  border-radius: 24px;
+  box-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.1),
+    -1px -1px 0 rgba(255, 255, 255, 0.5) inset,
+    18px 24px 50px rgba(44, 62, 80, 0.08);
+  position: relative;
+  backdrop-filter: blur(8px);
+  transform: perspective(1000px) rotateX(0deg);
+  animation: cardEntrance 0.7s ease-out 0.2s both;
+}
+
+.dark .hand-drawn-card {
+  background-color: rgba(42, 42, 42, 0.92);
+  border-color: #4a4a4a;
+}
+
+.hand-drawn-card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+.hand-drawn-title {
+  font-family: "Space Mono", monospace;
+  color: var(--hand-drawn-primary);
+  letter-spacing: -1px;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  animation: titleFadeInScale 0.8s ease-out;
+}
+
+.dark .hand-drawn-title {
+  color: #f0f0f0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hand-drawn-subtitle {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  animation: subtitleFadeIn 0.8s ease-out 0.1s both;
+}
+
+.hand-drawn-label {
+  font-family: "Space Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titleFadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes subtitleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-stack {
+    gap: 3.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hand-drawn-title {
+    font-size: 2.5rem;
+  }
+
+  .hand-drawn-subtitle {
+    font-size: 1rem;
+  }
+
+  .hand-drawn-label {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .hand-drawn-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.92));
+  }
+}
+
+.dark .hand-drawn-border {
+  border-color: #4a4a4a;
+}
