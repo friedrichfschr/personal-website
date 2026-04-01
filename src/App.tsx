@@ -365,6 +365,7 @@ function NowSection() {
   const openFrameRef = useRef<number | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
   const restoreTimeoutRef = useRef<number | null>(null);
+  const expandedCardElementRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
@@ -408,6 +409,24 @@ function NowSection() {
       window.clearTimeout(restoreTimeoutRef.current);
       restoreTimeoutRef.current = null;
     }
+  }, []);
+
+  const startCloseAnimation = useCallback((closingEntryId: string | null) => {
+    setExpandedCard((current) => (current ? { ...current, phase: "closing" } : null));
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setExpandedCard(null);
+      closeTimeoutRef.current = null;
+
+      if (closingEntryId) {
+        setRestoringEntryId(closingEntryId);
+        restoreTimeoutRef.current = window.setTimeout(() => {
+          setRestoringEntryId((current) => (
+            current === closingEntryId ? null : current
+          ));
+          restoreTimeoutRef.current = null;
+        }, 520);
+      }
+    }, 560);
   }, []);
 
   const getNearestIndex = useCallback(() => {
@@ -660,23 +679,18 @@ function NowSection() {
   const handleCloseExpanded = useCallback(() => {
     clearAnimationTimers();
     const closingEntryId = expandedCard?.entryId ?? null;
+    const expandedElement = expandedCardElementRef.current;
 
-    setExpandedCard((current) => (current ? { ...current, phase: "closing" } : null));
-    closeTimeoutRef.current = window.setTimeout(() => {
-      setExpandedCard(null);
-      closeTimeoutRef.current = null;
+    if (expandedElement && expandedElement.scrollTop > 4) {
+      expandedElement.scrollTo({ top: 0, behavior: "smooth" });
+      closeTimeoutRef.current = window.setTimeout(() => {
+        startCloseAnimation(closingEntryId);
+      }, 180);
+      return;
+    }
 
-      if (closingEntryId) {
-        setRestoringEntryId(closingEntryId);
-        restoreTimeoutRef.current = window.setTimeout(() => {
-          setRestoringEntryId((current) => (
-            current === closingEntryId ? null : current
-          ));
-          restoreTimeoutRef.current = null;
-        }, 520);
-      }
-    }, 560);
-  }, [clearAnimationTimers, expandedCard?.entryId]);
+    startCloseAnimation(closingEntryId);
+  }, [clearAnimationTimers, expandedCard?.entryId, startCloseAnimation]);
 
   return (
     <section className="now-section" aria-labelledby="now-section-title">
@@ -764,12 +778,14 @@ function NowSection() {
             onClick={handleCloseExpanded}
           />
           <div className="now-expanded-shell" aria-hidden="true">
-            <NowCard
-              entry={expandedEntry}
-              isExpanded
-              expansionState={expandedCard}
-              onClose={handleCloseExpanded}
-            />
+            <div ref={expandedCardElementRef}>
+              <NowCard
+                entry={expandedEntry}
+                isExpanded
+                expansionState={expandedCard}
+                onClose={handleCloseExpanded}
+              />
+            </div>
           </div>
         </>
       )}
