@@ -11,6 +11,14 @@ export const formatNowDate = (date: string, locale: UiLanguage) => {
     return date;
   }
 
+  if (locale === "en") {
+    return new Intl.DateTimeFormat(nowDateLocales[locale], {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(parsedDate);
+  }
+
   return new Intl.DateTimeFormat(nowDateLocales[locale], {
     year: "numeric",
     month: "2-digit",
