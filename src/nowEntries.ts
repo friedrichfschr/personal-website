@@ -502,14 +502,14 @@ export const nowEntries: NowEntryDefinition[] = [
               type: "paragraph",
               spans: [
                 { text: "For German students interested in studying in the U.S.: " },
-                { text: "bundestag.de/europa_internationales/ppp", href: "https://www.bundestag.de/europa_internationales/ppp" },
+                { text: "PPP scholarship page", href: "https://www.bundestag.de/europa_internationales/ppp" },
               ],
             },
             {
               type: "paragraph",
               spans: [
                 { text: "For U.S. students interested in spending a year in Germany: " },
-                { text: "usagermanyscholarship.org", href: "https://usagermanyscholarship.org" },
+                { text: "CBYX scholarship page", href: "https://usagermanyscholarship.org" },
               ],
             },
           ],
@@ -547,14 +547,14 @@ export const nowEntries: NowEntryDefinition[] = [
               type: "paragraph",
               spans: [
                 { text: "Für deutsche Schülerinnen und Schüler, die in den USA lernen möchten: " },
-                { text: "bundestag.de/europa_internationales/ppp", href: "https://www.bundestag.de/europa_internationales/ppp" },
+                { text: "zur PPP-Seite", href: "https://www.bundestag.de/europa_internationales/ppp" },
               ],
             },
             {
               type: "paragraph",
               spans: [
                 { text: "Für US-amerikanische Schülerinnen und Schüler, die ein Jahr in Deutschland verbringen möchten: " },
-                { text: "usagermanyscholarship.org", href: "https://usagermanyscholarship.org" },
+                { text: "zur CBYX-Seite", href: "https://usagermanyscholarship.org" },
               ],
             },
           ],
@@ -592,14 +592,14 @@ export const nowEntries: NowEntryDefinition[] = [
               type: "paragraph",
               spans: [
                 { text: "Pour les élèves allemands intéressés par des études aux États-Unis : " },
-                { text: "bundestag.de/europa_internationales/ppp", href: "https://www.bundestag.de/europa_internationales/ppp" },
+                { text: "page de la bourse PPP", href: "https://www.bundestag.de/europa_internationales/ppp" },
               ],
             },
             {
               type: "paragraph",
               spans: [
                 { text: "Pour les élèves américains souhaitant passer une année en Allemagne : " },
-                { text: "usagermanyscholarship.org", href: "https://usagermanyscholarship.org" },
+                { text: "page de la bourse CBYX", href: "https://usagermanyscholarship.org" },
               ],
             },
           ],

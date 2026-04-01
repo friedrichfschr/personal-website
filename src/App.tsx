@@ -142,7 +142,7 @@ function NowCard({
   onClose?: () => void;
 }) {
   const isHighlightEntry = entry.id === "openclaw";
-  const isLeftWrapImageEntry = entry.id === "cbyx-program";
+  const isLeftWrapImageEntry = entry.id === "cbyx-ppp";
   const { t, i18n } = useTranslation();
   const currentLocale = ((i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) || "en") as UiLanguage;
   const cardRef = useRef<HTMLElement | null>(null);
