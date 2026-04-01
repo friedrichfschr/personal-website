@@ -142,6 +142,7 @@ function NowCard({
   onClose?: () => void;
 }) {
   const isHighlightEntry = entry.id === "openclaw";
+  const isLeftWrapImageEntry = entry.id === "cbyx-program";
   const { t, i18n } = useTranslation();
   const currentLocale = ((i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) || "en") as UiLanguage;
   const cardRef = useRef<HTMLElement | null>(null);
@@ -150,6 +151,7 @@ function NowCard({
   const [isStaticBodyOverflowing, setIsStaticBodyOverflowing] = useState(false);
   const expandableBlocks = entry.expandable?.blocks ?? [];
   const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
+  const visibleBlocks = isExpanded ? [...entry.blocks, ...expandableBlocks] : entry.blocks;
   const shouldShowReadMore = !isExpanded && isStaticBodyOverflowing && hasExpandedContent;
   const isExpandableCard = !isExpanded && hasExpandedContent;
 
@@ -275,7 +277,7 @@ function NowCard({
       <div className={`now-card-content ${isExpanded ? "is-expanded-content" : ""}`}>
         <h3 className="now-card-title">{entry.title}</h3>
 
-        {entry.image && !isHighlightEntry && (
+        {entry.image && !isHighlightEntry && !isLeftWrapImageEntry && (
           <figure className="now-card-image-wrap">
             <img
               src={entry.image.src}
@@ -293,8 +295,23 @@ function NowCard({
 
         <div
           ref={staticBodyRef}
-          className={`now-card-body-viewport ${shouldShowReadMore ? "has-overflow" : ""} ${isExpanded ? "is-expanded" : ""} ${isHighlightEntry ? "has-inline-highlight" : ""}`}
+          className={`now-card-body-viewport ${shouldShowReadMore ? "has-overflow" : ""} ${isExpanded ? "is-expanded" : ""} ${isHighlightEntry ? "has-inline-highlight" : ""} ${isLeftWrapImageEntry ? "has-inline-flow-image" : ""}`}
         >
+          {entry.image && isLeftWrapImageEntry && (
+            <figure className={`now-card-image-wrap is-inline-flow-image is-left-inline-highlight ${isExpanded ? "is-expanded-inline" : ""}`}>
+              <img
+                src={entry.image.src}
+                alt={entry.image.alt}
+                className="now-card-image is-inline-flow"
+                draggable={false}
+              />
+              {entry.image.caption && (
+                <figcaption className="now-card-image-caption">
+                  {entry.image.caption}
+                </figcaption>
+              )}
+            </figure>
+          )}
           {entry.image && isHighlightEntry && (
             <figure className="now-card-image-wrap is-highlight is-inline-highlight">
               <img
@@ -310,21 +327,8 @@ function NowCard({
               )}
             </figure>
           )}
-          {renderRichBlocks(entry)}
+          {renderRichBlocks(entry, "now-card-body", visibleBlocks)}
         </div>
-
-        {isExpanded && expandableBlocks.length > 0 && (
-          <div className="now-card-body now-expanded-body">
-            {expandableBlocks.map((block, blockIndex) => (
-              <p
-                key={`${entry.id}-expanded-${blockIndex}`}
-                className={`now-card-text ${block.type === "quote" ? "is-quote" : ""}`}
-              >
-                {block.spans.map(renderRichSpan)}
-              </p>
-            ))}
-          </div>
-        )}
 
         {shouldShowReadMore && (
           <div className="now-card-actions">

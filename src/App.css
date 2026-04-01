@@ -1063,6 +1063,10 @@ body::before {
   display: flow-root;
 }
 
+.now-card-body-viewport.has-inline-flow-image {
+  display: flow-root;
+}
+
 .now-card-body-viewport.has-overflow::after {
   content: "";
   position: absolute;
@@ -1132,6 +1136,30 @@ body::before {
   shape-margin: 0.7rem;
 }
 
+.now-card-image-wrap.is-inline-flow-image {
+  float: left;
+  clear: none;
+  display: inline-flex;
+  width: clamp(7.25rem, 34%, 9rem);
+  margin: 0.12rem 1rem 0.7rem 0;
+  padding: 0.55rem 0.55rem 0.42rem;
+  border-radius: 18px;
+  background: rgba(255, 250, 242, 0.92);
+  shape-outside: margin-box;
+  shape-margin: 0.75rem;
+}
+
+.now-card-image-wrap.is-left-inline-highlight {
+  transform: rotate(-3.5deg);
+}
+
+.now-card.is-expanded.is-open .now-card-image-wrap.is-inline-flow-image {
+  width: clamp(8rem, 31%, 9.4rem);
+  margin: 0.18rem 1.15rem 0.8rem 0;
+  transform: rotate(-2.5deg);
+}
+
+
 .now-card-image-wrap.is-highlight::before,
 .now-card-image-wrap.is-highlight::after {
   content: "";
@@ -1187,6 +1215,15 @@ body::before {
   object-fit: cover;
   border-radius: 14px;
   box-shadow: 0 10px 18px rgba(44, 62, 80, 0.12);
+}
+
+.now-card-image.is-inline-flow {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 8px 16px rgba(44, 62, 80, 0.1);
 }
 
 .now-card-image-caption {
@@ -1246,13 +1283,6 @@ body::before {
   color: var(--now-accent);
 }
 
-.now-expanded-body {
-  padding-top: 0.4rem;
-  opacity: 0;
-  transform: translateY(0.65rem);
-  transition: opacity 0.42s ease 0.12s, transform 0.42s ease 0.12s;
-}
-
 .now-card:not(.is-expanded) .now-card-title,
 .now-card:not(.is-expanded) .now-card-body,
 .now-card:not(.is-expanded) .now-card-actions {
@@ -1290,15 +1320,6 @@ body::before {
   transform: rotate(5deg);
 }
 
-.now-card.is-expanded.is-open .now-card-image-wrap.is-inline-highlight {
-  margin: 0.05rem 0 0.7rem 1rem;
-  transform: rotate(5deg);
-}
-
-.now-card.is-expanded.is-open .now-expanded-body {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 .now-expand-button {
   border: 2px solid color-mix(in srgb, var(--now-accent) 26%, rgba(44, 62, 80, 0.18));
@@ -1661,6 +1682,12 @@ body::before {
   .now-card-image-wrap.is-inline-highlight {
     width: clamp(7rem, 41%, 8.4rem);
     margin-left: 0.8rem;
+    shape-margin: 0.5rem;
+  }
+
+  .now-card-image-wrap.is-inline-flow-image {
+    width: clamp(6.6rem, 38%, 8rem);
+    margin-right: 0.8rem;
     shape-margin: 0.5rem;
   }
 
