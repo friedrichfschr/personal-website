@@ -7,6 +7,16 @@ const resources = {
       hero: {
         title: "Friedrich Fischer",
         subtitle: "Ambitious, Curious & Communicative",
+        profile: {
+          ageLabel: "Age",
+          ageValue: "{{age}} years old",
+          interestsLabel: "Interests",
+          interests: {
+            computerScience: "Computer science",
+            music: "Music",
+            traveling: "Traveling",
+          },
+        },
       },
       social: {
         label: "Connect with me",
@@ -60,6 +70,16 @@ const resources = {
       hero: {
         title: "Friedrich Fischer",
         subtitle: "Ehrgeizig, neugierig & kommunikativ",
+        profile: {
+          ageLabel: "Alter",
+          ageValue: "{{age}} Jahre alt",
+          interestsLabel: "Interessen",
+          interests: {
+            computerScience: "Informatik",
+            music: "Musik",
+            traveling: "Reisen",
+          },
+        },
       },
       social: {
         label: "Kontakt",
@@ -113,6 +133,16 @@ const resources = {
       hero: {
         title: "Friedrich Fischer",
         subtitle: "Ambitieux, curieux & communicatif",
+        profile: {
+          ageLabel: "Âge",
+          ageValue: "{{age}} ans",
+          interestsLabel: "Centres d’intérêt",
+          interests: {
+            computerScience: "Informatique",
+            music: "Musique",
+            traveling: "Voyages",
+          },
+        },
       },
       social: {
         label: "Retrouve-moi ici",
@@ -166,6 +196,16 @@ const resources = {
       hero: {
         title: "Friedrich Fischer",
         subtitle: "有抱负、好奇且善于沟通",
+        profile: {
+          ageLabel: "年龄",
+          ageValue: "{{age}} 岁",
+          interestsLabel: "兴趣",
+          interests: {
+            computerScience: "计算机科学",
+            music: "音乐",
+            traveling: "旅行",
+          },
+        },
       },
       social: {
         label: "联系我",

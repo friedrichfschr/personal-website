@@ -114,6 +114,69 @@
   gap: 1.6rem;
 }
 
+.hero-profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: fit-content;
+  max-width: min(100%, 24rem);
+  padding: 1rem 1.1rem;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 241, 232, 0.86));
+  border: 2px solid rgba(44, 62, 80, 0.16);
+  box-shadow: 0 16px 30px rgba(44, 62, 80, 0.08);
+}
+
+.dark .hero-profile-card {
+  background: linear-gradient(180deg, rgba(53, 53, 53, 0.92), rgba(34, 34, 34, 0.9));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.hero-fact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.8rem;
+}
+
+.hero-fact-label {
+  margin: 0;
+  color: rgba(44, 62, 80, 0.62);
+}
+
+.dark .hero-fact-label {
+  color: rgba(240, 240, 240, 0.56);
+}
+
+.hero-fact-value {
+  font-family: "Caveat", cursive;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--hand-drawn-primary);
+}
+
+.hero-interest-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.hero-interest-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+  color: rgba(44, 62, 80, 0.82);
+}
+
+.dark .hero-interest-list {
+  color: rgba(240, 240, 240, 0.82);
+}
+
+.hero-interest-list li::marker {
+  color: var(--hand-drawn-accent);
+}
+
 .social-links-block {
   width: fit-content;
   max-width: 100%;
@@ -360,8 +423,13 @@
     gap: 1.2rem;
   }
 
+  .hero-profile-card,
   .social-links-block {
     margin-inline: auto;
+  }
+
+  .hero-profile-card {
+    width: min(100%, 24rem);
   }
 
   .hand-drawn-language-switcher {

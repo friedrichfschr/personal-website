@@ -5,6 +5,26 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SocialLinks } from "./SocialLinks";
 import type { UiLanguage } from "../../constants/ui";
 
+const BIRTH_DATE = {
+  year: 2009,
+  monthIndex: 1,
+  day: 3,
+} as const;
+
+function getCurrentAge() {
+  const today = new Date();
+  let age = today.getFullYear() - BIRTH_DATE.year;
+  const hasHadBirthdayThisYear =
+    today.getMonth() > BIRTH_DATE.monthIndex ||
+    (today.getMonth() === BIRTH_DATE.monthIndex && today.getDate() >= BIRTH_DATE.day);
+
+  if (!hasHadBirthdayThisYear) {
+    age -= 1;
+  }
+
+  return age;
+}
+
 type HeroSectionProps = {
   currentLanguage: string;
   showCVOptions: boolean;
@@ -25,6 +45,7 @@ export function HeroSection({
   onCVClick,
 }: HeroSectionProps) {
   const { t } = useTranslation();
+  const age = getCurrentAge();
 
   return (
     <section className="intro-section">
@@ -57,6 +78,22 @@ export function HeroSection({
           </div>
 
           <div className="hero-side-panel">
+            <div className="hero-profile-card hand-drawn-card">
+              <div className="hero-fact-row">
+                <span className="hand-drawn-label hero-fact-label">{t("hero.profile.ageLabel")}</span>
+                <span className="hero-fact-value">{t("hero.profile.ageValue", { age })}</span>
+              </div>
+
+              <div className="hero-interest-block">
+                <h3 className="hand-drawn-label hero-panel-label">{t("hero.profile.interestsLabel")}</h3>
+                <ul className="hero-interest-list">
+                  <li>{t("hero.profile.interests.computerScience")}</li>
+                  <li>{t("hero.profile.interests.music")}</li>
+                  <li>{t("hero.profile.interests.traveling")}</li>
+                </ul>
+              </div>
+            </div>
+
             <div className="social-links-block">
               <h3 className="hand-drawn-label hero-panel-label">{t("social.label")}</h3>
               <SocialLinks />
