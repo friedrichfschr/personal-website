@@ -79,7 +79,7 @@ export function HeroSection({
             </div>
 
             <div className="hero-profile-details">
-              <p className="hero-profile-age">● {t("hero.profile.ageValue", { age })}</p>
+              <p className="hero-profile-age">▸ {t("hero.profile.ageValue", { age })}</p>
 
               <div className="hero-profile-interests">
                 <p className="hero-profile-list-label">{t("hero.profile.interestsLabel")}:</p>

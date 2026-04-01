@@ -133,6 +133,7 @@
   margin: 0;
   color: rgba(44, 62, 80, 0.9);
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .dark .hero-profile-age {
@@ -462,13 +463,24 @@
   }
 
   .hero-side-panel {
-    gap: 1.2rem;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
+    gap: 1.2rem;
   }
 
   .hero-profile-list,
   .social-links-block {
     margin-inline: 0;
+  }
+
+  .social-links-block {
+    flex: 0 1 auto;
+  }
+
+  .cv-dropdown-wrap {
+    flex: 0 0 auto;
   }
 
   .hand-drawn-language-switcher {
@@ -483,9 +495,8 @@
 
 @media (max-width: 750px) {
   .social-links-grid {
-    width: 100%;
     grid-template-columns: repeat(3, max-content);
-    justify-content: center;
+    justify-content: start;
     justify-items: center;
     gap: 8px;
   }
