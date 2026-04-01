@@ -367,6 +367,8 @@ export function NowSection() {
   return (
     <section className="now-section" aria-labelledby="now-section-title">
       <div className="now-section-shell">
+        <div className="now-section-accent" aria-hidden="true"></div>
+
         <div className="now-section-header">
           <p className="hand-drawn-label now-section-kicker">{t("now.kicker")}</p>
 

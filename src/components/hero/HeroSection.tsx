@@ -62,7 +62,7 @@ export function HeroSection({
           <p className="hand-drawn-subtitle hero-subtitle">{t("hero.subtitle")}</p>
         </div>
 
-        <div className="hero-spotlight-card hand-drawn-card">
+        <div className="hero-spotlight-card">
           <div className="hero-profile-row">
             <div className="hero-portrait-stack">
               <span className="hero-orbit hero-orbit-one" aria-hidden="true"></span>
