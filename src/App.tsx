@@ -23,7 +23,12 @@ import {
 } from "./icons";
 import { siteConfig } from "../site";
 import { downloadCV, type CVLanguage } from "./utils/cvDownload";
-import { nowEntries, type NowEntry, type NowRichTextSpan } from "./nowEntries";
+import {
+  getNowEntriesForLocale,
+  nowEntries,
+  type NowEntry,
+  type NowRichTextSpan,
+} from "./nowEntries";
 
 const uiLanguages = ["en", "de", "fr", "zh"] as const;
 type UiLanguage = (typeof uiLanguages)[number];
@@ -218,13 +223,13 @@ function NowCard({
           <span className="now-card-date">{entry.date}</span>
         </div>
         <div className="now-card-meta-actions">
-          {entry.originalLanguage && (
+          {entry.isTranslated && (
             <span
               className="now-card-language-pill"
-              aria-label={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
-              title={`${t("now.originalLanguage")}: ${entry.originalLanguage}`}
+              aria-label={t("now.automaticTranslation")}
+              title={t("now.automaticTranslation")}
             >
-              {entry.originalLanguage}
+              {t("now.automaticTranslation")}
             </span>
           )}
         </div>
@@ -322,7 +327,7 @@ function NowCard({
 }
 
 function NowSection() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const carouselRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<{
     pointerId: number;
@@ -340,11 +345,16 @@ function NowSection() {
   const [isDragging, setIsDragging] = useState(false);
   const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(null);
   const [restoringEntryId, setRestoringEntryId] = useState<string | null>(null);
+  const currentLocale = (i18n.resolvedLanguage?.split("-")[0] ?? i18n.language.split("-")[0]) || "en";
+  const localizedNowEntries = useMemo(
+    () => getNowEntriesForLocale(currentLocale as "en" | "de" | "fr" | "zh"),
+    [currentLocale],
+  );
 
-  const totalCards = nowEntries.length;
+  const totalCards = localizedNowEntries.length;
   const expandedEntry = useMemo(
-    () => nowEntries.find((entry) => entry.id === expandedCard?.entryId) ?? null,
-    [expandedCard],
+    () => localizedNowEntries.find((entry) => entry.id === expandedCard?.entryId) ?? null,
+    [expandedCard, localizedNowEntries],
   );
 
   const getCardElements = () => {
@@ -688,7 +698,7 @@ function NowSection() {
           onLostPointerCapture={finishPointerDrag}
           onClickCapture={handleClickCapture}
         >
-          {nowEntries.map((entry: NowEntry) => {
+          {localizedNowEntries.map((entry: NowEntry) => {
             const isExpandedEntry = expandedCard?.entryId === entry.id;
             const isRestoringEntry = restoringEntryId === entry.id;
 
@@ -705,7 +715,7 @@ function NowSection() {
         </div>
 
         <div className="now-carousel-progress" aria-label={t("now.progressLabel")}>
-          {nowEntries.map((entry, index) => (
+          {localizedNowEntries.map((entry, index) => (
             <button
               key={entry.id}
               type="button"
@@ -1075,3 +1085,198 @@ function App() {
 }
 
 export default App;
+
+var resources = {
+  en: {
+    translation: {
+      hero: {
+        title: `Friedrich Fischer`,
+        subtitle: `Ambitious, Curious & Communicative`,
+      },
+      social: {
+        label: `Connect with me`,
+      },
+      cv: {
+        button: `My CV`,
+        label: `Choose a version`,
+        availableLabel: `Available in`,
+        languages: {
+          en: `English`,
+          de: `Deutsch`,
+        },
+      },
+      now: {
+        kicker: `Now`,
+        title: `What I’m into right now`,
+        description: ``,
+        controlsLabel: `Now carousel controls`,
+        carouselLabel: `Now page entries`,
+        progressLabel: `Now carousel navigation`,
+        previous: `Show previous entry`,
+        next: `Show next entry`,
+        jumpTo: `Jump to entry {{index}}: {{title}}`,
+        automaticTranslation: `Automatic translation`,
+        readMore: `Read more`,
+        close: `Close entry`,
+        modalKicker: `Expanded note`,
+      },
+      languageSwitcher: {
+        label: `Language selector`,
+        options: { en: `EN`, de: `DE`, fr: `FR`, zh: `ZH` },
+        aria: {
+          en: `Switch language to English`,
+          de: `Switch language to German`,
+          fr: `Switch language to French`,
+          zh: `Switch language to Mandarin Chinese`,
+        },
+      },
+      accessibility: {
+        portraitAlt: `Portrait of Friedrich Fischer`,
+      },
+    },
+  },
+  de: {
+    translation: {
+      hero: {
+        title: `Friedrich Fischer`,
+        subtitle: `Ehrgeizig, neugierig & kommunikativ`,
+      },
+      social: {
+        label: `Kontakt`,
+      },
+      cv: {
+        button: `Mein Lebenslauf`,
+        label: `Version auswählen`,
+        availableLabel: `Verfügbar in`,
+        languages: {
+          en: `Englisch`,
+          de: `Deutsch`,
+        },
+      },
+      now: {
+        kicker: `Now`,
+        title: `Was mich gerade beschäftigt`,
+        description: ``,
+        controlsLabel: `Steuerung für das Now-Karussell`,
+        carouselLabel: `Now-Einträge`,
+        progressLabel: `Navigation des Now-Karussells`,
+        previous: `Vorherigen Eintrag anzeigen`,
+        next: `Nächsten Eintrag anzeigen`,
+        jumpTo: `Zu Eintrag {{index}} springen: {{title}}`,
+        automaticTranslation: `Automatische Übersetzung`,
+        readMore: `Mehr lesen`,
+        close: `Eintrag schließen`,
+        modalKicker: `Erweiterte Notiz`,
+      },
+      languageSwitcher: {
+        label: `Sprachauswahl`,
+        options: { en: `EN`, de: `DE`, fr: `FR`, zh: `ZH` },
+        aria: {
+          en: `Sprache auf Englisch umstellen`,
+          de: `Sprache auf Deutsch umstellen`,
+          fr: `Sprache auf Französisch umstellen`,
+          zh: `Sprache auf Mandarin-Chinesisch umstellen`,
+        },
+      },
+      accessibility: {
+        portraitAlt: `Porträt von Friedrich Fischer`,
+      },
+    },
+  },
+  fr: {
+    translation: {
+      hero: {
+        title: `Friedrich Fischer`,
+        subtitle: `Ambitieux, curieux & communicatif`,
+      },
+      social: {
+        label: `Retrouve-moi ici`,
+      },
+      cv: {
+        button: `Mon CV`,
+        label: `Choisir une version`,
+        availableLabel: `Disponible en`,
+        languages: {
+          en: `Anglais`,
+          de: `Allemand`,
+        },
+      },
+      now: {
+        kicker: `Now`,
+        title: `Ce qui m’occupe en ce moment`,
+        description: ``,
+        controlsLabel: `Contrôles du carrousel Now`,
+        carouselLabel: `Entrées de la page Now`,
+        progressLabel: `Navigation du carrousel Now`,
+        previous: `Afficher l’entrée précédente`,
+        next: `Afficher l’entrée suivante`,
+        jumpTo: `Aller à l’entrée {{index}} : {{title}}`,
+        automaticTranslation: `Traduction automatique`,
+        readMore: `Lire la suite`,
+        close: `Fermer l’entrée`,
+        modalKicker: `Note développée`,
+      },
+      languageSwitcher: {
+        label: `Sélecteur de langue`,
+        options: { en: `EN`, de: `DE`, fr: `FR`, zh: `ZH` },
+        aria: {
+          en: `Passer la langue en anglais`,
+          de: `Passer la langue en allemand`,
+          fr: `Passer la langue en français`,
+          zh: `Passer la langue en chinois mandarin`,
+        },
+      },
+      accessibility: {
+        portraitAlt: `Portrait de Friedrich Fischer`,
+      },
+    },
+  },
+  zh: {
+    translation: {
+      hero: {
+        title: `Friedrich Fischer`,
+        subtitle: `有抱负、好奇且善于沟通`,
+      },
+      social: {
+        label: `联系我`,
+      },
+      cv: {
+        button: `我的简历`,
+        label: `选择版本`,
+        availableLabel: `可选语言`,
+        languages: {
+          en: `英语`,
+          de: `德语`,
+        },
+      },
+      now: {
+        kicker: `Now`,
+        title: `我最近在折腾什么`,
+        description: ``,
+        controlsLabel: `Now 轮播控制`,
+        carouselLabel: `Now 页面条目`,
+        progressLabel: `Now 轮播导航`,
+        previous: `显示上一条`,
+        next: `显示下一条`,
+        jumpTo: `跳转到第 {{index}} 条：{{title}}`,
+        automaticTranslation: `自动翻译`,
+        readMore: `阅读更多`,
+        close: `关闭条目`,
+        modalKicker: `展开笔记`,
+      },
+      languageSwitcher: {
+        label: `语言选择器`,
+        options: { en: `EN`, de: `DE`, fr: `FR`, zh: `ZH` },
+        aria: {
+          en: `切换语言为英语`,
+          de: `切换语言为德语`,
+          fr: `切换语言为法语`,
+          zh: `切换语言为普通话中文`,
+        },
+      },
+      accessibility: {
+        portraitAlt: `Friedrich Fischer 的肖像`,
+      },
+    },
+  },
+};
