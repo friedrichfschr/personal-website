@@ -490,9 +490,10 @@
   }
 
   .hero-contact-actions {
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     flex-wrap: nowrap;
+    gap: 1rem;
   }
 
   .hero-profile-list,
@@ -533,8 +534,8 @@
   }
 
   .hero-contact-actions {
-    justify-content: center;
-    gap: 0.65rem;
+    justify-content: space-evenly;
+    gap: 1.1rem;
   }
 
   .hero-panel-label {
