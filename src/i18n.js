@@ -85,7 +85,7 @@ const resources = {
         label: "Brauchst du eine Website? Hast du eine Idee, über die du sprechen möchtest? Vernetz dich mit mir:",
       },
       cv: {
-        button: "Mein Lebenslauf",
+        button: "Lebenslauf",
         label: "Version auswählen",
         availableLabel: "Verfügbar in",
         languages: {

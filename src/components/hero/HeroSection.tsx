@@ -109,7 +109,7 @@ export function HeroSection({
               >
                 <Button
                   ref={cvTriggerRef}
-                  className={`hand-drawn-button cv-trigger-button ${currentLanguage === "de" ? "is-german" : ""}`}
+                  className="hand-drawn-button cv-trigger-button"
                   onPress={onCVClick}
                   aria-haspopup="menu"
                   aria-expanded={showCVOptions}

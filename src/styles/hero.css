@@ -533,8 +533,8 @@
   }
 
   .hero-contact-actions {
-    justify-content: space-between;
-    gap: 0.85rem;
+    justify-content: center;
+    gap: 0.55rem;
   }
 
   .hero-panel-label {

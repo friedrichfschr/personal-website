@@ -33,24 +33,6 @@
   text-align: left;
 }
 
-@media (min-width: 900px) {
-  .cv-trigger-button.is-german {
-    align-items: flex-start;
-    padding-block: 0.8rem;
-  }
-
-  .cv-trigger-button.is-german .cv-trigger-label {
-    max-width: 8.6rem;
-    white-space: normal;
-    line-height: 1.15;
-    text-wrap: balance;
-  }
-
-  .cv-trigger-button.is-german .cv-trigger-chevron {
-    align-self: center;
-  }
-}
-
 .cv-trigger-button[data-hover="true"],
 .cv-trigger-button:hover {
   background: linear-gradient(135deg, #34495e, #22313f);
@@ -266,7 +248,7 @@
     align-self: center;
     font-size: 0.9rem;
     padding: 0.7rem 0.95rem;
-    gap: 0.55rem;
+    gap: 0.45rem;
   }
 
   .cv-trigger-chevron {
