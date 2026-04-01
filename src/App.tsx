@@ -225,7 +225,7 @@ function NowCard({
         isHidden ? "is-hidden-placeholder" : "",
       ].filter(Boolean).join(" ")}
       data-now-card
-      style={{ "--now-accent": entry.accent, ...expandedStyle } as CSSProperties}
+      style={{ "--now-accent": entry.accent, ...expandedStyle, paddingTop: "0rem" } as any}
       aria-expanded={isExpanded || undefined}
       aria-hidden={isHidden || undefined}
       onClick={(event) => {
@@ -242,7 +242,7 @@ function NowCard({
         }
       }}
     >
-      <div className={`now-card-meta-row ${isExpanded ? "is-expanded-header" : ""}`}>
+      <div className={`now-card-meta-row  ${isExpanded ? "is-expanded-header" : ""} `} style={{paddingTop: "1rem"}}>
         <div className="now-card-meta-leading">
           <span className="now-card-date">{formatNowDate(entry.date, currentLocale)}</span>
         </div>

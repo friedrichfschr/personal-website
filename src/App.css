@@ -33,6 +33,7 @@ body::before {
 }
 
 @supports (padding: env(safe-area-inset-top)) {
+
   html,
   body {
     background: transparent;
@@ -959,7 +960,7 @@ body::before {
 
 .now-card-meta-row.is-expanded-header {
   position: sticky;
-  top: 0;
+  top: 0rem;
   z-index: 3;
   margin: 0;
   padding: 0 0.2rem 0 0;
@@ -1399,17 +1400,6 @@ body::before {
   pointer-events: none;
 }
 
-.now-card.is-expanded::before {
-  content: "";
-  position: sticky;
-  top: 0;
-  display: block;
-  height: var(--now-card-padding);
-  margin: calc(var(--now-card-padding) * -1) calc(var(--now-card-padding) * -1) 0;
-  background: rgba(255, 255, 255, 0.985);
-  z-index: 2;
-  pointer-events: none;
-}
 
 .dark .now-card.is-expanded::before {
   background: rgba(43, 43, 43, 0.985);
@@ -1721,7 +1711,7 @@ body::before {
   }
 
   .now-card-meta-row.is-expanded-header {
-    top: 0;
+    top: 0rem;
   }
 }
 
