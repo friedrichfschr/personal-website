@@ -47,7 +47,208 @@ const sharedOpenClawImage = {
   src: "/assets/now/openclaw-bot.jpg",
 };
 
+const formatNowEntryDate = (date: string, locale: SupportedNowLocale): string => {
+  const [day, month, year] = date.split(".").map(Number);
+  const fullYear = year < 100 ? 2000 + year : year;
+  const parsedDate = new Date(Date.UTC(fullYear, month - 1, day));
+
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(parsedDate);
+};
+
 export const nowEntries: NowEntryDefinition[] = [
+  {
+    id: "cbyx-program",
+    date: "13.06.25",
+    accent: "#1f5fbf",
+    sourceLanguage: "en",
+    content: {
+      en: {
+        title: "CBYX Program",
+        image: {
+          src: "/assets/now/cbyx-program.jpg",
+          alt: "CBYX program logo in black, red, yellow, white, and blue",
+          caption: "CBYX / PPP",
+        },
+        blocks: [
+          {
+            type: "paragraph",
+            spans: [{ text: "Today, a chapter of my life closed. After spending ten months in the United States as a junior diplomat through the CBYX Program, I returned to Germany." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "This program has had the greatest impact on my life so far. From experiencing American high school and confronting stereotypes to visiting the United Nations General Assembly and speaking with politicians on Capitol Hill, this time was truly eventful." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "I am deeply grateful for the opportunities I had and for the people I met. I will carry this year in my heart forever." }],
+          },
+        ],
+        expandable: {
+          summary: "",
+          blocks: [
+            {
+              type: "paragraph",
+              spans: [{ text: "It is almost impossible to describe what these ten months felt like. If you have the chance, apply today." }],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "For German students who want to study in the USA: " },
+                { text: "PPP scholarship", href: "https://www.bundestag.de/europa_internationales/pp" },
+              ],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "For U.S. students who want to study in Germany: " },
+                { text: "CBYX scholarship", href: "https://usagermanyscholarship.org" },
+              ],
+            },
+          ],
+        },
+      },
+      de: {
+        title: "PPP-Stipendium",
+        image: {
+          src: "/assets/now/cbyx-program.jpg",
+          alt: "Logo des PPP-Programms in Schwarz, Rot, Gelb, Weiß und Blau",
+          caption: "PPP / CBYX",
+        },
+        blocks: [
+          {
+            type: "paragraph",
+            spans: [{ text: "Heute ist ein Kapitel meines Lebens zu Ende gegangen. Nachdem ich zehn Monate im Rahmen des PPP-Stipendiums als Junior-Botschafter in den Vereinigten Staaten verbracht habe, bin ich nach Deutschland zurückgekehrt." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "Dieses Programm hat mein Leben bisher am stärksten geprägt. Von amerikanischer Highschool-Erfahrung über das Hinterfragen von Stereotypen bis hin zum Besuch der Generalversammlung der Vereinten Nationen und Gesprächen mit Politikerinnen und Politikern auf dem Capitol Hill war diese Zeit wirklich ereignisreich." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "Ich bin sehr dankbar für die Möglichkeiten, die ich bekommen habe, und für die Menschen, die ich kennenlernen durfte. Dieses Jahr werde ich für immer im Herzen tragen." }],
+          },
+        ],
+        expandable: {
+          summary: "",
+          blocks: [
+            {
+              type: "paragraph",
+              spans: [{ text: "Es ist fast unmöglich zu beschreiben, wie sich diese zehn Monate angefühlt haben. Wenn du die Chance hast, dann bewirb dich heute." }],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "Für deutsche Staatsbürgerinnen und Staatsbürger, die in den USA studieren möchten: " },
+                { text: "PPP-Stipendium", href: "https://www.bundestag.de/europa_internationales/pp" },
+              ],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "Für US-Amerikanerinnen und US-Amerikaner, die in Deutschland studieren möchten: " },
+                { text: "CBYX scholarship", href: "https://usagermanyscholarship.org" },
+              ],
+            },
+          ],
+        },
+      },
+      fr: {
+        title: "Programme CBYX",
+        image: {
+          src: "/assets/now/cbyx-program.jpg",
+          alt: "Logo du programme CBYX en noir, rouge, jaune, blanc et bleu",
+          caption: "CBYX / PPP",
+        },
+        blocks: [
+          {
+            type: "paragraph",
+            spans: [{ text: "Aujourd’hui, un chapitre de ma vie s’est refermé. Après avoir passé dix mois aux États-Unis comme jeune ambassadeur dans le cadre du programme CBYX, je suis rentré en Allemagne." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "Ce programme a eu, jusqu’à présent, l’impact le plus fort sur ma vie. Entre l’expérience du lycée américain, la remise en question des stéréotypes, la visite de l’Assemblée générale des Nations unies et les échanges avec des responsables politiques à Capitol Hill, cette période a été incroyablement riche." }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "Je suis profondément reconnaissant pour les opportunités que j’ai eues et pour les personnes que j’ai rencontrées. Je garderai cette année dans mon cœur pour toujours." }],
+          },
+        ],
+        expandable: {
+          summary: "",
+          blocks: [
+            {
+              type: "paragraph",
+              spans: [{ text: "Il est presque impossible de décrire ce que ces dix mois m’ont fait ressentir. Si vous en avez l’occasion, candidatez dès aujourd’hui." }],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "Pour les citoyennes et citoyens allemands qui souhaitent étudier aux États-Unis : " },
+                { text: "bourse PPP", href: "https://www.bundestag.de/europa_internationales/pp" },
+              ],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "Pour les citoyennes et citoyens américains qui souhaitent étudier en Allemagne : " },
+                { text: "bourse CBYX", href: "https://usagermanyscholarship.org" },
+              ],
+            },
+          ],
+        },
+      },
+      zh: {
+        title: "CBYX 交流项目",
+        image: {
+          src: "/assets/now/cbyx-program.jpg",
+          alt: "黑红黄白蓝配色的 CBYX 项目标志",
+          caption: "CBYX / PPP",
+        },
+        blocks: [
+          {
+            type: "paragraph",
+            spans: [{ text: "今天，我人生中的一个篇章画上了句号。作为 CBYX 项目的一员，我以青年交流大使的身份在美国度过了十个月，如今已经回到德国。" }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "到目前为止，这个项目对我的人生影响最大。从亲身体验美国高中生活、直面各种刻板印象，到参观联合国大会、在国会山与政界人士交流，这段时间真的非常充实。" }],
+          },
+          {
+            type: "paragraph",
+            spans: [{ text: "我由衷感谢自己获得的这些机会，也感谢一路上遇到的人。我会永远把这一年放在心里。" }],
+          },
+        ],
+        expandable: {
+          summary: "",
+          blocks: [
+            {
+              type: "paragraph",
+              spans: [{ text: "这十个月到底是什么感觉，几乎很难用语言真正说清。如果你也有这样的机会，我真心建议你今天就去申请。" }],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "德国公民申请赴美学习：" },
+                { text: "PPP 项目", href: "https://www.bundestag.de/europa_internationales/pp" },
+              ],
+            },
+            {
+              type: "paragraph",
+              spans: [
+                { text: "美国公民申请赴德学习：" },
+                { text: "CBYX 项目", href: "https://usagermanyscholarship.org" },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  },
   {
     id: "openclaw",
     date: "31.03.2026",
@@ -468,7 +669,7 @@ export const getNowEntriesForLocale = (locale: SupportedNowLocale): NowEntry[] =
 
     return {
       id: entry.id,
-      date: entry.date,
+      date: formatNowEntryDate(entry.date, locale),
       accent: entry.accent,
       sourceLanguage: entry.sourceLanguage,
       isTranslated: locale !== entry.sourceLanguage,
