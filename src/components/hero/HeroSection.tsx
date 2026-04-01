@@ -78,15 +78,18 @@ export function HeroSection({
               </div>
             </div>
 
-            <ul className="hero-profile-list" aria-label={t("hero.profile.interestsLabel")}>
-              <li>
-                <span className="hero-profile-list-label">{t("hero.profile.ageLabel")}:</span>{" "}
-                <span>{t("hero.profile.ageValue", { age })}</span>
-              </li>
-              <li>{t("hero.profile.interests.computerScience")}</li>
-              <li>{t("hero.profile.interests.music")}</li>
-              <li>{t("hero.profile.interests.traveling")}</li>
-            </ul>
+            <div className="hero-profile-details">
+              <p className="hero-profile-age">{t("hero.profile.ageValue", { age })}</p>
+
+              <div className="hero-profile-interests">
+                <p className="hero-profile-list-label">{t("hero.profile.interestsLabel")}:</p>
+                <ul className="hero-profile-list" aria-label={t("hero.profile.interestsLabel")}>
+                  <li>{t("hero.profile.interests.computerScience")}</li>
+                  <li>{t("hero.profile.interests.music")}</li>
+                  <li>{t("hero.profile.interests.traveling")}</li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div className="hero-side-panel">
