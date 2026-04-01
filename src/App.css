@@ -962,9 +962,10 @@ body::before {
   top: 0;
   z-index: 4;
   margin: calc(var(--now-card-padding) * -1) calc(var(--now-card-padding) * -1) 0;
-  padding: var(--now-card-padding) var(--now-card-padding) 0.5rem;
+  padding: var(--now-card-padding) var(--now-card-padding) 0.35rem;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.995) 0%, rgba(249, 246, 240, 0.99) 84%, rgba(249, 246, 240, 0.965) 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.995) 0%, rgba(249, 246, 240, 0.99) 76%, rgba(249, 246, 240, 0.94) 100%);
+  box-shadow: 0 10px 18px rgba(44, 62, 80, 0.06);
   backdrop-filter: none;
 }
 
@@ -981,7 +982,8 @@ body::before {
 
 .dark .now-card-meta-row.is-expanded-header {
   background:
-    linear-gradient(180deg, rgba(43, 43, 43, 0.995) 0%, rgba(31, 31, 31, 0.99) 84%, rgba(31, 31, 31, 0.965) 100%);
+    linear-gradient(180deg, rgba(43, 43, 43, 0.995) 0%, rgba(31, 31, 31, 0.99) 76%, rgba(31, 31, 31, 0.94) 100%);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
 }
 
 .dark .now-card-meta-row.is-expanded-header::before {
@@ -1060,7 +1062,7 @@ body::before {
   gap: 1rem;
   flex: 1 1 auto;
   min-height: 0;
-  transition: gap 0.38s ease, transform 0.42s ease, opacity 0.32s ease;
+  transition: gap 0.38s ease, transform 0.42s ease, opacity 0.32s ease, padding 0.34s ease;
 }
 
 .now-card-body-viewport {
@@ -1103,7 +1105,7 @@ body::before {
 
 .now-card.is-expanded.is-open .now-card-content {
   gap: 1rem;
-  padding-top: 0.15rem;
+  padding-top: 0;
 }
 
 .now-card-image-wrap {
@@ -1322,6 +1324,7 @@ body::before {
 
 .now-card.is-expanded.is-open .now-card-title {
   max-width: 22ch;
+  margin-top: 0.1rem;
 }
 
 .now-card.is-expanded.is-open .now-card-image-wrap {
