@@ -960,17 +960,17 @@ body::before {
 .now-card-meta-row.is-expanded-header {
   position: sticky;
   top: 0;
-  z-index: 2;
-  margin: 0;
-  padding: 0 0.2rem 0 0;
+  z-index: 3;
+  margin: calc(var(--now-card-padding) * -1) calc(var(--now-card-padding) * -1) 0;
+  padding: var(--now-card-padding) var(--now-card-padding) 0.35rem;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(249, 246, 240, 0.94) 78%, transparent 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.985) 0%, rgba(249, 246, 240, 0.98) 82%, rgba(249, 246, 240, 0.94) 100%);
   backdrop-filter: none;
 }
 
 .dark .now-card-meta-row.is-expanded-header {
   background:
-    linear-gradient(180deg, rgba(43, 43, 43, 0.98) 0%, rgba(31, 31, 31, 0.94) 78%, transparent 100%);
+    linear-gradient(180deg, rgba(43, 43, 43, 0.99) 0%, rgba(31, 31, 31, 0.985) 82%, rgba(31, 31, 31, 0.94) 100%);
 }
 
 .now-card-meta-actions {
