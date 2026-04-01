@@ -63,39 +63,35 @@ export function HeroSection({
         </div>
 
         <div className="hero-spotlight-card hand-drawn-card">
-          <div className="hero-portrait-stack">
-            <span className="hero-orbit hero-orbit-one" aria-hidden="true"></span>
-            <span className="hero-orbit hero-orbit-two" aria-hidden="true"></span>
-            <div className="hero-portrait-frame">
-              <img
-                draggable={false}
-                style={{ userSelect: "none" }}
-                src="/Portrait.png"
-                alt={t("accessibility.portraitAlt")}
-                className="hand-drawn-portrait hero-portrait-image"
-              />
+          <div className="hero-profile-row">
+            <div className="hero-portrait-stack">
+              <span className="hero-orbit hero-orbit-one" aria-hidden="true"></span>
+              <span className="hero-orbit hero-orbit-two" aria-hidden="true"></span>
+              <div className="hero-portrait-frame">
+                <img
+                  draggable={false}
+                  style={{ userSelect: "none" }}
+                  src="/Portrait.png"
+                  alt={t("accessibility.portraitAlt")}
+                  className="hand-drawn-portrait hero-portrait-image"
+                />
+              </div>
             </div>
+
+            <ul className="hero-profile-list" aria-label={t("hero.profile.interestsLabel")}>
+              <li>
+                <span className="hero-profile-list-label">{t("hero.profile.ageLabel")}:</span>{" "}
+                <span>{t("hero.profile.ageValue", { age })}</span>
+              </li>
+              <li>{t("hero.profile.interests.computerScience")}</li>
+              <li>{t("hero.profile.interests.music")}</li>
+              <li>{t("hero.profile.interests.traveling")}</li>
+            </ul>
           </div>
 
           <div className="hero-side-panel">
-            <div className="hero-profile-card hand-drawn-card">
-              <div className="hero-fact-row">
-                <span className="hand-drawn-label hero-fact-label">{t("hero.profile.ageLabel")}</span>
-                <span className="hero-fact-value">{t("hero.profile.ageValue", { age })}</span>
-              </div>
-
-              <div className="hero-interest-block">
-                <h3 className="hand-drawn-label hero-panel-label">{t("hero.profile.interestsLabel")}</h3>
-                <ul className="hero-interest-list">
-                  <li>{t("hero.profile.interests.computerScience")}</li>
-                  <li>{t("hero.profile.interests.music")}</li>
-                  <li>{t("hero.profile.interests.traveling")}</li>
-                </ul>
-              </div>
-            </div>
-
             <div className="social-links-block">
-              <h3 className="hand-drawn-label hero-panel-label">{t("social.label")}</h3>
+              <h3 className="hero-panel-label">{t("social.label")}</h3>
               <SocialLinks />
             </div>
 
