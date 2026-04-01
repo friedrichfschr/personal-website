@@ -93,31 +93,36 @@ export function HeroSection({
           </div>
 
           <div className="hero-side-panel">
-            <div className="social-links-block">
+            <div className="hero-contact-block">
               <h3 className="hero-panel-label">{t("social.label")}</h3>
-              <SocialLinks />
             </div>
 
-            <div
-              className="cv-dropdown-wrap"
-              onMouseEnter={onCVHover}
-              onMouseLeave={onCVLeave}
-            >
-              <Button
-                ref={cvTriggerRef}
-                className="hand-drawn-button cv-trigger-button"
-                onPress={onCVClick}
-                aria-haspopup="menu"
-                aria-expanded={showCVOptions}
+            <div className="hero-contact-actions">
+              <div className="social-links-block">
+                <SocialLinks />
+              </div>
+
+              <div
+                className="cv-dropdown-wrap"
+                onMouseEnter={onCVHover}
+                onMouseLeave={onCVLeave}
               >
-                <span>{t("cv.button")}</span>
-                <span
-                  className={`cv-trigger-chevron ${showCVOptions ? "is-open" : ""}`}
-                  aria-hidden="true"
+                <Button
+                  ref={cvTriggerRef}
+                  className="hand-drawn-button cv-trigger-button"
+                  onPress={onCVClick}
+                  aria-haspopup="menu"
+                  aria-expanded={showCVOptions}
                 >
-                  ▾
-                </span>
-              </Button>
+                  <span>{t("cv.button")}</span>
+                  <span
+                    className={`cv-trigger-chevron ${showCVOptions ? "is-open" : ""}`}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

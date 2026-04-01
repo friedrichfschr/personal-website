@@ -19,7 +19,7 @@ const resources = {
         },
       },
       social: {
-        label: "need a website? have an idea you want to exchange? Connect with me:",
+        label: "Need a website? Have an idea you’d like to discuss? Let’s connect:",
       },
       cv: {
         button: "My CV",
@@ -82,7 +82,7 @@ const resources = {
         },
       },
       social: {
-        label: "need a website? have an idea you want to exchange? Connect with me:",
+        label: "Brauchst du eine Website? Hast du eine Idee, über die du sprechen möchtest? Vernetz dich mit mir:",
       },
       cv: {
         button: "Mein Lebenslauf",
@@ -145,7 +145,7 @@ const resources = {
         },
       },
       social: {
-        label: "need a website? have an idea you want to exchange? Connect with me:",
+        label: "Besoin d’un site web ? Une idée dont tu aimerais discuter ? Entrons en contact :",
       },
       cv: {
         button: "Mon CV",
@@ -208,7 +208,7 @@ const resources = {
         },
       },
       social: {
-        label: "need a website? have an idea you want to exchange? Connect with me:",
+        label: "需要一个网站？有个想交流的想法？来联系我吧：",
       },
       cv: {
         button: "我的简历",
