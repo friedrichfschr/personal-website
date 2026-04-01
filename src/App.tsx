@@ -225,7 +225,7 @@ function NowCard({
         <div className="now-card-meta-actions">
           {entry.isTranslated && (
             <span
-              className="now-card-language-pill"
+              className="now-card-language-pill is-translation-pill"
               aria-label={t("now.automaticTranslation")}
               title={t("now.automaticTranslation")}
             >
