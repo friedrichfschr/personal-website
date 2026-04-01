@@ -961,16 +961,16 @@ body::before {
   position: sticky;
   top: 0;
   z-index: 3;
-  margin: 0;
-  padding: 0 0.2rem 0 0;
+  margin: calc(var(--now-card-padding) * -1) calc(var(--now-card-padding) * -1) 0;
+  padding: var(--now-card-padding) var(--now-card-padding) 0.2rem;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(249, 246, 240, 0.94) 78%, transparent 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.985) 0%, rgba(249, 246, 240, 0.95) 78%, transparent 100%);
   backdrop-filter: none;
 }
 
 .dark .now-card-meta-row.is-expanded-header {
   background:
-    linear-gradient(180deg, rgba(43, 43, 43, 0.98) 0%, rgba(31, 31, 31, 0.94) 78%, transparent 100%);
+    linear-gradient(180deg, rgba(43, 43, 43, 0.985) 0%, rgba(31, 31, 31, 0.95) 78%, transparent 100%);
 }
 
 .now-card-meta-actions {
@@ -1045,7 +1045,7 @@ body::before {
   gap: 1rem;
   flex: 1 1 auto;
   min-height: 0;
-  transition: gap 0.38s ease, transform 0.42s ease, opacity 0.32s ease;
+  transition: gap 0.38s ease, transform 0.42s ease, opacity 0.32s ease, padding 0.34s ease;
 }
 
 .now-card-body-viewport {
@@ -1088,6 +1088,7 @@ body::before {
 
 .now-card.is-expanded.is-open .now-card-content {
   gap: 1rem;
+  padding-top: 0.95rem;
 }
 
 .now-card-image-wrap {
@@ -1397,22 +1398,6 @@ body::before {
 .now-card.is-hidden-placeholder {
   visibility: hidden;
   pointer-events: none;
-}
-
-.now-card.is-expanded::before {
-  content: "";
-  position: sticky;
-  top: 0;
-  display: block;
-  height: var(--now-card-padding);
-  margin: calc(var(--now-card-padding) * -1) calc(var(--now-card-padding) * -1) 0;
-  background: rgba(255, 255, 255, 0.985);
-  z-index: 2;
-  pointer-events: none;
-}
-
-.dark .now-card.is-expanded::before {
-  background: rgba(43, 43, 43, 0.985);
 }
 
 .now-card.is-expanded {
