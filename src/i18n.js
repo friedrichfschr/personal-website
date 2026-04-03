@@ -32,7 +32,7 @@ const resources = {
       },
       now: {
         kicker: "Now",
-        title: "What I’m into right now",
+        title: "What I’m up to right now",
         description: "",
         controlsLabel: "Now carousel controls",
         carouselLabel: "Now page entries",
