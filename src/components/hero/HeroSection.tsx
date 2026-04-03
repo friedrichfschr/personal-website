@@ -94,7 +94,7 @@ export function HeroSection({
 
           <div className="hero-side-panel">
             <div className="hero-contact-block">
-              <h3 className="hero-panel-label">Open for opportunities exchange of ideas: contact me here</h3>
+              <h3 className="hero-panel-label">{t("social.label")}</h3>
             </div>
 
             <div className="hero-contact-actions">
