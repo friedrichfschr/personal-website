@@ -82,7 +82,7 @@ const resources = {
         },
       },
       social: {
-        label: "Offen für Möglichkeiten oder den Austausch von Ideen. Kontaktiere mich hier:",
+        label: "Offen für Gelegenheiten und Ideenaustausch. Kontaktiere mich hier:",
       },
       cv: {
         button: "Lebenslauf",
