@@ -19,5 +19,5 @@ jobs:
           server: hosting236035.ae855.netcup.net
           username: ${{ secrets.FTP_NETCUP_USERNAME }}
           password: ${{ secrets.FTP_NETCUP_PASSWORD }}
-          server-dir: /friedrich-fischer.de
+          server-dir: /friedrich-fischer.de/
           local-dir: ./personal-website/
