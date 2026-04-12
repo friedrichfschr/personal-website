@@ -20,4 +20,4 @@ jobs:
           username: ${{ secrets.FTP_NETCUP_USERNAME }}
           password: ${{ secrets.FTP_NETCUP_PASSWORD }}
           server-dir: /friedrich-fischer.de/
-          local-dir: /friedrich-fischer.de/personal-website/
+          local-dir: /
