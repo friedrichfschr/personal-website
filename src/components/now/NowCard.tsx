@@ -29,8 +29,8 @@ export function NowCard({
   onExpand?: (entry: NowEntry, card: HTMLElement) => void;
   onClose?: () => void;
 }) {
-  const isHighlightEntry = entry.id === "openclaw";
-  const isLeftWrapImageEntry = entry.id === "cbyx-ppp";
+  const isHighlightEntry = entry.imageStyle === "highlight";
+  const isLeftWrapImageEntry = entry.imageStyle === "inline-flow-left";
   const { t, i18n } = useTranslation();
   const currentLocale = getResolvedUiLanguage(i18n.language, i18n.resolvedLanguage);
   const cardRef = useRef<HTMLElement | null>(null);

@@ -8,7 +8,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { getNowEntriesForLocale, nowEntries, type NowEntry } from "../../nowEntries";
+import { mapNowEntriesForLocale, nowEntries, type NowEntry, type NowEntryDefinition } from "../../nowEntries";
+import { fetchBlogPosts } from "../../lib/blogApi";
 import { getResolvedUiLanguage } from "../../utils/language";
 import { NowCard } from "./NowCard";
 import type { ExpandedCardRect, ExpandedCardState } from "./types";
@@ -33,10 +34,11 @@ export function NowSection() {
   const [isDragging, setIsDragging] = useState(false);
   const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(null);
   const [restoringEntryId, setRestoringEntryId] = useState<string | null>(null);
+  const [entryDefinitions, setEntryDefinitions] = useState<NowEntryDefinition[]>(nowEntries);
   const currentLocale = getResolvedUiLanguage(i18n.language, i18n.resolvedLanguage);
   const localizedNowEntries = useMemo(
-    () => getNowEntriesForLocale(currentLocale),
-    [currentLocale],
+    () => mapNowEntriesForLocale(entryDefinitions, currentLocale),
+    [currentLocale, entryDefinitions],
   );
 
   const totalCards = localizedNowEntries.length;
@@ -136,6 +138,27 @@ export function NowSection() {
   }, [getDisplayActiveIndex, getNearestIndex]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    (async () => {
+      try {
+        const blogPosts = await fetchBlogPosts(controller.signal);
+        if (blogPosts.length > 0) {
+          setEntryDefinitions(blogPosts);
+        }
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
+        console.error("Failed to load blog posts", error);
+      }
+    })();
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) {
       return;
@@ -150,6 +173,10 @@ export function NowSection() {
       window.removeEventListener("resize", syncCarouselState);
     };
   }, [syncCarouselState]);
+
+  useEffect(() => {
+    setCanScrollNext(totalCards > 1);
+  }, [totalCards]);
 
   useEffect(() => () => {
     clearAnimationTimers();
@@ -363,6 +390,10 @@ export function NowSection() {
       }
     }, 560);
   }, [clearAnimationTimers, expandedCard?.entryId]);
+
+  if (localizedNowEntries.length === 0) {
+    return null;
+  }
 
   return (
     <section className="now-section" aria-labelledby="now-section-title">

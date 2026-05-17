@@ -32,7 +32,8 @@ export type NowEntryDefinition = {
   date: string;
   accent: string;
   sourceLanguage: SupportedNowLocale;
-  content: Record<SupportedNowLocale, NowEntryContent>;
+  imageStyle?: "default" | "highlight" | "inline-flow-left";
+  content: Partial<Record<SupportedNowLocale, NowEntryContent>>;
 };
 
 export type NowEntry = {
@@ -40,6 +41,7 @@ export type NowEntry = {
   date: string;
   accent: string;
   sourceLanguage: SupportedNowLocale;
+  imageStyle: "default" | "highlight" | "inline-flow-left";
   isTranslated: boolean;
 } & NowEntryContent;
 
@@ -57,6 +59,7 @@ export const nowEntries: NowEntryDefinition[] = [
     date: "2026-03-31",
     accent: "#e74c3c",
     sourceLanguage: "en",
+    imageStyle: "highlight",
     content: {
       en: {
         title: "OpenClaw",
@@ -197,6 +200,7 @@ export const nowEntries: NowEntryDefinition[] = [
     date: "2025-06-13",
     accent: "#2563eb",
     sourceLanguage: "en",
+    imageStyle: "inline-flow-left",
     content: {
       en: {
         title: "CBYX Program",
@@ -378,17 +382,34 @@ export const nowEntries: NowEntryDefinition[] = [
   },
 ];
 
-export const getNowEntriesForLocale = (locale: SupportedNowLocale): NowEntry[] => (
-  nowEntries.map((entry) => {
-    const localizedContent = entry.content[locale] ?? entry.content[entry.sourceLanguage];
+export const mapNowEntriesForLocale = (
+  entries: NowEntryDefinition[],
+  locale: SupportedNowLocale,
+): NowEntry[] => (
+  entries
+    .map((entry) => {
+      const localizedContent =
+        entry.content[locale]
+        ?? entry.content[entry.sourceLanguage]
+        ?? Object.values(entry.content).find(Boolean);
 
-    return {
-      id: entry.id,
-      date: entry.date,
-      accent: entry.accent,
-      sourceLanguage: entry.sourceLanguage,
-      isTranslated: locale !== entry.sourceLanguage,
-      ...localizedContent,
-    };
-  })
+      if (!localizedContent) {
+        return null;
+      }
+
+      return {
+        id: entry.id,
+        date: entry.date,
+        accent: entry.accent,
+        sourceLanguage: entry.sourceLanguage,
+        imageStyle: entry.imageStyle ?? "default",
+        isTranslated: locale !== entry.sourceLanguage && Boolean(entry.content[locale]),
+        ...localizedContent,
+      };
+    })
+    .filter(Boolean) as NowEntry[]
+);
+
+export const getNowEntriesForLocale = (locale: SupportedNowLocale): NowEntry[] => (
+  mapNowEntriesForLocale(nowEntries, locale)
 );
