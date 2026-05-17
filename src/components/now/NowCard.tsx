@@ -40,7 +40,9 @@ export function NowCard({
   const expandableBlocks = entry.expandable?.blocks ?? [];
   const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
   const visibleBlocks = isExpanded ? [...entry.blocks, ...expandableBlocks] : entry.blocks;
-  const shouldShowReadMore = !isExpanded && isStaticBodyOverflowing && hasExpandedContent;
+  const shouldShowReadMore = !isExpanded && hasExpandedContent && (
+    isStaticBodyOverflowing || expandableBlocks.length > 0
+  );
   const isExpandableCard = !isExpanded && hasExpandedContent;
 
   const expandedStyle = useMemo(() => {
