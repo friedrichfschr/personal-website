@@ -136,17 +136,7 @@ export function NowCard({
         <div className="now-card-meta-leading">
           <span className="now-card-date">{formatNowDate(entry.date, currentLocale)}</span>
         </div>
-        <div className="now-card-meta-actions">
-          {entry.isTranslated && (
-            <span
-              className="now-card-language-pill is-translation-pill"
-              aria-label={t("now.automaticTranslation")}
-              title={t("now.automaticTranslation")}
-            >
-              {t("now.automaticTranslation")}
-            </span>
-          )}
-        </div>
+        <div className="now-card-meta-actions"></div>
         <div className="now-card-meta-trailing">
           {isExpanded ? (
             <button

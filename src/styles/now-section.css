@@ -519,6 +519,16 @@
   margin-top: 0.85rem;
 }
 
+.now-card-body>.now-card-markdown-heading,
+.now-card-body>.now-card-list {
+  margin-top: 0.9rem;
+}
+
+.now-card-body>.now-card-markdown-heading:first-child,
+.now-card-body>.now-card-list:first-child {
+  margin-top: 0;
+}
+
 .now-card-actions {
   display: flex;
   justify-content: flex-end;
@@ -532,8 +542,33 @@
   line-height: 1.72;
 }
 
+.now-card-markdown-heading {
+  font-family: "Space Mono", monospace;
+  color: var(--hand-drawn-primary);
+  font-size: 1.05rem;
+  line-height: 1.35;
+  margin-bottom: 0.45rem;
+}
+
+.now-card-list {
+  color: rgba(44, 62, 80, 0.88);
+  font-size: 1rem;
+  line-height: 1.66;
+  margin-bottom: 0;
+  padding-left: 1.25rem;
+}
+
+.now-card-list li+li {
+  margin-top: 0.35rem;
+}
+
 .dark .now-card-text {
   color: rgba(240, 240, 240, 0.86);
+}
+
+.dark .now-card-markdown-heading,
+.dark .now-card-list {
+  color: rgba(240, 240, 240, 0.88);
 }
 
 .now-card-text.is-quote {
