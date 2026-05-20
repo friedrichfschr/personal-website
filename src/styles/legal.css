@@ -1,0 +1,143 @@
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0 0;
+  color: rgba(44, 62, 80, 0.72);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.86rem;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.site-footer a,
+.legal-page a {
+  color: var(--hand-drawn-primary);
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible,
+.legal-back-link:hover,
+.legal-back-link:focus-visible {
+  color: var(--hand-drawn-accent);
+}
+
+.site-footer-credit {
+  margin: 0;
+  text-align: right;
+}
+
+.legal-page {
+  width: 100%;
+}
+
+.legal-back-link {
+  display: inline-flex;
+  margin-bottom: 1rem;
+  font-family: "Space Mono", monospace;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.legal-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid var(--hand-drawn-border);
+  border-radius: 24px;
+  box-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.1),
+    -1px -1px 0 rgba(255, 255, 255, 0.5) inset,
+    18px 24px 50px rgba(44, 62, 80, 0.08);
+  padding: clamp(1.35rem, 3vw, 2.4rem);
+}
+
+.legal-kicker {
+  margin: 0 0 0.65rem;
+  color: var(--hand-drawn-accent);
+  font-family: "Space Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.legal-card h1,
+.legal-card h2 {
+  color: var(--hand-drawn-primary);
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+}
+
+.legal-card h1 {
+  margin: 0 0 1.35rem;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.legal-card h2 {
+  margin: 0 0 0.55rem;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.legal-section {
+  max-width: 68ch;
+}
+
+.legal-section + .legal-section {
+  margin-top: 1.35rem;
+}
+
+.legal-card p {
+  margin: 0;
+  color: rgba(44, 62, 80, 0.86);
+  font-family: "IBM Plex Mono", monospace;
+  line-height: 1.72;
+}
+
+.legal-card p + p {
+  margin-top: 0.6rem;
+}
+
+.legal-note,
+.legal-placeholder {
+  display: inline-block;
+  border-left: 3px solid color-mix(in srgb, var(--hand-drawn-accent) 55%, transparent);
+  padding-left: 0.8rem;
+}
+
+.legal-note {
+  margin-bottom: 1.35rem !important;
+}
+
+.dark .site-footer,
+.dark .legal-card p {
+  color: rgba(240, 240, 240, 0.78);
+}
+
+.dark .site-footer a,
+.dark .legal-page a,
+.dark .legal-card h1,
+.dark .legal-card h2 {
+  color: rgba(240, 240, 240, 0.92);
+}
+
+.dark .legal-card {
+  background: rgba(42, 42, 42, 0.92);
+  border-color: #4a4a4a;
+}
+
+@media (max-width: 640px) {
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .site-footer-credit {
+    text-align: left;
+  }
+}

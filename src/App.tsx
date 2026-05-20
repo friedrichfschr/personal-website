@@ -10,13 +10,30 @@ import "./App.css";
 import { useTranslation } from "react-i18next";
 import { HeroSection } from "./components/hero/HeroSection";
 import { CvDownloadMenu } from "./components/hero/CvDownloadMenu";
+import { Footer } from "./components/legal/Footer";
+import { LegalPage } from "./components/legal/LegalPage";
 import { NowSection } from "./components/now/NowSection";
 import { type DropdownPosition, type UiLanguage } from "./constants/ui";
 import { downloadCV, type CVLanguage } from "./utils/cvDownload";
 import { getResolvedUiLanguage } from "./utils/language";
 
+type AppRoute = "home" | "privacy" | "impressum";
+
+function resolveRoute(pathname: string): AppRoute {
+  if (pathname === "/privacy") {
+    return "privacy";
+  }
+
+  if (pathname === "/impressum") {
+    return "impressum";
+  }
+
+  return "home";
+}
+
 function App() {
   const { i18n } = useTranslation();
+  const [route, setRoute] = useState<AppRoute>(() => resolveRoute(window.location.pathname));
   const [showCVOptions, setShowCVOptions] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition | null>(null);
@@ -106,6 +123,36 @@ function App() {
     i18n.changeLanguage(language);
   };
 
+  const handleNavigate = useCallback((path: string) => (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (
+      event.defaultPrevented ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    window.history.pushState({}, "", path);
+    setRoute(resolveRoute(path));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setRoute(resolveRoute(window.location.pathname));
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
   useEffect(() => {
     const hasTouchCapability = () =>
       typeof window !== "undefined" &&
@@ -172,26 +219,34 @@ function App() {
   return (
     <div className="hand-drawn-bg page-shell min-h-screen p-4 sm:p-8">
       <div className="hand-drawn-container page-stack max-w-5xl w-full mx-auto">
-        <HeroSection
-          currentLanguage={currentLanguage}
-          showCVOptions={showCVOptions}
-          cvTriggerRef={cvTriggerRef}
-          onChangeLanguage={changeLanguage}
-          onCVHover={handleCVHover}
-          onCVLeave={handleCVLeave}
-          onCVClick={handleCVClick}
-        />
+        {route === "home" ? (
+          <>
+            <HeroSection
+              currentLanguage={currentLanguage}
+              showCVOptions={showCVOptions}
+              cvTriggerRef={cvTriggerRef}
+              onChangeLanguage={changeLanguage}
+              onCVHover={handleCVHover}
+              onCVLeave={handleCVLeave}
+              onCVClick={handleCVClick}
+            />
 
-        <CvDownloadMenu
-          showCVOptions={showCVOptions}
-          dropdownPosition={dropdownPosition}
-          cvDropdownRef={cvDropdownRef}
-          onHover={handleCVHover}
-          onLeave={handleCVLeave}
-          onDownload={handleCVDownload}
-        />
+            <CvDownloadMenu
+              showCVOptions={showCVOptions}
+              dropdownPosition={dropdownPosition}
+              cvDropdownRef={cvDropdownRef}
+              onHover={handleCVHover}
+              onLeave={handleCVLeave}
+              onDownload={handleCVDownload}
+            />
 
-        <NowSection />
+            <NowSection />
+          </>
+        ) : (
+          <LegalPage page={route} locale={currentLanguage} onNavigate={handleNavigate} />
+        )}
+
+        <Footer locale={currentLanguage} onNavigate={handleNavigate} />
       </div>
     </div>
   );
