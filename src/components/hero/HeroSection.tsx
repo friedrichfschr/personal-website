@@ -1,72 +1,48 @@
 import { Button } from "@heroui/react";
-import type { MouseEvent as ReactMouseEvent, RefObject } from "react";
+import type { MouseEvent as ReactMouseEvent, ReactNode, RefObject } from "react";
 import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SocialLinks } from "./SocialLinks";
-import type { UiLanguage } from "../../constants/ui";
-
-const BIRTH_DATE = {
-  year: 2009,
-  monthIndex: 1,
-  day: 3,
-} as const;
-
-function getCurrentAge() {
-  const today = new Date();
-  let age = today.getFullYear() - BIRTH_DATE.year;
-  const hasHadBirthdayThisYear =
-    today.getMonth() > BIRTH_DATE.monthIndex ||
-    (today.getMonth() === BIRTH_DATE.monthIndex && today.getDate() >= BIRTH_DATE.day);
-
-  if (!hasHadBirthdayThisYear) {
-    age -= 1;
-  }
-
-  return age;
-}
 
 type HeroSectionProps = {
-  currentLanguage: string;
   showCVOptions: boolean;
   cvTriggerRef: RefObject<HTMLButtonElement | null>;
-  onChangeLanguage: (language: UiLanguage) => void;
   onCVHover: () => void;
   onCVLeave: (event: ReactMouseEvent<HTMLElement>) => void;
   onCVClick: () => void;
+  cvDropdownContent?: ReactNode;
 };
 
 export function HeroSection({
-  currentLanguage,
   showCVOptions,
   cvTriggerRef,
-  onChangeLanguage,
   onCVHover,
   onCVLeave,
   onCVClick,
+  cvDropdownContent,
 }: HeroSectionProps) {
   const { t } = useTranslation();
-  const age = getCurrentAge();
 
   return (
     <section className="intro-section">
-      <div className="top-toolbar">
-        <LanguageSwitcher
-          currentLanguage={currentLanguage}
-          onChange={onChangeLanguage}
-        />
-      </div>
-
       <div className="hero-shell">
         <div className="hero-copy-block">
           <h1 className="hand-drawn-title hero-title">{t("hero.title")}</h1>
-          <p className="hand-drawn-subtitle hero-subtitle">{t("hero.subtitle")}</p>
+          <p className="hand-drawn-subtitle hero-subtitle">
+            {t("hero.subtitle")}
+          </p>
         </div>
 
         <div className="hero-spotlight-card">
           <div className="hero-profile-row">
             <div className="hero-portrait-stack">
-              <span className="hero-orbit hero-orbit-one" aria-hidden="true"></span>
-              <span className="hero-orbit hero-orbit-two" aria-hidden="true"></span>
+              <span
+                className="hero-orbit hero-orbit-one"
+                aria-hidden="true"
+              ></span>
+              <span
+                className="hero-orbit hero-orbit-two"
+                aria-hidden="true"
+              ></span>
               <div className="hero-portrait-frame">
                 <img
                   draggable={false}
@@ -79,16 +55,25 @@ export function HeroSection({
             </div>
 
             <div className="hero-profile-details">
-              <p className="hero-profile-age">▸ {t("hero.profile.ageValue", { age })}</p>
-
-              <div className="hero-profile-interests">
-                <p className="hero-profile-list-label">{t("hero.profile.interestsLabel")}:</p>
-                <ul className="hero-profile-list" aria-label={t("hero.profile.interestsLabel")}>
-                  <li>{t("hero.profile.interests.computerScience")}</li>
-                  <li>{t("hero.profile.interests.music")}</li>
-                  <li>{t("hero.profile.interests.traveling")}</li>
-                </ul>
-              </div>
+              <p className="hero-profile-bio">
+                {t("hero.profile.bioStart")}
+                <span className="hero-defined-term">
+                  <span className="hero-defined-term-word">
+                    {t("hero.profile.philomath")}
+                  </span>
+                  <button
+                    type="button"
+                    className="hero-term-info"
+                    aria-label={t("hero.profile.philomathAria")}
+                  >
+                    i
+                    <span className="hero-term-tooltip" role="tooltip">
+                      {t("hero.profile.philomathDefinition")}
+                    </span>
+                  </button>
+                </span>
+                {t("hero.profile.bioEnd")}
+              </p>
             </div>
           </div>
 
@@ -119,9 +104,10 @@ export function HeroSection({
                     className={`cv-trigger-chevron ${showCVOptions ? "is-open" : ""}`}
                     aria-hidden="true"
                   >
-                    ▾
+                    v
                   </span>
                 </Button>
+                {cvDropdownContent}
               </div>
             </div>
           </div>

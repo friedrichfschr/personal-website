@@ -173,6 +173,151 @@
   width: 100%;
 }
 
+.cv-access-panel {
+  display: grid;
+  gap: 0.72rem;
+  width: 100%;
+}
+
+.cv-access-form,
+.cv-code-form {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cv-access-form label {
+  color: rgba(44, 62, 80, 0.72);
+  font-family: "Space Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.cv-code-details {
+  border-top: 1px dashed rgba(44, 62, 80, 0.16);
+  padding-top: 0.25rem;
+}
+
+.cv-code-details summary {
+  width: fit-content;
+  color: rgba(44, 62, 80, 0.42);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+
+.cv-code-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.cv-code-details summary:hover {
+  color: rgba(44, 62, 80, 0.62);
+}
+
+.cv-code-form {
+  margin-top: 0.55rem;
+}
+
+.cv-code-form label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cv-access-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+}
+
+.cv-access-row input {
+  min-width: 0;
+  padding: 0.62rem 0.75rem;
+  border: 2px solid rgba(44, 62, 80, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--hand-drawn-primary);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  box-shadow: 2px 2px 0 rgba(44, 62, 80, 0.08);
+}
+
+.cv-code-row input {
+  padding: 0.5rem 0.65rem;
+  border-width: 1.5px;
+  border-color: rgba(44, 62, 80, 0.24);
+  background: rgba(255, 255, 255, 0.42);
+  font-size: 0.76rem;
+}
+
+.cv-access-submit,
+.cv-code-submit {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 2.6rem;
+  padding-inline: 0.8rem;
+}
+
+.cv-code-submit {
+  min-height: 2.25rem;
+  border-width: 1.5px;
+  color: rgba(44, 62, 80, 0.78);
+  font-size: 0.76rem;
+  box-shadow: none;
+}
+
+.cv-access-message {
+  margin: 0;
+  color: rgba(44, 62, 80, 0.62);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.dark .cv-access-form label {
+  color: rgba(240, 240, 240, 0.75);
+}
+
+.dark .cv-code-details {
+  border-top-color: rgba(240, 240, 240, 0.14);
+}
+
+.dark .cv-code-details summary,
+.dark .cv-access-message {
+  color: rgba(240, 240, 240, 0.56);
+}
+
+.dark .cv-code-details summary:hover {
+  color: rgba(240, 240, 240, 0.76);
+}
+
+.dark .cv-access-row input {
+  border-color: rgba(240, 240, 240, 0.58);
+  background: rgba(33, 33, 33, 0.82);
+  color: rgba(240, 240, 240, 0.9);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.22);
+}
+
+.dark .cv-code-row input {
+  border-color: rgba(240, 240, 240, 0.3);
+  background: rgba(33, 33, 33, 0.5);
+}
+
+@media (max-width: 768px) {
+  .cv-access-row input {
+    font-size: 16px;
+  }
+
+  .cv-code-row input {
+    font-size: 16px;
+  }
+}
+
 .hero-profile-details {
   display: flex;
   flex-direction: column;
@@ -181,48 +326,101 @@
   min-width: 0;
 }
 
-.hero-profile-age {
+.hero-profile-bio {
+  max-width: 28rem;
   margin: 0;
-  color: rgba(44, 62, 80, 0.9);
+  color: rgba(44, 62, 80, 0.86);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.hero-defined-term {
+  position: relative;
+  display: inline-block;
+  padding-right: 0.46rem;
+  white-space: nowrap;
+}
+
+.hero-defined-term-word {
+  color: var(--hand-drawn-primary);
+}
+
+.hero-term-info {
+  position: absolute;
+  right: -0.08rem;
+  display: inline-grid;
+  place-items: center;
+  width: 0.68rem;
+  height: 0.68rem;
+  padding: 0;
+  border: 1.5px solid rgba(44, 62, 80, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.48);
+  color: rgba(44, 62, 80, 0.58);
+  font-family: "Space Mono", monospace;
+  font-size: 0.44rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+}
+
+.hero-term-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.45rem);
+  z-index: 30;
+  width: max-content;
+  max-width: min(15rem, 72vw);
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid rgba(44, 62, 80, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 12px 24px rgba(44, 62, 80, 0.14);
+  color: rgba(44, 62, 80, 0.88);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  transform: translate(-50%, 0.25rem);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: normal;
 }
 
-.dark .hero-profile-age {
-  color: rgba(240, 240, 240, 0.9);
+.hero-term-info:hover .hero-term-tooltip,
+.hero-term-info:focus-visible .hero-term-tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
-.hero-profile-interests {
-  display: grid;
-  gap: 0.35rem;
+.hero-term-info:focus-visible {
+  outline: 2px solid rgba(231, 76, 60, 0.45);
+  outline-offset: 2px;
 }
 
-.hero-profile-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  list-style: disc;
-  color: rgba(44, 62, 80, 0.82);
+.dark .hero-profile-bio {
+  color: rgba(240, 240, 240, 0.84);
 }
 
-.hero-profile-list > li::marker {
-  color: currentColor;
+.dark .hero-defined-term-word {
+  color: #f0f0f0;
 }
 
-.hero-profile-list li + li {
-  margin-top: 0.35rem;
+.dark .hero-term-info {
+  background: rgba(42, 42, 42, 0.5);
+  border-color: rgba(240, 240, 240, 0.32);
+  color: rgba(240, 240, 240, 0.56);
 }
 
-.dark .hero-profile-list {
-  color: rgba(240, 240, 240, 0.82);
-}
-
-.hero-profile-list-label {
-  margin: 0;
-  font-weight: 600;
-}
-
-.dark .hero-profile-list-label {
-  color: rgba(240, 240, 240, 0.92);
+.dark .hero-term-tooltip {
+  background: rgba(33, 33, 33, 0.98);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.34);
+  color: rgba(240, 240, 240, 0.88);
 }
 
 @media (min-width: 900px) {
@@ -253,14 +451,6 @@
   .hero-profile-details {
     grid-column: 3;
     grid-row: 1;
-  }
-
-  .hero-profile-age {
-    white-space: nowrap;
-  }
-
-  .hero-profile-interests {
-    gap: 0.25rem;
   }
 
 }
@@ -509,6 +699,11 @@
     gap: 0.55rem;
   }
 
+  .hero-profile-bio {
+    font-size: 0.88rem;
+    line-height: 1.58;
+  }
+
   .hero-portrait-stack {
     min-height: 14.5rem;
   }
@@ -551,7 +746,6 @@
     gap: 1rem;
   }
 
-  .hero-profile-list,
   .social-links-block {
     margin-inline: 0;
   }

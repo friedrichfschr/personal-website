@@ -8,31 +8,42 @@ const resources = {
         title: "Friedrich Fischer",
         subtitle: "Ambitious, Curious & Communicative",
         profile: {
-          ageLabel: "Age",
-          ageValue: "{{age}} years old",
-          interestsLabel: "Interests",
-          interests: {
-            computerScience: "Computer science",
-            music: "Music",
-            traveling: "Traveling",
-          },
+          bio: "I'm Friedrich Fischer, a 17-year-old globally minded philomath from Germany enthusiastic about computers, learning languages, and discovering the world.",
+          bioStart: "I'm Friedrich Fischer, a 17-year-old globally minded ",
+          philomath: "philomath",
+          philomathAria: "Definition of philomath",
+          philomathDefinition:
+            "A lover of learning; a person who enjoys acquiring knowledge.",
+          bioEnd:
+            " from Germany enthusiastic about computers, learning languages, and discovering the world.",
         },
       },
       social: {
         label: "Open for Opportunities or exchanging ideas. Contact me here:",
       },
       cv: {
-        button: "My CV",
+        button: "Get CV",
         label: "Choose a version",
         availableLabel: "Available in",
         languages: {
           en: "English",
           de: "Deutsch",
         },
+        request: {
+          emailLabel: "Get my CV sent to your Email",
+          emailPlaceholder: "your.email@example.com",
+          submit: "Request",
+          sending: "Sending",
+          codeLabel: "I have a Code",
+          codeInputLabel: "CV code",
+          codePlaceholder: "Enter CV code",
+          unlock: "Unlock",
+          checking: "Checking",
+        },
       },
       now: {
         kicker: "Now",
-        title: "What I’m up to right now",
+        title: "What I'm up to right now",
         description: "",
         controlsLabel: "Now carousel controls",
         carouselLabel: "Now page entries",
@@ -45,266 +56,24 @@ const resources = {
         close: "Close entry",
         modalKicker: "Expanded note",
       },
-      languageSwitcher: {
-        label: "Language selector",
-        options: {
-          en: "EN",
-          de: "DE",
-          fr: "FR",
-          zh: "ZH",
-        },
-        aria: {
-          en: "Switch language to English",
-          de: "Switch language to German",
-          fr: "Switch language to French",
-          zh: "Switch language to Mandarin Chinese",
-        },
-      },
       accessibility: {
         portraitAlt: "Portrait of Friedrich Fischer",
       },
     },
   },
-  de: {
-    translation: {
-      hero: {
-        title: "Friedrich Fischer",
-        subtitle: "Ehrgeizig, neugierig & kommunikativ",
-        profile: {
-          ageLabel: "Alter",
-          ageValue: "{{age}} Jahre alt",
-          interestsLabel: "Interessen",
-          interests: {
-            computerScience: "Informatik",
-            music: "Musik",
-            traveling: "Reisen",
-          },
-        },
-      },
-      social: {
-        label: "Offen für Gelegenheiten und Ideenaustausch. Kontaktiere mich hier:",
-      },
-      cv: {
-        button: "Lebenslauf",
-        label: "Version auswählen",
-        availableLabel: "Verfügbar in",
-        languages: {
-          en: "Englisch",
-          de: "Deutsch",
-        },
-      },
-      now: {
-        kicker: "Now",
-        title: "Was mich gerade beschäftigt",
-        description: "",
-        controlsLabel: "Steuerung für das Now-Karussell",
-        carouselLabel: "Now-Einträge",
-        progressLabel: "Navigation des Now-Karussells",
-        previous: "Vorherigen Eintrag anzeigen",
-        next: "Nächsten Eintrag anzeigen",
-        jumpTo: "Zu Eintrag {{index}} springen: {{title}}",
-        automaticTranslation: "Automatisch übersetzt",
-        readMore: "Mehr lesen",
-        close: "Eintrag schließen",
-        modalKicker: "Erweiterte Notiz",
-      },
-      languageSwitcher: {
-        label: "Sprachauswahl",
-        options: {
-          en: "EN",
-          de: "DE",
-          fr: "FR",
-          zh: "ZH",
-        },
-        aria: {
-          en: "Sprache auf Englisch umstellen",
-          de: "Sprache auf Deutsch umstellen",
-          fr: "Sprache auf Französisch umstellen",
-          zh: "Sprache auf Mandarin-Chinesisch umstellen",
-        },
-      },
-      accessibility: {
-        portraitAlt: "Porträt von Friedrich Fischer",
-      },
-    },
-  },
-  fr: {
-    translation: {
-      hero: {
-        title: "Friedrich Fischer",
-        subtitle: "Ambitieux, curieux & communicatif",
-        profile: {
-          ageLabel: "Âge",
-          ageValue: "{{age}} ans",
-          interestsLabel: "Centres d’intérêt",
-          interests: {
-            computerScience: "Informatique",
-            music: "Musique",
-            traveling: "Voyages",
-          },
-        },
-      },
-      social: {
-        label: "Ouvert aux opportunités ou à l’échange d’idées. Contacte-moi ici :",
-      },
-      cv: {
-        button: "Mon CV",
-        label: "Choisir une version",
-        availableLabel: "Disponible en",
-        languages: {
-          en: "Anglais",
-          de: "Allemand",
-        },
-      },
-      now: {
-        kicker: "Now",
-        title: "Ce qui m’occupe en ce moment",
-        description: "",
-        controlsLabel: "Contrôles du carrousel Now",
-        carouselLabel: "Entrées de la page Now",
-        progressLabel: "Navigation du carrousel Now",
-        previous: "Afficher l’entrée précédente",
-        next: "Afficher l’entrée suivante",
-        jumpTo: "Aller à l’entrée {{index}} : {{title}}",
-        automaticTranslation: "Traduit automatiquement",
-        readMore: "Lire la suite",
-        close: "Fermer l’entrée",
-        modalKicker: "Note développée",
-      },
-      languageSwitcher: {
-        label: "Sélecteur de langue",
-        options: {
-          en: "EN",
-          de: "DE",
-          fr: "FR",
-          zh: "ZH",
-        },
-        aria: {
-          en: "Passer la langue en anglais",
-          de: "Passer la langue en allemand",
-          fr: "Passer la langue en français",
-          zh: "Passer la langue en chinois mandarin",
-        },
-      },
-      accessibility: {
-        portraitAlt: "Portrait de Friedrich Fischer",
-      },
-    },
-  },
-  zh: {
-    translation: {
-      hero: {
-        title: "Friedrich Fischer",
-        subtitle: "有抱负、好奇且善于沟通",
-        profile: {
-          ageLabel: "年龄",
-          ageValue: "{{age}} 岁",
-          interestsLabel: "兴趣",
-          interests: {
-            computerScience: "计算机科学",
-            music: "音乐",
-            traveling: "旅行",
-          },
-        },
-      },
-      social: {
-        label: "欢迎合作机会或想法交流。在这里联系我：",
-      },
-      cv: {
-        button: "我的简历",
-        label: "选择版本",
-        availableLabel: "可选语言",
-        languages: {
-          en: "英语",
-          de: "德语",
-        },
-      },
-      now: {
-        kicker: "Now",
-        title: "我最近在折腾什么",
-        description: "",
-        controlsLabel: "Now 轮播控制",
-        carouselLabel: "Now 页面条目",
-        progressLabel: "Now 轮播导航",
-        previous: "显示上一条",
-        next: "显示下一条",
-        jumpTo: "跳转到第 {{index}} 条：{{title}}",
-        automaticTranslation: "自动翻译",
-        readMore: "阅读更多",
-        close: "关闭条目",
-        modalKicker: "展开笔记",
-      },
-      languageSwitcher: {
-        label: "语言选择器",
-        options: {
-          en: "EN",
-          de: "DE",
-          fr: "FR",
-          zh: "ZH",
-        },
-        aria: {
-          en: "切换语言为英语",
-          de: "切换语言为德语",
-          fr: "切换语言为法语",
-          zh: "切换语言为普通话中文",
-        },
-      },
-      accessibility: {
-        portraitAlt: "Friedrich Fischer 的肖像",
-      },
-    },
-  },
-};
-
-const storageKey = "preferred-language";
-const supportedLanguages = ["en", "de", "fr", "zh"];
-
-const normalizeLanguage = (language) => language?.split("-")[0];
-
-const detectLanguage = () => {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-
-  const storedLanguage = normalizeLanguage(
-    window.localStorage.getItem(storageKey),
-  );
-  if (storedLanguage && supportedLanguages.includes(storedLanguage)) {
-    return storedLanguage;
-  }
-
-  const browserLanguages = [
-    ...(window.navigator.languages ?? []),
-    window.navigator.language,
-  ]
-    .map(normalizeLanguage)
-    .filter(Boolean);
-
-  const preferredLanguage = browserLanguages.find((language) =>
-    supportedLanguages.includes(language),
-  );
-
-  return preferredLanguage ?? "en";
 };
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: detectLanguage(),
+  lng: "en",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,
   },
 });
 
-i18n.on("languageChanged", (language) => {
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(storageKey, language);
-    document.documentElement.lang = language;
-  }
-});
-
 if (typeof document !== "undefined") {
-  document.documentElement.lang = i18n.language;
+  document.documentElement.lang = "en";
 }
 
 export default i18n;

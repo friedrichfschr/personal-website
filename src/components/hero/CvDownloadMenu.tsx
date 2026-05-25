@@ -1,65 +1,96 @@
 import { Button } from "@heroui/react";
 import type { CSSProperties, MouseEvent as ReactMouseEvent, RefObject } from "react";
 import { useTranslation } from "react-i18next";
-import type { CVLanguage } from "../../utils/cvDownload";
 import type { DropdownPosition } from "../../constants/ui";
+import { buildCvDownloadUrl, type CvDocument } from "../../lib/cvApi";
+import { cvLanguageLabels } from "../../utils/cvDownload";
+import { CvAccessGate } from "./CvAccessGate";
 
 type CvDownloadMenuProps = {
   showCVOptions: boolean;
   dropdownPosition: DropdownPosition | null;
   cvDropdownRef: RefObject<HTMLDivElement | null>;
+  cvCode: string;
+  documents: CvDocument[];
+  cvAccessStatus: "checking" | "locked" | "invalid" | "request-sent";
+  cvAccessMessage: string;
   onHover: () => void;
   onLeave: (event: ReactMouseEvent<HTMLElement>) => void;
-  onDownload: (language: CVLanguage) => void;
+  onDownload: () => void;
+  onCvEmailRequest: (email: string) => Promise<void>;
+  onCvCodeSubmit: (code: string) => Promise<void>;
+  inline?: boolean;
+  isClosing?: boolean;
 };
 
 export function CvDownloadMenu({
   showCVOptions,
   dropdownPosition,
   cvDropdownRef,
+  cvCode,
+  documents,
+  cvAccessStatus,
+  cvAccessMessage,
   onHover,
   onLeave,
   onDownload,
+  onCvEmailRequest,
+  onCvCodeSubmit,
+  inline = false,
+  isClosing = false,
 }: CvDownloadMenuProps) {
   const { t } = useTranslation();
 
-  if (!showCVOptions || !dropdownPosition) {
+  if (!showCVOptions || (!inline && !dropdownPosition)) {
     return null;
   }
+
+  const dropdownStyle = inline
+    ? ({ "--dropdown-arrow-left": "50%" } as CSSProperties)
+    : ({
+      top: `${dropdownPosition?.top}px`,
+      left: `${dropdownPosition?.left}px`,
+      width: `${dropdownPosition?.width}px`,
+      "--dropdown-arrow-left": `${dropdownPosition?.arrowLeft}px`,
+    } as CSSProperties);
 
   return (
     <div
       ref={cvDropdownRef}
-      className="hand-drawn-dropdown-menu cv-portal-dropdown"
+      className={`hand-drawn-dropdown-menu ${inline ? "cv-inline-dropdown" : "cv-portal-dropdown"} ${isClosing ? "closing" : ""}`}
       aria-label={t("cv.label")}
       role="menu"
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      style={{
-        top: `${dropdownPosition.top}px`,
-        left: `${dropdownPosition.left}px`,
-        width: `${dropdownPosition.width}px`,
-        "--dropdown-arrow-left": `${dropdownPosition.arrowLeft}px`,
-      } as CSSProperties}
+      style={dropdownStyle}
     >
       <div className="hand-drawn-dropdown-arrow"></div>
-      <span className="hand-drawn-dropdown-label">{t("cv.availableLabel")}</span>
-      <div className="cv-dropdown-actions">
-        <Button
-          size="sm"
-          className="hand-drawn-button-secondary cv-option-button"
-          onPress={() => onDownload("en")}
-        >
-          {t("cv.languages.en")}
-        </Button>
-        <Button
-          size="sm"
-          className="hand-drawn-button-secondary cv-option-button"
-          onPress={() => onDownload("de")}
-        >
-          {t("cv.languages.de")}
-        </Button>
-      </div>
+      {documents.length > 0 ? (
+        <>
+          <span className="hand-drawn-dropdown-label">{t("cv.availableLabel")}</span>
+          <div className="cv-dropdown-actions">
+            {documents.map((document) => (
+              <Button
+                key={document.language}
+                as="a"
+                href={buildCvDownloadUrl(document.language, cvCode)}
+                size="sm"
+                className="hand-drawn-button-secondary cv-option-button"
+                onPress={onDownload}
+              >
+                {cvLanguageLabels[document.language] || document.language.toUpperCase()}
+              </Button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <CvAccessGate
+          status={cvAccessStatus}
+          message={cvAccessMessage}
+          onEmailRequest={onCvEmailRequest}
+          onCodeSubmit={onCvCodeSubmit}
+        />
+      )}
     </div>
   );
 }

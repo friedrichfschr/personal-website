@@ -1,4 +1,4 @@
-export type SupportedNowLocale = "en" | "de" | "fr" | "zh";
+export type SupportedNowLocale = "en";
 
 export type NowRichTextSpan = {
   text: string;
@@ -59,14 +59,12 @@ export const nowEntries: NowEntryDefinition[] = [];
 
 export const mapNowEntriesForLocale = (
   entries: NowEntryDefinition[],
-  locale: SupportedNowLocale,
 ): NowEntry[] => (
   entries
     .map((entry) => {
       const localizedContent =
-        entry.content[locale]
+        entry.content.en
         ?? entry.content.default
-        ?? entry.content.en
         ?? Object.values(entry.content).find(Boolean);
 
       if (!localizedContent) {
@@ -84,6 +82,6 @@ export const mapNowEntriesForLocale = (
     .filter(Boolean) as NowEntry[]
 );
 
-export const getNowEntriesForLocale = (locale: SupportedNowLocale): NowEntry[] => (
-  mapNowEntriesForLocale(nowEntries, locale)
+export const getNowEntriesForLocale = (): NowEntry[] => (
+  mapNowEntriesForLocale(nowEntries)
 );

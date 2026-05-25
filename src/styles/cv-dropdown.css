@@ -143,7 +143,12 @@
 }
 
 .hand-drawn-dropdown-menu.closing {
-  animation: slideOutShrinkUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  animation: dropdownFloatOut 0.18s ease-in forwards;
+}
+
+.cv-inline-dropdown.closing {
+  animation: inlineDropdownFloatOut 0.18s ease-in forwards;
 }
 
 .dark .hand-drawn-dropdown-menu {
@@ -173,6 +178,34 @@
 .cv-portal-dropdown {
   position: fixed;
   inset: auto auto auto 0;
+}
+
+.cv-dropdown-wrap {
+  position: relative;
+}
+
+.cv-inline-dropdown {
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: calc(100% + 0.78rem);
+  width: min(340px, calc(100vw - 32px));
+  transform: none;
+  overflow: visible;
+}
+
+.cv-inline-dropdown .hand-drawn-dropdown-arrow {
+  left: auto;
+  right: 1.75rem;
+  top: auto;
+  bottom: -10px;
+  transform: none;
+  border-top: 10px solid rgba(44, 62, 80, 0.92);
+  border-bottom: 0;
+}
+
+.dark .cv-inline-dropdown .hand-drawn-dropdown-arrow {
+  border-top-color: #5a5a5a;
 }
 
 .cv-dropdown-actions {
@@ -207,15 +240,27 @@
   }
 }
 
-@keyframes slideOutShrinkUp {
+@keyframes dropdownFloatOut {
   from {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateY(0) scale(1);
   }
 
   to {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.8);
+    transform: translateY(-6px) scale(0.96);
+  }
+}
+
+@keyframes inlineDropdownFloatOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
   }
 }
 
@@ -261,11 +306,38 @@
     min-width: 0;
     display: flex;
     justify-content: center;
+    position: relative;
+  }
+
+  .cv-inline-dropdown {
+    right: 0;
   }
 
   .hand-drawn-dropdown-label {
     white-space: normal;
     text-align: center;
+  }
+
+  .cv-portal-dropdown {
+    transform: translateY(calc(-100% - 0.65rem));
+    max-height: min(72vh, 28rem);
+    width: min(340px, calc(100vw - 32px));
+    overflow: visible;
+    overscroll-behavior: contain;
+    border-radius: 18px;
+    padding: 0.9rem;
+  }
+
+  .cv-portal-dropdown .hand-drawn-dropdown-arrow {
+    top: auto;
+    bottom: -10px;
+    border-top: 10px solid rgba(44, 62, 80, 0.92);
+    border-bottom: 0;
+    z-index: 1;
+  }
+
+  .dark .cv-portal-dropdown .hand-drawn-dropdown-arrow {
+    border-top-color: #5a5a5a;
   }
 }
 

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import type { NowEntry } from "../../nowEntries";
-import { getResolvedUiLanguage, formatNowDate } from "../../utils/language";
+import { formatNowDate } from "../../utils/language";
 import type { ExpandedCardState } from "./types";
 import { renderRichBlocks } from "./richText";
 
@@ -31,8 +31,7 @@ export function NowCard({
 }) {
   const isHighlightEntry = entry.imageStyle === "highlight";
   const isLeftWrapImageEntry = entry.imageStyle === "inline-flow-left";
-  const { t, i18n } = useTranslation();
-  const currentLocale = getResolvedUiLanguage(i18n.language, i18n.resolvedLanguage);
+  const { t } = useTranslation();
   const cardRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const staticBodyRef = useRef<HTMLDivElement | null>(null);
@@ -134,7 +133,7 @@ export function NowCard({
     >
       <div className={`now-card-meta-row  ${isExpanded ? "is-expanded-header" : ""} `} style={{ paddingTop: "1rem" }}>
         <div className="now-card-meta-leading">
-          <span className="now-card-date">{formatNowDate(entry.date, currentLocale)}</span>
+          <span className="now-card-date">{formatNowDate(entry.date)}</span>
         </div>
         <div className="now-card-meta-actions"></div>
         <div className="now-card-meta-trailing">

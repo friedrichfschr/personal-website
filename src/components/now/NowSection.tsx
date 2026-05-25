@@ -10,12 +10,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { mapNowEntriesForLocale, nowEntries, type NowEntry, type NowEntryDefinition } from "../../nowEntries";
 import { fetchBlogPosts } from "../../lib/blogApi";
-import { getResolvedUiLanguage } from "../../utils/language";
 import { NowCard } from "./NowCard";
 import type { ExpandedCardRect, ExpandedCardState } from "./types";
 
 export function NowSection() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const carouselRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<{
     pointerId: number;
@@ -35,10 +34,9 @@ export function NowSection() {
   const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(null);
   const [restoringEntryId, setRestoringEntryId] = useState<string | null>(null);
   const [entryDefinitions, setEntryDefinitions] = useState<NowEntryDefinition[]>(nowEntries);
-  const currentLocale = getResolvedUiLanguage(i18n.language, i18n.resolvedLanguage);
   const localizedNowEntries = useMemo(
-    () => mapNowEntriesForLocale(entryDefinitions, currentLocale),
-    [currentLocale, entryDefinitions],
+    () => mapNowEntriesForLocale(entryDefinitions),
+    [entryDefinitions],
   );
 
   const totalCards = localizedNowEntries.length;
