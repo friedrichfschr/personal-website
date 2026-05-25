@@ -215,9 +215,13 @@
 }
 
 .cv-option-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 2.8rem;
   border-radius: 14px;
+  text-decoration: none;
 }
 
 .cv-dropdown-actions > :nth-child(1) {

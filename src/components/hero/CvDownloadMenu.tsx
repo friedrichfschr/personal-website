@@ -1,4 +1,3 @@
-import { Button } from "@heroui/react";
 import type { CSSProperties, MouseEvent as ReactMouseEvent, RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import type { DropdownPosition } from "../../constants/ui";
@@ -70,16 +69,16 @@ export function CvDownloadMenu({
           <span className="hand-drawn-dropdown-label">{t("cv.availableLabel")}</span>
           <div className="cv-dropdown-actions">
             {documents.map((document) => (
-              <Button
+              <a
                 key={document.language}
-                as="a"
                 href={buildCvDownloadUrl(document.language, cvCode)}
-                size="sm"
                 className="hand-drawn-button-secondary cv-option-button"
-                onPress={onDownload}
+                target="_blank"
+                rel="noreferrer"
+                onClick={onDownload}
               >
                 {cvLanguageLabels[document.language] || document.language.toUpperCase()}
-              </Button>
+              </a>
             ))}
           </div>
         </>
