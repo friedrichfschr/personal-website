@@ -1,6 +1,7 @@
 import { Suspense, useRef } from 'react';
 import RealityPianoScene from './components/RealityPianoScene';
 import SongPlayer from './components/SongPlayer';
+import { NowSection } from './components/now/NowSection';
 
 function App() {
   const songNotesRef = useRef(new Map());
@@ -40,6 +41,10 @@ function App() {
           Click or tap the piano keys to play them. You can also use your
           keyboard: Z X C V B N M and Q W E R T Y U.
         </p>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8">
+        <NowSection />
       </section>
     </main>
   );

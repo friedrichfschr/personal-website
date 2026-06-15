@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .tmp-3d-piano-player/
+.tmp-personal-website-source/
 
 .env
 .env.*
