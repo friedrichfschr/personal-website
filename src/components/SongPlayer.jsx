@@ -14,9 +14,10 @@ function midiNoteToKeyName(midiNote) {
   return `_${midiNote - pianoSceneConfig.audio.baseMidiOffset}`;
 }
 
-export default function SongPlayer({ activeNotesRef }) {
+export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }) {
   const songs = pianoSceneConfig.songs;
-  const [selectedSongId, setSelectedSongId] = useState(songs[0]?.id);
+  const defaultSongId = songs.find((song) => song.id === 'clair-de-lune')?.id ?? songs[0]?.id;
+  const [selectedSongId, setSelectedSongId] = useState(defaultSongId);
   const [notes, setNotes] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -70,7 +71,7 @@ export default function SongPlayer({ activeNotesRef }) {
   }, [activeNotesRef, selectedSong]);
 
   useEffect(() => {
-    if (!selectedSong || autoplayAttemptedRef.current) return undefined;
+    if (!autoPlayWhenReady || !selectedSong || autoplayAttemptedRef.current) return undefined;
 
     const timeoutId = window.setTimeout(async () => {
       const audio = audioRef.current;
@@ -84,10 +85,10 @@ export default function SongPlayer({ activeNotesRef }) {
       } catch {
         // Browsers may block autoplay with sound until the first user gesture.
       }
-    }, 3200);
+    }, 650);
 
     return () => window.clearTimeout(timeoutId);
-  }, [selectedSong]);
+  }, [autoPlayWhenReady, selectedSong]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -134,8 +135,12 @@ export default function SongPlayer({ activeNotesRef }) {
     if (!audio || !selectedSong) return;
 
     if (audio.paused) {
-      await audio.play();
-      setIsPlaying(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch {
+        setIsPlaying(false);
+      }
     } else {
       audio.pause();
       setIsPlaying(false);

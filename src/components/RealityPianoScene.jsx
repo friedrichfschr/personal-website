@@ -373,7 +373,7 @@ function ResponsiveCamera() {
   return null;
 }
 
-export default function RealityPianoScene({ songNotesRef }) {
+export default function RealityPianoScene({ songNotesRef, onSceneReady }) {
   const { atmosphere } = pianoSceneConfig;
 
   return (
@@ -390,6 +390,9 @@ export default function RealityPianoScene({ songNotesRef }) {
       onCreated={({ gl }) => {
         gl.shadowMap.enabled = true;
         gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        window.requestAnimationFrame(() => {
+          onSceneReady?.();
+        });
       }}
     >
       <ResponsiveCamera />
