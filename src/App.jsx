@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import RealityPianoScene from './components/RealityPianoScene';
 import SongPlayer from './components/SongPlayer';
 import { NowSection } from './components/now/NowSection';
@@ -6,10 +6,44 @@ import { SocialLinks } from './components/SocialLinks';
 import { PianoSceneLoader } from './components/PianoSceneLoader';
 import { CvButton } from './components/CvButton';
 import { AmbientParticles } from './components/AmbientParticles';
+import { Footer } from './components/Footer';
+import { LegalPage } from './components/LegalPage';
+
+function getCurrentPage() {
+  if (window.location.pathname === '/privacy') return 'privacy';
+  if (window.location.pathname === '/impressum') return 'impressum';
+  return 'home';
+}
 
 function App() {
   const songNotesRef = useRef(new Map());
   const [isPianoSceneReady, setIsPianoSceneReady] = useState(false);
+  const [page, setPage] = useState(getCurrentPage);
+
+  useEffect(() => {
+    function handlePopState() {
+      setPage(getCurrentPage());
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleNavigate = (path) => (event) => {
+    event.preventDefault();
+    window.history.pushState({}, '', path);
+    setPage(getCurrentPage());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (page === 'privacy' || page === 'impressum') {
+    return (
+      <LegalPage
+        page={page}
+        onNavigate={handleNavigate}
+      />
+    );
+  }
 
   return (
     <main className="site-shell min-h-screen bg-[#070b14] text-paper">
@@ -49,6 +83,10 @@ function App() {
       <section className="now-content mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8">
         <NowSection />
       </section>
+
+      <div className="site-footer-wrap mx-auto w-full max-w-6xl px-5 pb-8 sm:px-8">
+        <Footer onNavigate={handleNavigate} />
+      </div>
     </main>
   );
 }

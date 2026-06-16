@@ -1,3 +1,5 @@
+import { Footer } from './Footer';
+
 const email = 'friedrich.riesel@outlook.de';
 
 const privacySections = [
@@ -101,12 +103,7 @@ export function LegalPage({ page, onNavigate }) {
         <article className="legal-card" aria-labelledby="legal-title">
           <p className="legal-kicker">{isPrivacy ? 'Privacy Policy' : 'Legal Notice'}</p>
           <h1 id="legal-title">{isPrivacy ? 'Privacy Policy' : 'Impressum'}</h1>
-          {isPrivacy ? (
-            <p className="legal-note">
-              This page is a practical draft based on the existing website text. Please review it
-              before treating it as final legal advice.
-            </p>
-          ) : null}
+
           {sections.map((section) => (
             <section className="legal-section" key={section.title}>
               <h2>{section.title}</h2>
@@ -114,6 +111,7 @@ export function LegalPage({ page, onNavigate }) {
             </section>
           ))}
         </article>
+        <Footer onNavigate={onNavigate} />
       </section>
     </main>
   );

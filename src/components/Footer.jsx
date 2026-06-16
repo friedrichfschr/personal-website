@@ -11,7 +11,7 @@ export function Footer({ onNavigate }) {
           Impressum
         </a>
       </nav>
-      <p className="site-footer-credit">Copyright {currentYear} | Friedrich Fischer</p>
+      <p className="site-footer-credit">© {currentYear} | Friedrich Fischer</p>
     </footer>
   );
 }

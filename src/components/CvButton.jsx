@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   buildCvDownloadUrl,
   cvLanguageLabels,
@@ -18,11 +19,16 @@ export function CvButton() {
   const [codeInput, setCodeInput] = useState('');
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
   const [isSubmittingCode, setIsSubmittingCode] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState(null);
   const wrapperRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handlePointerDown = (event) => {
-      if (!wrapperRef.current?.contains(event.target)) {
+      if (
+        !wrapperRef.current?.contains(event.target) &&
+        !dropdownRef.current?.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -30,6 +36,43 @@ export function CvButton() {
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setDropdownPosition(null);
+      return undefined;
+    }
+
+    const updateDropdownPosition = () => {
+      const trigger = wrapperRef.current;
+      if (!trigger) return;
+
+      const rect = trigger.getBoundingClientRect();
+      const gutter = 16;
+      const width = Math.min(336, window.innerWidth - gutter * 2);
+      const left = Math.min(
+        Math.max(rect.right - width, gutter),
+        window.innerWidth - width - gutter,
+      );
+      const top = Math.min(rect.bottom + 12, window.innerHeight - gutter);
+
+      setDropdownPosition({
+        left,
+        top,
+        width,
+        arrowLeft: Math.min(Math.max(rect.left + rect.width / 2 - left, 22), width - 22),
+      });
+    };
+
+    updateDropdownPosition();
+    window.addEventListener('resize', updateDropdownPosition);
+    window.addEventListener('scroll', updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener('resize', updateDropdownPosition);
+      window.removeEventListener('scroll', updateDropdownPosition, true);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     const search = new URLSearchParams(window.location.search);
@@ -116,6 +159,90 @@ export function CvButton() {
     window.history.replaceState({}, '', nextUrl);
   };
 
+  const dropdown = isOpen && dropdownPosition ? (
+    <div
+      ref={dropdownRef}
+      className="cv-dropdown-menu is-portal"
+      role="menu"
+      aria-label="Choose a CV version"
+      style={{
+        left: `${dropdownPosition.left}px`,
+        top: `${dropdownPosition.top}px`,
+        width: `${dropdownPosition.width}px`,
+        '--dropdown-arrow-left': `${dropdownPosition.arrowLeft}px`,
+      }}
+    >
+      <div className="cv-dropdown-arrow" aria-hidden="true" />
+      {documents.length > 0 ? (
+        <>
+          <span className="cv-dropdown-label">Available in</span>
+          <div className="cv-dropdown-actions">
+            {documents.map((document) => (
+              <a
+                key={document.language}
+                href={buildCvDownloadUrl(document.language, cvCode)}
+                className="cv-option-button"
+                target="_blank"
+                rel="noreferrer"
+                onClick={handleDownload}
+              >
+                {cvLanguageLabels[document.language] || document.language.toUpperCase()}
+              </a>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="cv-access-panel" aria-live="polite">
+          <form className="cv-access-form" onSubmit={handleEmailSubmit}>
+            <label htmlFor="cv-request-email">Get my CV sent to your Email</label>
+            <div className="cv-access-row">
+              <input
+                id="cv-request-email"
+                type="email"
+                value={email}
+                placeholder="your.email@example.com"
+                required
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <button
+                className="cv-access-submit"
+                type="submit"
+                disabled={isSubmittingEmail || status === 'checking'}
+              >
+                {isSubmittingEmail ? 'Sending' : 'Request'}
+              </button>
+            </div>
+          </form>
+
+          <details className="cv-code-details">
+            <summary>I have a Code</summary>
+            <form className="cv-code-form" onSubmit={handleCodeSubmit}>
+              <label htmlFor="cv-access-code">CV code</label>
+              <div className="cv-access-row cv-code-row">
+                <input
+                  id="cv-access-code"
+                  type="text"
+                  value={codeInput}
+                  placeholder="Enter CV code"
+                  onChange={(event) => setCodeInput(event.target.value)}
+                />
+                <button
+                  className="cv-code-submit"
+                  type="submit"
+                  disabled={isSubmittingCode || status === 'checking'}
+                >
+                  {isSubmittingCode || status === 'checking' ? 'Checking' : 'Unlock'}
+                </button>
+              </div>
+            </form>
+          </details>
+
+          {message ? <p className="cv-access-message">{message}</p> : null}
+        </div>
+      )}
+    </div>
+  ) : null;
+
   return (
     <div className="cv-button-wrap" ref={wrapperRef}>
       <button
@@ -131,78 +258,7 @@ export function CvButton() {
         </span>
       </button>
 
-      {isOpen ? (
-        <div className="cv-dropdown-menu" role="menu" aria-label="Choose a CV version">
-          <div className="cv-dropdown-arrow" aria-hidden="true" />
-          {documents.length > 0 ? (
-            <>
-              <span className="cv-dropdown-label">Available in</span>
-              <div className="cv-dropdown-actions">
-                {documents.map((document) => (
-                  <a
-                    key={document.language}
-                    href={buildCvDownloadUrl(document.language, cvCode)}
-                    className="cv-option-button"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={handleDownload}
-                  >
-                    {cvLanguageLabels[document.language] || document.language.toUpperCase()}
-                  </a>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="cv-access-panel" aria-live="polite">
-              <form className="cv-access-form" onSubmit={handleEmailSubmit}>
-                <label htmlFor="cv-request-email">Get my CV sent to your Email</label>
-                <div className="cv-access-row">
-                  <input
-                    id="cv-request-email"
-                    type="email"
-                    value={email}
-                    placeholder="your.email@example.com"
-                    required
-                    onChange={(event) => setEmail(event.target.value)}
-                  />
-                  <button
-                    className="cv-access-submit"
-                    type="submit"
-                    disabled={isSubmittingEmail || status === 'checking'}
-                  >
-                    {isSubmittingEmail ? 'Sending' : 'Request'}
-                  </button>
-                </div>
-              </form>
-
-              <details className="cv-code-details">
-                <summary>I have a Code</summary>
-                <form className="cv-code-form" onSubmit={handleCodeSubmit}>
-                  <label htmlFor="cv-access-code">CV code</label>
-                  <div className="cv-access-row cv-code-row">
-                    <input
-                      id="cv-access-code"
-                      type="text"
-                      value={codeInput}
-                      placeholder="Enter CV code"
-                      onChange={(event) => setCodeInput(event.target.value)}
-                    />
-                    <button
-                      className="cv-code-submit"
-                      type="submit"
-                      disabled={isSubmittingCode || status === 'checking'}
-                    >
-                      {isSubmittingCode || status === 'checking' ? 'Checking' : 'Unlock'}
-                    </button>
-                  </div>
-                </form>
-              </details>
-
-              {message ? <p className="cv-access-message">{message}</p> : null}
-            </div>
-          )}
-        </div>
-      ) : null}
+      {dropdown ? createPortal(dropdown, document.body) : null}
     </div>
   );
 }

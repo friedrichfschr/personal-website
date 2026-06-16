@@ -221,20 +221,23 @@ export function NowSection() {
   const getExpandedTargetRect = useCallback(() => {
     const isMobile = window.innerWidth <= 768;
     const gutter = isMobile ? 8 : 14;
-    const top = isMobile ? 12 : Math.min(Math.max(window.innerHeight * 0.05, 14), 44);
     const width = Math.min(
       isMobile ? window.innerWidth - gutter * 2 : 736,
       window.innerWidth - gutter * 2,
     );
-    const heightLimit = isMobile
-      ? window.innerHeight - top - 12
-      : Math.min(window.innerHeight * 0.84, 832);
+    const height = Math.max(
+      Math.min(
+        isMobile ? window.innerHeight - gutter * 2 : window.innerHeight * 0.84,
+        832,
+      ),
+      320,
+    );
 
     return {
-      top,
+      top: Math.max((window.innerHeight - height) / 2, gutter),
       left: Math.max((window.innerWidth - width) / 2, gutter),
       width,
-      height: Math.max(heightLimit, 320),
+      height,
     };
   }, []);
 
