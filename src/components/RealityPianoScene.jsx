@@ -162,6 +162,10 @@ function RealityPianoModel({ songNotesRef }) {
   const audioContextRef = useRef();
   const activePointerKeyRef = useRef();
   const pressedKeysRef = useRef(new Set());
+  const activeColor = useMemo(
+    () => new THREE.Color(pianoSceneConfig.animation.activeColor),
+    [],
+  );
 
   const modelScene = useMemo(() => {
     const scene = collada.scene.clone(true);
@@ -296,7 +300,7 @@ function RealityPianoModel({ songNotesRef }) {
       if (key.isMesh && key.material) {
         key.material.color.lerpColors(
           key.userData.idleColor,
-          new THREE.Color(config.activeColor),
+          activeColor,
           amount * 0.85,
         );
       }
@@ -379,7 +383,7 @@ export default function RealityPianoScene({ songNotesRef, onSceneReady }) {
   return (
     <Canvas
       camera={{ position: pianoSceneConfig.camera.desktopPosition, fov: pianoSceneConfig.camera.fov }}
-      dpr={[1, 1.75]}
+      dpr={[1, 1.35]}
       shadows
       gl={{
         antialias: true,

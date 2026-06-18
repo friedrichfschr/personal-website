@@ -22,6 +22,76 @@ export function CvButton() {
   const [dropdownPosition, setDropdownPosition] = useState(null);
   const wrapperRef = useRef(null);
   const dropdownRef = useRef(null);
+  const inputFocusScrollRef = useRef(null);
+  const scrollRestoreTimersRef = useRef([]);
+
+  const restoreWindowScroll = (position) => {
+    const html = document.documentElement;
+    const previousScrollBehavior = html.style.scrollBehavior;
+
+    html.style.scrollBehavior = 'auto';
+    window.scrollTo(position.x, position.y);
+    html.style.scrollBehavior = previousScrollBehavior;
+  };
+
+  const scheduleScrollRestore = (position) => {
+    const restore = () => restoreWindowScroll(position);
+    const timers = scrollRestoreTimersRef.current;
+
+    restore();
+    timers.push(window.requestAnimationFrame(restore));
+    timers.push(window.setTimeout(restore, 80));
+    timers.push(window.setTimeout(restore, 220));
+  };
+
+  const focusInputWithoutPageScroll = (input) => {
+    const position = { x: window.scrollX, y: window.scrollY, createdAt: Date.now() };
+    inputFocusScrollRef.current = position;
+
+    try {
+      input.focus({ preventScroll: true });
+    } catch {
+      input.focus();
+    }
+
+    try {
+      const cursorPosition = input.value.length;
+      input.setSelectionRange(cursorPosition, cursorPosition);
+    } catch {
+      // Some input types, such as email on Safari, do not expose selection ranges.
+    }
+
+    scheduleScrollRestore(position);
+  };
+
+  const handleCvInputPointerDown = (event) => {
+    if (event.pointerType !== 'touch') return;
+
+    event.preventDefault();
+    focusInputWithoutPageScroll(event.currentTarget);
+  };
+
+  const handleCvInputTouchStart = (event) => {
+    if (window.PointerEvent) return;
+
+    event.preventDefault();
+    focusInputWithoutPageScroll(event.currentTarget);
+  };
+
+  const handleCvInputFocus = () => {
+    const position = inputFocusScrollRef.current;
+
+    if (!position || Date.now() - position.createdAt > 600) return;
+
+    scheduleScrollRestore(position);
+  };
+
+  useEffect(() => () => {
+    scrollRestoreTimersRef.current.forEach((timer) => {
+      window.cancelAnimationFrame(timer);
+      window.clearTimeout(timer);
+    });
+  }, []);
 
   useEffect(() => {
     const handlePointerDown = (event) => {
@@ -43,6 +113,8 @@ export function CvButton() {
       return undefined;
     }
 
+    let frameId = null;
+
     const updateDropdownPosition = () => {
       const trigger = wrapperRef.current;
       if (!trigger) return;
@@ -54,7 +126,7 @@ export function CvButton() {
         Math.max(rect.right - width, gutter),
         window.innerWidth - width - gutter,
       );
-      const top = Math.min(rect.bottom + 12, window.innerHeight - gutter);
+      const top = rect.bottom + 12;
 
       setDropdownPosition({
         left,
@@ -64,13 +136,30 @@ export function CvButton() {
       });
     };
 
+    const scheduleDropdownPositionUpdate = () => {
+      if (frameId !== null) return;
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        updateDropdownPosition();
+      });
+    };
+
     updateDropdownPosition();
-    window.addEventListener('resize', updateDropdownPosition);
-    window.addEventListener('scroll', updateDropdownPosition, true);
+    window.addEventListener('resize', scheduleDropdownPositionUpdate);
+    window.addEventListener('scroll', scheduleDropdownPositionUpdate, true);
+    window.visualViewport?.addEventListener('resize', scheduleDropdownPositionUpdate);
+    window.visualViewport?.addEventListener('scroll', scheduleDropdownPositionUpdate);
 
     return () => {
-      window.removeEventListener('resize', updateDropdownPosition);
-      window.removeEventListener('scroll', updateDropdownPosition, true);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener('resize', scheduleDropdownPositionUpdate);
+      window.removeEventListener('scroll', scheduleDropdownPositionUpdate, true);
+      window.visualViewport?.removeEventListener('resize', scheduleDropdownPositionUpdate);
+      window.visualViewport?.removeEventListener('scroll', scheduleDropdownPositionUpdate);
     };
   }, [isOpen]);
 
@@ -202,6 +291,9 @@ export function CvButton() {
                 value={email}
                 placeholder="your.email@example.com"
                 required
+                onFocus={handleCvInputFocus}
+                onPointerDown={handleCvInputPointerDown}
+                onTouchStart={handleCvInputTouchStart}
                 onChange={(event) => setEmail(event.target.value)}
               />
               <button
@@ -224,6 +316,9 @@ export function CvButton() {
                   type="text"
                   value={codeInput}
                   placeholder="Enter CV code"
+                  onFocus={handleCvInputFocus}
+                  onPointerDown={handleCvInputPointerDown}
+                  onTouchStart={handleCvInputTouchStart}
                   onChange={(event) => setCodeInput(event.target.value)}
                 />
                 <button

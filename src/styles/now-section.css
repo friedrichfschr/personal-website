@@ -1176,3 +1176,15 @@
   font-size: 0.9rem;
   line-height: 1.6;
 }
+
+.now-expanded-backdrop {
+  z-index: 2147483000 !important;
+}
+
+.now-expanded-shell {
+  z-index: 2147483001 !important;
+}
+
+.now-card.is-expanded {
+  z-index: 2147483002 !important;
+}

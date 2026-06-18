@@ -1,0 +1,109 @@
+.site-entry-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482500;
+  display: grid;
+  place-items: center;
+  background: #070b14;
+  color: #f7f4ee;
+  opacity: 1;
+  transition:
+    opacity 0.48s ease,
+    background-color 0.48s ease;
+}
+
+.site-entry-overlay.is-exiting {
+  pointer-events: none;
+  background: rgba(7, 11, 20, 0);
+  opacity: 0;
+}
+
+.site-loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.site-loading-dots span {
+  display: block;
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: rgba(247, 244, 238, 0.62);
+  animation: siteLoadingDot 1s ease-in-out infinite;
+}
+
+.site-loading-dots span:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.site-loading-dots span:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+.site-start-button {
+  min-width: 6.5rem;
+  min-height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.72rem 1.25rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.028)),
+    rgba(140, 145, 156, 0.08);
+  color: rgba(247, 244, 238, 0.82);
+  cursor: pointer;
+  font-family: "Anton", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 14px 44px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  transition:
+    border-color 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease,
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.site-start-button:focus-visible {
+  border-color: rgba(189, 139, 53, 0.45);
+  background-color: rgba(189, 139, 53, 0.08);
+  color: #f7f4ee;
+  outline: none;
+}
+
+.site-start-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-start-button:hover {
+    border-color: rgba(189, 139, 53, 0.45);
+    background-color: rgba(189, 139, 53, 0.08);
+    color: #f7f4ee;
+  }
+}
+
+.site-entry-overlay.is-exiting .site-start-button {
+  opacity: 0;
+  transform: translateY(0.35rem) scale(0.98);
+}
+
+@keyframes siteLoadingDot {
+
+  0%,
+  100% {
+    opacity: 0.32;
+    transform: translateY(0);
+  }
+
+  45% {
+    opacity: 0.82;
+    transform: translateY(-0.18rem);
+  }
+}

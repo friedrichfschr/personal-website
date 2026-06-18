@@ -14,6 +14,23 @@ function midiNoteToKeyName(midiNote) {
   return `_${midiNote - pianoSceneConfig.audio.baseMidiOffset}`;
 }
 
+function findFirstNoteIndexAtOrAfter(notes, time) {
+  let low = 0;
+  let high = notes.length;
+
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+
+    if (notes[mid].time < time) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+
+  return low;
+}
+
 export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }) {
   const songs = pianoSceneConfig.songs;
   const defaultSongId = songs.find((song) => song.id === 'clair-de-lune')?.id ?? songs[0]?.id;
@@ -26,6 +43,10 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
   const rafRef = useRef();
   const lastUiUpdateRef = useRef(0);
   const autoplayAttemptedRef = useRef(false);
+  const noteCursorRef = useRef(0);
+  const activeSongNotesRef = useRef(new Map());
+  const previousSongTimeRef = useRef(0);
+  const maxNoteDurationRef = useRef(0);
 
   const selectedSong = useMemo(
     () => songs.find((song) => song.id === selectedSongId) ?? songs[0],
@@ -40,6 +61,9 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
 
       setNotes([]);
       activeNotesRef.current.clear();
+      activeSongNotesRef.current.clear();
+      noteCursorRef.current = 0;
+      previousSongTimeRef.current = 0;
 
       const response = await fetch(selectedSong.midiUrl);
       const buffer = await response.arrayBuffer();
@@ -53,16 +77,28 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
           velocity: Math.max(note.velocity, 0.35),
         }))
         .sort((a, b) => a.time - b.time);
+      const maxNoteDuration = parsedNotes.reduce(
+        (maxDuration, note) => Math.max(maxDuration, note.endTime - note.time),
+        0,
+      );
 
       if (isCancelled) return;
 
       setNotes(parsedNotes);
+      noteCursorRef.current = 0;
+      activeSongNotesRef.current.clear();
+      previousSongTimeRef.current = 0;
+      maxNoteDurationRef.current = maxNoteDuration;
     }
 
     loadMidi().catch(() => {
       if (isCancelled) return;
       setNotes([]);
       activeNotesRef.current.clear();
+      activeSongNotesRef.current.clear();
+      noteCursorRef.current = 0;
+      previousSongTimeRef.current = 0;
+      maxNoteDurationRef.current = 0;
     });
 
     return () => {
@@ -71,7 +107,18 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
   }, [activeNotesRef, selectedSong]);
 
   useEffect(() => {
-    if (!autoPlayWhenReady || !selectedSong || autoplayAttemptedRef.current) return undefined;
+    if (!selectedSong) return;
+
+    const preloadAudio = new Audio();
+    preloadAudio.preload = 'auto';
+    preloadAudio.src = selectedSong.audioUrl;
+    preloadAudio.load();
+  }, [selectedSong]);
+
+  useEffect(() => {
+    if (!autoPlayWhenReady || !selectedSong || notes.length === 0 || autoplayAttemptedRef.current) {
+      return undefined;
+    }
 
     const timeoutId = window.setTimeout(async () => {
       const audio = audioRef.current;
@@ -88,7 +135,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
     }, 650);
 
     return () => window.clearTimeout(timeoutId);
-  }, [autoPlayWhenReady, selectedSong]);
+  }, [autoPlayWhenReady, notes.length, selectedSong]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -96,14 +143,33 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
 
     function updateActiveNotes() {
       const songTime = audio.currentTime + (selectedSong?.animationOffset ?? 0);
+      const previousSongTime = previousSongTimeRef.current;
+
+      if (songTime < previousSongTime || songTime - previousSongTime > 1.5) {
+        activeSongNotesRef.current.clear();
+        noteCursorRef.current = findFirstNoteIndexAtOrAfter(
+          notes,
+          Math.max(0, songTime - maxNoteDurationRef.current),
+        );
+      }
+
       activeNotesRef.current.clear();
 
-      for (const note of notes) {
-        if (note.time > songTime) break;
+      while (noteCursorRef.current < notes.length && notes[noteCursorRef.current].time <= songTime) {
+        const note = notes[noteCursorRef.current];
+        activeSongNotesRef.current.set(note, note);
+        noteCursorRef.current += 1;
+      }
+
+      for (const note of activeSongNotesRef.current.values()) {
         if (note.endTime >= songTime) {
           activeNotesRef.current.set(note.keyName, note.velocity);
+        } else {
+          activeSongNotesRef.current.delete(note);
         }
       }
+
+      previousSongTimeRef.current = songTime;
 
       const now = performance.now();
       if (now - lastUiUpdateRef.current > 120) {
@@ -127,6 +193,8 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
 
   function clearActiveNotes() {
     activeNotesRef.current.clear();
+    activeSongNotesRef.current.clear();
+    previousSongTimeRef.current = 0;
     setCurrentTime(audioRef.current?.currentTime ?? 0);
   }
 
@@ -136,6 +204,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
 
     if (audio.paused) {
       try {
+        if (notes.length === 0) return;
         await audio.play();
         setIsPlaying(true);
       } catch {
@@ -159,6 +228,9 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
     setCurrentTime(0);
     setNotes([]);
     activeNotesRef.current.clear();
+    activeSongNotesRef.current.clear();
+    noteCursorRef.current = 0;
+    previousSongTimeRef.current = 0;
     setSelectedSongId(event.target.value);
   }
 
@@ -170,7 +242,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
         ref={audioRef}
         key={selectedSong.id}
         src={selectedSong.audioUrl}
-        preload="metadata"
+        preload="auto"
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
         onEnded={() => {
           setIsPlaying(false);
