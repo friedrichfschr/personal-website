@@ -21,8 +21,15 @@ jobs:
 
       - name: Build project
         run: |
-          yarn install
-          yarn build
+          npm ci
+          npm run build
+
+      - name: Inspect build output
+        run: |
+          pwd
+          ls -la
+          ls -la dist
+          find dist -maxdepth 2 -type f
 
       - name: Deploy over FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
@@ -32,3 +39,4 @@ jobs:
           password: ${{ secrets.FTP_NETCUP_PASSWORD }}
           server-dir: /friedrich-fischer.de/
           local-dir: ./dist/
+          state-name: .ftp-deploy-sync-state-dist.json
