@@ -329,6 +329,24 @@ export function NowSection() {
     if (dragState.didDrag) {
       const snappedIndex = getNearestIndex();
       scrollToIndex(snappedIndex);
+      return;
+    }
+
+    const clickedCard = document
+      .elementFromPoint(event.clientX, event.clientY)
+      ?.closest?.('[data-now-card]');
+
+    if (clickedCard instanceof HTMLElement) {
+      const entryIndex = getCardElements().indexOf(clickedCard);
+      const entry = localizedNowEntries[entryIndex];
+      const hasExpandedContent = entry && (
+        entry.blocks.length > 0 || (entry.expandable?.blocks?.length ?? 0) > 0
+      );
+
+      if (entry && hasExpandedContent) {
+        suppressClickRef.current = true;
+        handleExpand(entry, clickedCard);
+      }
     }
   };
 
