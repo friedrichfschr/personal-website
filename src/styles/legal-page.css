@@ -5,14 +5,22 @@
 }
 
 .legal-shell {
-  background: #070b14;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(247, 244, 238, 0.018) 0,
+      rgba(247, 244, 238, 0.018) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    var(--ink-bg);
 }
 
 .legal-back-link {
   display: inline-flex;
   margin-bottom: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
+  border-radius: 0.28rem;
   background: rgba(255, 255, 255, 0.045);
   box-shadow:
     0 14px 44px rgba(0, 0, 0, 0.18),
@@ -23,11 +31,19 @@
 
 .legal-card {
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.35rem;
+  border-radius: 0.55rem;
   background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(247, 244, 238, 0.018) 0,
+      rgba(247, 244, 238, 0.018) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
     linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045)),
     rgba(7, 11, 20, 0.78);
   box-shadow:
+    0.32rem 0.32rem 0 rgba(159, 59, 47, 0.2),
     0 24px 72px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   padding: clamp(1.25rem, 3vw, 2.4rem);
@@ -37,10 +53,11 @@
 .legal-kicker {
   margin: 0 0 0.65rem;
   color: rgba(189, 139, 53, 0.92);
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  font-size: 0.84rem;
-  font-style: italic;
-  letter-spacing: 0.08em;
+  font-family: var(--display-font);
+  font-size: 0.92rem;
+  font-style: normal;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .legal-card h1,
@@ -50,14 +67,22 @@
 
 .legal-card h1 {
   margin: 0 0 1.4rem;
+  font-family: var(--display-font);
   font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 400;
+  letter-spacing: 0.025em;
   line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .legal-card h2 {
   margin: 0 0 0.55rem;
-  font-size: 1rem;
-  line-height: 1.35;
+  font-family: var(--display-font);
+  font-size: 1.08rem;
+  font-weight: 400;
+  letter-spacing: 0.035em;
+  line-height: 1.25;
+  text-transform: uppercase;
 }
 
 .legal-section {

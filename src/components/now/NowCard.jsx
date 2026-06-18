@@ -4,8 +4,19 @@ import { renderRichBlocks } from './richText';
 
 const labels = {
   close: 'Close entry',
-  readMore: 'Read more',
 };
+
+const blockToPlainText = (block) => {
+  if (block.type === 'unordered-list' || block.type === 'ordered-list') {
+    return block.items
+      .map((item) => item.map((span) => span.text).join(''))
+      .join(' ');
+  }
+
+  return block.spans?.map((span) => span.text).join('') ?? '';
+};
+
+const normalizePreviewText = (text) => text.replace(/\s+/g, ' ').trim();
 
 export function NowCard({
   entry,
@@ -21,7 +32,9 @@ export function NowCard({
   const cardRef = useRef(null);
   const closeButtonRef = useRef(null);
   const staticBodyRef = useRef(null);
+  const collapsedPreviewRef = useRef(null);
   const [isStaticBodyOverflowing, setIsStaticBodyOverflowing] = useState(false);
+  const [collapsedPreviewText, setCollapsedPreviewText] = useState('');
   const expandableBlocks = entry.expandable?.blocks ?? [];
   const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
   const visibleBlocks = isExpanded ? [...entry.blocks, ...expandableBlocks] : entry.blocks;
@@ -29,6 +42,10 @@ export function NowCard({
     isStaticBodyOverflowing || expandableBlocks.length > 0
   );
   const isExpandableCard = !isExpanded && hasExpandedContent;
+  const collapsedFullText = useMemo(
+    () => normalizePreviewText([...entry.blocks, ...expandableBlocks].map(blockToPlainText).join(' ')),
+    [entry.blocks, expandableBlocks],
+  );
 
   const expandedStyle = useMemo(() => {
     if (!isExpanded || !expansionState) {
@@ -57,6 +74,7 @@ export function NowCard({
   useLayoutEffect(() => {
     if (isExpanded) {
       setIsStaticBodyOverflowing(false);
+      setCollapsedPreviewText('');
       return undefined;
     }
 
@@ -87,6 +105,62 @@ export function NowCard({
       window.removeEventListener('resize', updateOverflow);
     };
   }, [entry.blocks, entry.image, isExpanded]);
+
+  useLayoutEffect(() => {
+    if (isExpanded) {
+      return undefined;
+    }
+
+    const viewport = staticBodyRef.current;
+    const preview = collapsedPreviewRef.current;
+
+    if (!viewport || !preview || !collapsedFullText) {
+      setCollapsedPreviewText(collapsedFullText);
+      return undefined;
+    }
+
+    const ellipsis = '...';
+
+    const updatePreview = () => {
+      preview.textContent = collapsedFullText;
+
+      if (preview.scrollHeight <= viewport.clientHeight + 1) {
+        setCollapsedPreviewText(collapsedFullText);
+        return;
+      }
+
+      let low = 0;
+      let high = collapsedFullText.length;
+      let best = '';
+
+      while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        const candidate = `${collapsedFullText.slice(0, mid).trimEnd()}${ellipsis}`;
+        preview.textContent = candidate;
+
+        if (preview.scrollHeight <= viewport.clientHeight + 1) {
+          best = candidate;
+          low = mid + 1;
+        } else {
+          high = mid - 1;
+        }
+      }
+
+      setCollapsedPreviewText(best || ellipsis);
+    };
+
+    updatePreview();
+
+    const resizeObserver = new ResizeObserver(updatePreview);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(preview);
+    window.addEventListener('resize', updatePreview);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updatePreview);
+    };
+  }, [collapsedFullText, entry.image, isExpanded]);
 
   return (
     <article
@@ -192,26 +266,15 @@ export function NowCard({
               )}
             </figure>
           )}
-          {renderRichBlocks(entry, 'now-card-body', visibleBlocks)}
+          {isExpanded ? (
+            renderRichBlocks(entry, 'now-card-body', visibleBlocks)
+          ) : (
+            <p ref={collapsedPreviewRef} className="now-card-collapsed-preview">
+              {collapsedPreviewText || collapsedFullText}
+            </p>
+          )}
         </div>
 
-        {shouldShowReadMore && (
-          <div className="now-card-actions">
-            <button
-              type="button"
-              className="now-expand-button"
-              onClick={(event) => {
-                const card = event.currentTarget.closest('[data-now-card]');
-                if (card instanceof HTMLElement) {
-                  onExpand?.(entry, card);
-                }
-              }}
-              aria-haspopup="dialog"
-            >
-              {labels.readMore}
-            </button>
-          </div>
-        )}
       </div>
     </article>
   );

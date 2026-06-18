@@ -10,8 +10,8 @@ import { fetchBlogPosts } from '../../lib/blogApi';
 import { NowCard } from './NowCard';
 
 const labels = {
-  kicker: 'Now',
-  title: "What I'm up to right now",
+  kicker: 'discover my',
+  title: "Projects",
   controlsLabel: 'Now carousel controls',
   carouselLabel: 'Now page entries',
   progressLabel: 'Now carousel navigation',
@@ -203,9 +203,9 @@ export function NowSection() {
       if (event.key === 'Escape') {
         setExpandedCard((current) => current
           ? {
-              ...current,
-              phase: current.phase === 'closing' ? current.phase : 'closing',
-            }
+            ...current,
+            phase: current.phase === 'closing' ? current.phase : 'closing',
+          }
           : null);
       }
     };
@@ -369,9 +369,9 @@ export function NowSection() {
     const syncExpandedTarget = () => {
       setExpandedCard((current) => (current
         ? {
-            ...current,
-            targetRect: getExpandedTargetRect(),
-          }
+          ...current,
+          targetRect: getExpandedTargetRect(),
+        }
         : null));
     };
 
@@ -431,83 +431,85 @@ export function NowSection() {
   }
 
   return (
-    <section className="now-section" aria-labelledby="now-section-title">
-      <div className="now-section-shell">
-        <div className="now-section-accent" aria-hidden="true"></div>
+    <section
+      className={`now-section ${expandedCard ? 'has-expanded-modal' : ''}`}
+      aria-labelledby="now-section-title"
+    >
 
-        <div className="now-section-header">
-          <p className="hand-drawn-label now-section-kicker">{labels.kicker}</p>
 
-          <div className="now-section-title-row">
-            <h2 id="now-section-title" className="now-section-title">
-              {labels.title}
-            </h2>
 
-            <div className="now-carousel-controls" aria-label={labels.controlsLabel}>
-              <button
-                type="button"
-                className="now-arrow-button"
-                onClick={() => scrollByDirection('prev')}
-                disabled={!canScrollPrev || Boolean(expandedCard)}
-                aria-label={labels.previous}
-              >
-                &larr;
-              </button>
-              <button
-                type="button"
-                className="now-arrow-button"
-                onClick={() => scrollByDirection('next')}
-                disabled={!canScrollNext || Boolean(expandedCard)}
-                aria-label={labels.next}
-              >
-                &rarr;
-              </button>
-            </div>
-          </div>
+      <p className="hand-drawn-label now-section-kicker">{labels.kicker}</p>
+
+      <div className="now-section-title-row">
+        <h2 id="now-section-title" className="now-section-title">
+          {labels.title}
+        </h2>
+
+        <div className="now-carousel-controls" aria-label={labels.controlsLabel}>
+          <button
+            type="button"
+            className="now-arrow-button"
+            onClick={() => scrollByDirection('prev')}
+            disabled={!canScrollPrev || Boolean(expandedCard)}
+            aria-label={labels.previous}
+          >
+            &larr;
+          </button>
+          <button
+            type="button"
+            className="now-arrow-button"
+            onClick={() => scrollByDirection('next')}
+            disabled={!canScrollNext || Boolean(expandedCard)}
+            aria-label={labels.next}
+          >
+            &rarr;
+          </button>
         </div>
 
-        <div
-          ref={carouselRef}
-          className={`now-carousel ${isDragging ? 'is-dragging' : ''} ${expandedCard ? 'has-expanded-card' : ''}`}
-          aria-label={labels.carouselLabel}
-          tabIndex={expandedCard ? -1 : 0}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={finishPointerDrag}
-          onPointerCancel={finishPointerDrag}
-          onLostPointerCapture={finishPointerDrag}
-          onClickCapture={handleClickCapture}
-        >
-          {localizedNowEntries.map((entry) => {
-            const isExpandedEntry = expandedCard?.entryId === entry.id;
-            const isRestoringEntry = restoringEntryId === entry.id;
-
-            return (
-              <NowCard
-                key={entry.id}
-                entry={entry}
-                isHidden={isExpandedEntry}
-                isRestoring={isRestoringEntry}
-                onExpand={handleExpand}
-              />
-            );
-          })}
-        </div>
-
-        <div className="now-carousel-progress" aria-label={labels.progressLabel}>
-          {localizedNowEntries.map((entry, index) => (
-            <button
-              key={entry.id}
-              type="button"
-              className={`now-progress-dot ${index === activeIndex ? 'is-active' : ''}`}
-              onClick={() => scrollToIndex(index)}
-              aria-label={labels.jumpTo({ index: index + 1, title: entry.title })}
-              aria-pressed={index === activeIndex}
-              disabled={Boolean(expandedCard)}
-            />
-          ))}
-        </div>
       </div>
+
+      <div
+        ref={carouselRef}
+        className={`now-carousel ${isDragging ? 'is-dragging' : ''} ${expandedCard ? 'has-expanded-card' : ''}`}
+        aria-label={labels.carouselLabel}
+        tabIndex={expandedCard ? -1 : 0}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishPointerDrag}
+        onPointerCancel={finishPointerDrag}
+        onLostPointerCapture={finishPointerDrag}
+        onClickCapture={handleClickCapture}
+      >
+        {localizedNowEntries.map((entry) => {
+          const isExpandedEntry = expandedCard?.entryId === entry.id;
+          const isRestoringEntry = restoringEntryId === entry.id;
+
+          return (
+            <NowCard
+              key={entry.id}
+              entry={entry}
+              isHidden={isExpandedEntry}
+              isRestoring={isRestoringEntry}
+              onExpand={handleExpand}
+            />
+          );
+        })}
+      </div>
+
+      <div className="now-carousel-progress" aria-label={labels.progressLabel}>
+        {localizedNowEntries.map((entry, index) => (
+          <button
+            key={entry.id}
+            type="button"
+            className={`now-progress-dot ${index === activeIndex ? 'is-active' : ''}`}
+            onClick={() => scrollToIndex(index)}
+            aria-label={labels.jumpTo({ index: index + 1, title: entry.title })}
+            aria-pressed={index === activeIndex}
+            disabled={Boolean(expandedCard)}
+          />
+        ))}
+      </div>
+
 
       {expandedCard && expandedEntry && (
         <>

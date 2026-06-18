@@ -237,7 +237,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
   if (!selectedSong) return null;
 
   return (
-    <section className="absolute right-3 top-3 z-10 rounded-lg border border-white/[0.06] bg-neutral-400/[0.055] px-2 py-1.5 text-paper/78 shadow-[0_14px_44px_rgba(0,0,0,0.22)] backdrop-blur-2xl sm:right-5 sm:top-5">
+    <section className="song-player" aria-label="Music player">
       <audio
         ref={audioRef}
         key={selectedSong.id}
@@ -250,29 +250,30 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
         }}
       />
 
-      <div className="flex items-center gap-2">
-        <div className="min-w-0">
+      <div className="song-player-inner">
+        <div className="song-player-copy">
+          <span className="song-player-label">Now playing</span>
           <select
             value={selectedSong.id}
             onChange={handleSongChange}
-            className="w-full max-w-[178px] truncate rounded-md bg-neutral-300/[0.08] px-2 py-1 text-xs font-medium text-paper/76 outline-none transition hover:bg-neutral-200/[0.13]"
+            className="song-player-select"
           >
             {songs.map((song) => (
-              <option key={song.id} value={song.id} className="bg-ink text-paper">
+              <option key={song.id} value={song.id}>
                 {song.title}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          <span className="text-[11px] font-medium tabular-nums text-paper/48">
+        <div className="song-player-controls">
+          <span className="song-player-time">
             {formatTime(currentTime)}
           </span>
           <button
             type="button"
             onClick={togglePlayback}
-            className="inline-flex size-8 items-center justify-center rounded-full bg-neutral-300/[0.09] text-paper/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition hover:bg-neutral-200/[0.15] hover:text-paper/90"
+            className="song-player-toggle"
             aria-label={isPlaying ? 'Pause song' : 'Play song'}
           >
             {isPlaying ? <Pause size={14} /> : <Play size={14} />}

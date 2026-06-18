@@ -54,6 +54,47 @@ function App() {
     };
   }, [hasStarted]);
 
+  useEffect(() => {
+    if (page !== 'home') return undefined;
+
+    let animationFrame = 0;
+
+    const updateSectionFocus = () => {
+      animationFrame = 0;
+
+      const nextSection = document.querySelector('[data-section-layer="projects"]');
+      if (!(nextSection instanceof HTMLElement)) return;
+
+      const rect = nextSection.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const isMobileViewport = window.matchMedia('(max-width: 767px)').matches;
+      const start = viewportHeight * (isMobileViewport ? 0.62 : 0.82);
+      const end = viewportHeight * (isMobileViewport ? 0.18 : 0.26);
+      const progress = Math.min(Math.max((start - rect.top) / (start - end), 0), 1);
+
+      document.documentElement.style.setProperty('--section-focus-progress', progress.toFixed(3));
+    };
+
+    const requestUpdate = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(updateSectionFocus);
+    };
+
+    updateSectionFocus();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+
+    return () => {
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      document.documentElement.style.removeProperty('--section-focus-progress');
+    };
+  }, [page]);
+
   const handleNavigate = (path) => (event) => {
     event.preventDefault();
     window.history.pushState({}, '', path);
@@ -94,28 +135,32 @@ function App() {
           </div>
         </div>
         <AmbientParticles className="hero-particles" />
-        <div className="site-wordmark pointer-events-none absolute left-4 top-4 z-10 select-none sm:left-7 sm:top-6">
-          <span className="font-serif text-3xl italic tracking-wide text-white/72 drop-shadow-[0_4px_20px_rgba(0,0,0,0.55)] sm:text-5xl">
-            Friedrich
-          </span>
-        </div>
         <SongPlayer activeNotesRef={songNotesRef} autoPlayWhenReady={isPianoSceneReady && hasStarted} />
       </section>
 
       <div className="page-scroll-panel">
-        <section className="intro-content mx-auto grid w-full max-w-5xl gap-8 px-5 pb-14 pt-8 text-paper/82 sm:px-8 sm:pt-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-          <p className="mt-0 max-w-3xl text-lg leading-8 text-paper/64">
-            My name is Friedrich Fischer, a 17-year-old globally minded philomath
-            from Germany who is enthusiastic about computers, learning languages,
-            and discovering the world.
-          </p>
-          <div className="grid w-full grid-cols-[max-content_minmax(0,1fr)] items-end gap-x-3 gap-y-4 md:w-auto md:grid-cols-1 md:justify-items-end">
+        <section
+          className="intro-content mx-auto grid w-full max-w-5xl gap-8 px-5 text-paper/82 sm:px-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-start"
+          data-section-layer="about"
+        >
+          <div className="intro-statement">
+            <p className="intro-kicker">My name is</p>
+            <h1 className="intro-heading">Friedrich Fischer</h1>
+            <p className="intro-copy">
+              I'm a 17-year-old globally minded philomath
+              from Germany who is enthusiastic about computers, practical music, learning languages,
+              and discovering the cultures of the world.
+            </p>
+          </div>
+          <div className="intro-actions">
             <SocialLinks />
-            <CvButton />
+            <div className="intro-cv-slot">
+              <CvButton />
+            </div>
           </div>
         </section>
 
-        <section className="now-content mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8">
+        <section className="now-content w-full px-5 pb-20 sm:px-8" data-section-layer="projects">
           <NowSection />
         </section>
 
