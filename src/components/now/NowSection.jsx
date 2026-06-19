@@ -9,6 +9,14 @@ import { mapNowEntriesForLocale, nowEntries } from '../../nowEntries';
 import { fetchBlogPosts } from '../../lib/blogApi';
 import { NowCard } from './NowCard';
 
+const localFallbackEntries = import.meta.env.DEV ? nowEntries : [];
+
+const excludeProductionMockEntries = (entries) => (
+  import.meta.env.PROD
+    ? entries.filter((entry) => !String(entry?.id ?? '').startsWith('mock-'))
+    : entries
+);
+
 const labels = {
   kicker: 'discover my',
   title: "Projects",
@@ -31,11 +39,11 @@ export function NowSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [nearestIndex, setNearestIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(nowEntries.length > 1);
+  const [canScrollNext, setCanScrollNext] = useState(localFallbackEntries.length > 1);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedCard, setExpandedCard] = useState(null);
   const [restoringEntryId, setRestoringEntryId] = useState(null);
-  const [entryDefinitions, setEntryDefinitions] = useState(nowEntries);
+  const [entryDefinitions, setEntryDefinitions] = useState(localFallbackEntries);
   const [loadState, setLoadState] = useState('loading');
   const [loadError, setLoadError] = useState('');
   const localizedNowEntries = useMemo(
@@ -146,12 +154,15 @@ export function NowSection() {
       try {
         setLoadState('loading');
         setLoadError('');
-        const blogPosts = await fetchBlogPosts(controller.signal);
+        const blogPosts = excludeProductionMockEntries(
+          await fetchBlogPosts(controller.signal),
+        );
         if (blogPosts.length > 0) {
           setEntryDefinitions(blogPosts);
           setLoadState('ready');
         } else {
-          setLoadState(nowEntries.length > 0 ? 'ready' : 'empty');
+          setEntryDefinitions(localFallbackEntries);
+          setLoadState(localFallbackEntries.length > 0 ? 'ready' : 'empty');
         }
       } catch (error) {
         if (error.name === 'AbortError') {
@@ -160,7 +171,8 @@ export function NowSection() {
 
         console.error('Failed to load blog posts', error);
         setLoadError(error.message || 'Unknown blog loading error');
-        setLoadState(nowEntries.length > 0 ? 'ready' : 'error');
+        setEntryDefinitions(localFallbackEntries);
+        setLoadState(localFallbackEntries.length > 0 ? 'ready' : 'error');
       }
     })();
 
