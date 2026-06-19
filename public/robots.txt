@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://friedrich-fischer.de/sitemap.xml
