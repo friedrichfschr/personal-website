@@ -343,7 +343,7 @@
   overflow: visible;
 }
 
-.now-card-body-viewport.has-inline-highlight,
+.now-card-body-viewport.has-inline-right-image,
 .now-card-body-viewport.has-inline-flow-image {
   display: flow-root;
 }
@@ -372,27 +372,15 @@
     border-color 0.42s ease;
 }
 
-.now-card-image-wrap.is-highlight {
-  position: relative;
-  width: clamp(8rem, 40%, 10rem);
-  margin: 0.05rem 0 0.45rem auto;
-  padding: 0.7rem 0.7rem 0.5rem;
-  border-radius: 0.42rem;
-  border-color: color-mix(in srgb, var(--now-accent) 24%, rgba(44, 62, 80, 0.12));
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 240, 0.94));
-  box-shadow:
-    0 14px 24px rgba(44, 62, 80, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.72) inset;
-  transform: rotate(6deg);
-  z-index: 1;
-}
-
-.now-card-image-wrap.is-inline-highlight {
+.now-card-image-wrap.is-right-image {
   float: right;
   clear: none;
-  display: inline-flex;
   width: clamp(8rem, 40%, 10rem);
   margin: 0.05rem 0 0.6rem 1rem;
+  padding: 0.55rem;
+  border-radius: 12px;
+  background: rgba(255, 250, 242, 0.92);
+  box-shadow: 0 8px 16px rgba(44, 62, 80, 0.08);
   shape-outside: margin-box;
   shape-margin: 0.7rem;
 }
@@ -410,7 +398,7 @@
   shape-margin: 0.75rem;
 }
 
-.now-card-image-wrap.is-left-inline-highlight {
+.now-card-image-wrap.is-left-image {
   transform: rotate(-3.5deg);
 }
 
@@ -420,43 +408,13 @@
   transform: rotate(-2.5deg);
 }
 
-.now-card-image-wrap.is-highlight::before,
-.now-card-image-wrap.is-highlight::after {
-  content: "";
-  position: absolute;
-  top: -0.6rem;
-  width: 3.5rem;
-  height: 1rem;
-  border-radius: 999px;
-  background: rgba(255, 232, 164, 0.84);
-  border: 1px solid rgba(44, 62, 80, 0.08);
-  box-shadow: 0 6px 14px rgba(44, 62, 80, 0.08);
-}
-
-.now-card-image-wrap.is-highlight::before {
-  left: 0.85rem;
-  transform: rotate(-12deg);
-}
-
-.now-card-image-wrap.is-highlight::after {
-  right: 0.75rem;
-  transform: rotate(14deg);
-}
-
 .dark .now-card-image-wrap {
   background: rgba(55, 55, 55, 0.88);
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-.dark .now-card-image-wrap.is-highlight {
-  background: linear-gradient(180deg, rgba(58, 58, 58, 0.98), rgba(44, 34, 34, 0.94));
-  border-color: color-mix(in srgb, var(--now-accent) 26%, rgba(255, 255, 255, 0.12));
-}
-
-.dark .now-card-image-wrap.is-highlight::before,
-.dark .now-card-image-wrap.is-highlight::after {
-  background: rgba(157, 126, 68, 0.78);
-  border-color: rgba(255, 255, 255, 0.06);
+.dark .now-card-image-wrap.is-right-image {
+  background: rgba(55, 55, 55, 0.88);
 }
 
 .now-card-image {
@@ -466,15 +424,14 @@
   user-select: none;
 }
 
-.now-card-image.is-highlight {
+.now-card-image.is-right-image {
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
   min-height: 0;
   max-height: 9.1rem;
   object-fit: cover;
-  border-radius: 14px;
-  box-shadow: 0 10px 18px rgba(44, 62, 80, 0.12);
+  border-radius: 8px;
 }
 
 .now-card-image.is-inline-flow {
@@ -621,10 +578,9 @@
   box-shadow: 0 14px 24px rgba(44, 62, 80, 0.1);
 }
 
-.now-card.is-expanded.is-open .now-card-image-wrap.is-highlight {
+.now-card.is-expanded.is-open .now-card-image-wrap.is-right-image {
   width: clamp(8.4rem, 42%, 10.4rem);
   margin-top: 0.05rem;
-  transform: rotate(5deg);
 }
 
 .now-expand-button {
@@ -931,14 +887,9 @@
     max-width: none;
   }
 
-  .now-card-image-wrap.is-highlight {
+  .now-card-image-wrap.is-right-image {
     width: clamp(7rem, 41%, 8.4rem);
     margin-bottom: 0.2rem;
-    transform: rotate(5deg);
-  }
-
-  .now-card-image-wrap.is-inline-highlight {
-    width: clamp(7rem, 41%, 8.4rem);
     margin-left: 0.8rem;
     shape-margin: 0.5rem;
   }
@@ -949,12 +900,7 @@
     shape-margin: 0.5rem;
   }
 
-  .now-card-image-wrap.is-highlight::before,
-  .now-card-image-wrap.is-highlight::after {
-    width: 2.8rem;
-  }
-
-  .now-card-image.is-highlight {
+  .now-card-image.is-right-image {
     max-height: 7.2rem;
   }
 
@@ -1090,9 +1036,8 @@
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
 }
 
-.now-card-image-wrap.is-highlight {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(189, 139, 53, 0.08));
-  border-color: rgba(189, 139, 53, 0.34);
+.now-card-image-wrap.is-right-image {
+  background: rgba(255, 255, 255, 0.075);
 }
 
 .now-card-image-wrap.is-inline-flow-image {

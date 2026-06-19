@@ -7,6 +7,11 @@ export const nowEntries = [
     content: {
       default: {
         title: 'Building a Night Piano Room',
+        image: {
+          src: '/assets/now/openclaw-bot.jpg',
+          alt: 'Testing the standard image layout',
+          caption: 'Standard image: displayed above the text.',
+        },
         blocks: [
           {
             type: 'paragraph',
@@ -39,10 +44,15 @@ export const nowEntries = [
     id: 'mock-song-sync',
     date: '2026-06-10',
     accent: '#d7d893',
-    imageStyle: 'default',
+    imageStyle: 'rechts',
     content: {
       default: {
         title: 'Syncing Audio and MIDI',
+        image: {
+          src: '/assets/now/cbyx-program.jpg',
+          alt: 'Testing the right-aligned image layout',
+          caption: 'Rechts: a simple image floated to the right.',
+        },
         blocks: [
           {
             type: 'paragraph',
@@ -77,10 +87,15 @@ export const nowEntries = [
     id: 'mock-exchange-year',
     date: '2025-06-13',
     accent: '#93a8d8',
-    imageStyle: 'default',
+    imageStyle: 'inline-flow-left',
     content: {
       default: {
         title: 'Notes From an Exchange Year',
+        image: {
+          src: '/assets/now/ppp-stipendium.png',
+          alt: 'Testing the left-aligned image layout',
+          caption: 'Inline flow: text wraps around the image on the left.',
+        },
         blocks: [
           {
             type: 'paragraph',
@@ -92,6 +107,31 @@ export const nowEntries = [
             type: 'paragraph',
             spans: [
               { text: 'The card should scroll, expand, close with Escape, and keep the same interaction behavior as the original Personal Website blog section.' },
+            ],
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: 'mock-no-picture',
+    date: '2025-05-28',
+    accent: '#c27790',
+    imageStyle: 'default',
+    content: {
+      default: {
+        title: 'A Post Without a Picture',
+        blocks: [
+          {
+            type: 'paragraph',
+            spans: [
+              { text: 'This entry deliberately has no image, making it useful for checking spacing, text overflow, and the expanded reading view.' },
+            ],
+          },
+          {
+            type: 'quote',
+            spans: [
+              { text: 'Not every thought needs a thumbnail.' },
             ],
           },
         ],

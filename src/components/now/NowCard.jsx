@@ -27,7 +27,7 @@ export function NowCard({
   onExpand,
   onClose,
 }) {
-  const isHighlightEntry = entry.imageStyle === 'highlight';
+  const isRightImageEntry = ['rechts', 'highlight'].includes(entry.imageStyle);
   const isLeftWrapImageEntry = entry.imageStyle === 'inline-flow-left';
   const cardRef = useRef(null);
   const closeButtonRef = useRef(null);
@@ -216,7 +216,7 @@ export function NowCard({
       <div className={`now-card-content ${isExpanded ? 'is-expanded-content' : ''}`}>
         <h3 className="now-card-title">{entry.title}</h3>
 
-        {entry.image && !isHighlightEntry && !isLeftWrapImageEntry && (
+        {entry.image && !isRightImageEntry && !isLeftWrapImageEntry && (
           <figure className="now-card-image-wrap">
             <img
               src={entry.image.src}
@@ -234,10 +234,10 @@ export function NowCard({
 
         <div
           ref={staticBodyRef}
-          className={`now-card-body-viewport ${shouldShowReadMore ? 'has-overflow' : ''} ${isExpanded ? 'is-expanded' : ''} ${isHighlightEntry ? 'has-inline-highlight' : ''} ${isLeftWrapImageEntry ? 'has-inline-flow-image' : ''}`}
+          className={`now-card-body-viewport ${shouldShowReadMore ? 'has-overflow' : ''} ${isExpanded ? 'is-expanded' : ''} ${isRightImageEntry ? 'has-inline-right-image' : ''} ${isLeftWrapImageEntry ? 'has-inline-flow-image' : ''}`}
         >
           {entry.image && isLeftWrapImageEntry && (
-            <figure className={`now-card-image-wrap is-inline-flow-image is-left-inline-highlight ${isExpanded ? 'is-expanded-inline' : ''}`}>
+            <figure className={`now-card-image-wrap is-inline-flow-image is-left-image ${isExpanded ? 'is-expanded-inline' : ''}`}>
               <img
                 src={entry.image.src}
                 alt={entry.image.alt}
@@ -251,12 +251,12 @@ export function NowCard({
               )}
             </figure>
           )}
-          {entry.image && isHighlightEntry && (
-            <figure className="now-card-image-wrap is-highlight is-inline-highlight">
+          {entry.image && isRightImageEntry && (
+            <figure className="now-card-image-wrap is-right-image">
               <img
                 src={entry.image.src}
                 alt={entry.image.alt}
-                className="now-card-image is-highlight"
+                className="now-card-image is-right-image"
                 draggable={false}
               />
               {entry.image.caption && (
