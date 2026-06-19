@@ -206,6 +206,8 @@ export function NowCard({
               src={entry.image.src}
               alt={entry.image.alt}
               className="now-card-image"
+              loading="lazy"
+              decoding="async"
               draggable={false}
             />
             {entry.image.caption && (
@@ -226,6 +228,8 @@ export function NowCard({
                 src={entry.image.src}
                 alt={entry.image.alt}
                 className="now-card-image is-inline-flow"
+                loading="lazy"
+                decoding="async"
                 draggable={false}
               />
               {entry.image.caption && (
@@ -241,6 +245,8 @@ export function NowCard({
                 src={entry.image.src}
                 alt={entry.image.alt}
                 className="now-card-image is-right-image"
+                loading="lazy"
+                decoding="async"
                 draggable={false}
               />
               {entry.image.caption && (

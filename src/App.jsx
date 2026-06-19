@@ -1,5 +1,4 @@
-import { Suspense, useEffect, useRef, useState } from 'react';
-import RealityPianoScene from './components/RealityPianoScene';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import SongPlayer from './components/SongPlayer';
 import { NowSection } from './components/now/NowSection';
 import { SocialLinks } from './components/SocialLinks';
@@ -7,6 +6,8 @@ import { CvButton } from './components/CvButton';
 import { AmbientParticles } from './components/AmbientParticles';
 import { Footer } from './components/Footer';
 import { LegalPage } from './components/LegalPage';
+
+const RealityPianoScene = lazy(() => import('./components/RealityPianoScene'));
 
 function getCurrentPage() {
   if (window.location.pathname === '/privacy') return 'privacy';

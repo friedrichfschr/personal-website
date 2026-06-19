@@ -1,4 +1,3 @@
-import { Midi } from '@tonejs/midi';
 import { Pause, Play } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { pianoSceneConfig } from '../data/pianoSceneConfig';
@@ -59,6 +58,8 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
     async function loadMidi() {
       if (!selectedSong) return;
 
+      const { Midi } = await import('@tonejs/midi');
+
       setNotes([]);
       activeNotesRef.current.clear();
       activeSongNotesRef.current.clear();
@@ -105,15 +106,6 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
       isCancelled = true;
     };
   }, [activeNotesRef, selectedSong]);
-
-  useEffect(() => {
-    if (!selectedSong) return;
-
-    const preloadAudio = new Audio();
-    preloadAudio.preload = 'auto';
-    preloadAudio.src = selectedSong.audioUrl;
-    preloadAudio.load();
-  }, [selectedSong]);
 
   useEffect(() => {
     if (!autoPlayWhenReady || !selectedSong || notes.length === 0 || autoplayAttemptedRef.current) {
@@ -242,7 +234,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
         ref={audioRef}
         key={selectedSong.id}
         src={selectedSong.audioUrl}
-        preload="auto"
+        preload="metadata"
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
         onEnded={() => {
           setIsPlaying(false);

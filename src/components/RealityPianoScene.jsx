@@ -377,6 +377,41 @@ function ResponsiveCamera() {
   return null;
 }
 
+function SceneActivityController() {
+  const { gl, invalidate, setFrameloop } = useThree();
+
+  useEffect(() => {
+    let isInViewport = true;
+
+    const updateFrameloop = () => {
+      const shouldAnimate = isInViewport && document.visibilityState === 'visible';
+      setFrameloop(shouldAnimate ? 'always' : 'never');
+
+      if (shouldAnimate) {
+        invalidate();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isInViewport = entry?.isIntersecting ?? true;
+        updateFrameloop();
+      },
+      { threshold: 0.01 },
+    );
+
+    observer.observe(gl.domElement);
+    document.addEventListener('visibilitychange', updateFrameloop);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', updateFrameloop);
+    };
+  }, [gl.domElement, invalidate, setFrameloop]);
+
+  return null;
+}
+
 export default function RealityPianoScene({ songNotesRef, onSceneReady }) {
   const { atmosphere } = pianoSceneConfig;
 
@@ -399,6 +434,7 @@ export default function RealityPianoScene({ songNotesRef, onSceneReady }) {
         });
       }}
     >
+      <SceneActivityController />
       <ResponsiveCamera />
       <color attach="background" args={[atmosphere.background]} />
       <fog attach="fog" args={[atmosphere.fogColor, atmosphere.fogNear, atmosphere.fogFar]} />
