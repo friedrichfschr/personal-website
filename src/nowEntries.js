@@ -3,7 +3,7 @@ export const nowEntries = [
     id: 'mock-piano-room',
     date: '2026-06-15',
     accent: '#bd8b35',
-    imageStyle: 'default',
+    imageStyle: 'rechts',
     content: {
       default: {
         title: 'Building a Night Piano Room',
@@ -16,8 +16,17 @@ export const nowEntries = [
           {
             type: 'paragraph',
             spans: [
-              { text: 'A small test post for shaping the new blog section around the 3D piano scene.', italic: true },
+              { text: 'A small test post for ', italic: true },
+              { text: 'shaping', bold: true, italic: true },
+              { text: ' the new blog section around the ', italic: true },
+              { text: '3D piano scene', highlight: true },
+              { text: '.', italic: true },
             ],
+          },
+          {
+            type: 'heading',
+            level: 3,
+            spans: [{ text: 'A quieter interface' }],
           },
           {
             type: 'paragraph',
@@ -32,7 +41,7 @@ export const nowEntries = [
             {
               type: 'paragraph',
               spans: [
-                { text: 'This mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically.' },
+                { text: 'TThis mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum doThis mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolThis mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. loremor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem lor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. loremhis mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem' },
               ],
             },
           ],
@@ -63,9 +72,9 @@ export const nowEntries = [
           {
             type: 'unordered-list',
             items: [
-              [{ text: 'MP3 or OGG handles the actual sound.' }],
-              [{ text: 'MIDI drives the visual key presses.' }],
-              [{ text: 'The audio clock keeps everything aligned.' }],
+              [{ text: 'MP3 or OGG', code: true }, { text: ' handles the actual sound.' }],
+              [{ text: 'MIDI', bold: true }, { text: ' drives the visual key presses.' }],
+              [{ text: 'The audio clock keeps everything aligned.', underline: true }],
             ],
           },
         ],
@@ -75,7 +84,7 @@ export const nowEntries = [
             {
               type: 'paragraph',
               spans: [
-                { text: 'This keeps the musical quality high while still making the 3D scene respond with convincing motion.' },
+                { text: 'This keeps the musical quality This mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing This mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing el This mock post exists only as local fallback data. Once the API is reachable from the browser, live posts can replace it automatically. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. loremit. lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem elit. lorem ipsum dolor sit amet, consectetur adipiscing elit. loremhigh while still making the 3D scene respond with convincing motion.' },
               ],
             },
           ],
@@ -106,7 +115,11 @@ export const nowEntries = [
           {
             type: 'paragraph',
             spans: [
-              { text: 'The card should scroll, expand, close with Escape, and keep the same interaction behavior as the original Personal Website blog section.' },
+              { text: 'The card should scroll, expand, close with ' },
+              { text: 'Escape', code: true },
+              { text: ', and keep the same interaction behavior as the ' },
+              { text: 'original Personal Website', href: 'https://friedrich-fischer.de' },
+              { text: ' blog section.' },
             ],
           },
         ],
@@ -132,6 +145,14 @@ export const nowEntries = [
             type: 'quote',
             spans: [
               { text: 'Not every thought needs a thumbnail.' },
+            ],
+          },
+          {
+            type: 'ordered-list',
+            items: [
+              [{ text: 'Write the thought down.', bold: true }],
+              [{ text: 'Remove the unnecessary parts.', strikethrough: true }],
+              [{ text: 'Publish the useful remainder.', highlight: true }],
             ],
           },
         ],

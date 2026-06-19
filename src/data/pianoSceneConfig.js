@@ -66,7 +66,7 @@ export const pianoSceneConfig = {
     },
   },
   animation: {
-    activeColor: '#db4545',
+    activeColor: '#000000',
     keyIdleRotation: -Math.PI / 4,
     keyPressedRotation: -0.72,
     keyAttackSpeed: 8,

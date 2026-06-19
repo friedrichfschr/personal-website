@@ -6,18 +6,6 @@ const labels = {
   close: 'Close entry',
 };
 
-const blockToPlainText = (block) => {
-  if (block.type === 'unordered-list' || block.type === 'ordered-list') {
-    return block.items
-      .map((item) => item.map((span) => span.text).join(''))
-      .join(' ');
-  }
-
-  return block.spans?.map((span) => span.text).join('') ?? '';
-};
-
-const normalizePreviewText = (text) => text.replace(/\s+/g, ' ').trim();
-
 export function NowCard({
   entry,
   isExpanded = false,
@@ -31,10 +19,11 @@ export function NowCard({
   const isLeftWrapImageEntry = entry.imageStyle === 'inline-flow-left';
   const cardRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const metaRowRef = useRef(null);
+  const metaLeadingRef = useRef(null);
   const staticBodyRef = useRef(null);
-  const collapsedPreviewRef = useRef(null);
   const [isStaticBodyOverflowing, setIsStaticBodyOverflowing] = useState(false);
-  const [collapsedPreviewText, setCollapsedPreviewText] = useState('');
+  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const expandableBlocks = entry.expandable?.blocks ?? [];
   const hasExpandedContent = entry.blocks.length > 0 || expandableBlocks.length > 0;
   const visibleBlocks = isExpanded ? [...entry.blocks, ...expandableBlocks] : entry.blocks;
@@ -42,11 +31,7 @@ export function NowCard({
     isStaticBodyOverflowing || expandableBlocks.length > 0
   );
   const isExpandableCard = !isExpanded && hasExpandedContent;
-  const collapsedFullText = useMemo(
-    () => normalizePreviewText([...entry.blocks, ...expandableBlocks].map(blockToPlainText).join(' ')),
-    [entry.blocks, expandableBlocks],
-  );
-
+  const previewBlocks = [...entry.blocks, ...expandableBlocks];
   const expandedStyle = useMemo(() => {
     if (!isExpanded || !expansionState) {
       return undefined;
@@ -57,6 +42,9 @@ export function NowCard({
       '--now-source-left': `${expansionState.sourceRect.left}px`,
       '--now-source-width': `${expansionState.sourceRect.width}px`,
       '--now-source-height': `${expansionState.sourceRect.height}px`,
+      '--now-source-title-width': expansionState.sourceTitleWidth
+        ? `${expansionState.sourceTitleWidth}px`
+        : undefined,
       '--now-target-top': `${expansionState.targetRect.top}px`,
       '--now-target-left': `${expansionState.targetRect.left}px`,
       '--now-target-width': `${expansionState.targetRect.width}px`,
@@ -71,10 +59,47 @@ export function NowCard({
     }
   }, [expansionState?.phase, isExpanded]);
 
+  useEffect(() => {
+    if (!isExpanded) {
+      setIsHeaderElevated(false);
+    }
+  }, [isExpanded]);
+
+  useLayoutEffect(() => {
+    if (isExpanded && expansionState?.phase === 'closing' && cardRef.current) {
+      cardRef.current.scrollTop = 0;
+      setIsHeaderElevated(false);
+    }
+  }, [expansionState?.phase, isExpanded]);
+
+  useLayoutEffect(() => {
+    const row = metaRowRef.current;
+    const leading = metaLeadingRef.current;
+    if (!row || !leading) return undefined;
+
+    const updateHeaderHeight = () => {
+      const styles = window.getComputedStyle(row);
+      const paddingHeight = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+      const trailingHeight = row.querySelector('.now-card-meta-trailing')?.scrollHeight ?? 0;
+      const contentHeight = Math.max(leading.scrollHeight, trailingHeight);
+      row.style.minHeight = `${Math.ceil(contentHeight + paddingHeight)}px`;
+    };
+
+    updateHeaderHeight();
+    const resizeObserver = new ResizeObserver(updateHeaderHeight);
+    resizeObserver.observe(leading);
+    window.addEventListener('resize', updateHeaderHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+      row.style.removeProperty('min-height');
+    };
+  }, [entry.title, isExpanded]);
+
   useLayoutEffect(() => {
     if (isExpanded) {
       setIsStaticBodyOverflowing(false);
-      setCollapsedPreviewText('');
       return undefined;
     }
 
@@ -104,63 +129,7 @@ export function NowCard({
       resizeObserver.disconnect();
       window.removeEventListener('resize', updateOverflow);
     };
-  }, [entry.blocks, entry.image, isExpanded]);
-
-  useLayoutEffect(() => {
-    if (isExpanded) {
-      return undefined;
-    }
-
-    const viewport = staticBodyRef.current;
-    const preview = collapsedPreviewRef.current;
-
-    if (!viewport || !preview || !collapsedFullText) {
-      setCollapsedPreviewText(collapsedFullText);
-      return undefined;
-    }
-
-    const ellipsis = '...';
-
-    const updatePreview = () => {
-      preview.textContent = collapsedFullText;
-
-      if (preview.scrollHeight <= viewport.clientHeight + 1) {
-        setCollapsedPreviewText(collapsedFullText);
-        return;
-      }
-
-      let low = 0;
-      let high = collapsedFullText.length;
-      let best = '';
-
-      while (low <= high) {
-        const mid = Math.floor((low + high) / 2);
-        const candidate = `${collapsedFullText.slice(0, mid).trimEnd()}${ellipsis}`;
-        preview.textContent = candidate;
-
-        if (preview.scrollHeight <= viewport.clientHeight + 1) {
-          best = candidate;
-          low = mid + 1;
-        } else {
-          high = mid - 1;
-        }
-      }
-
-      setCollapsedPreviewText(best || ellipsis);
-    };
-
-    updatePreview();
-
-    const resizeObserver = new ResizeObserver(updatePreview);
-    resizeObserver.observe(viewport);
-    resizeObserver.observe(preview);
-    window.addEventListener('resize', updatePreview);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updatePreview);
-    };
-  }, [collapsedFullText, entry.image, isExpanded]);
+  }, [entry.blocks, entry.expandable, entry.image, isExpanded]);
 
   return (
     <article
@@ -177,6 +146,14 @@ export function NowCard({
       style={{ '--now-accent': entry.accent, ...expandedStyle, paddingTop: '0rem' }}
       aria-expanded={isExpanded || undefined}
       aria-hidden={isHidden || undefined}
+      onScroll={(event) => {
+        if (!isExpanded) return;
+
+        const nextIsHeaderElevated = event.currentTarget.scrollTop > 2;
+        setIsHeaderElevated((current) => (
+          current === nextIsHeaderElevated ? current : nextIsHeaderElevated
+        ));
+      }}
       onClick={(event) => {
         if (
           isExpanded ||
@@ -191,9 +168,18 @@ export function NowCard({
         }
       }}
     >
-      <div className={`now-card-meta-row ${isExpanded ? 'is-expanded-header' : ''}`} style={{ paddingTop: '1rem' }}>
-        <div className="now-card-meta-leading">
+      <div
+        ref={metaRowRef}
+        className={[
+          'now-card-meta-row',
+          isExpanded ? 'is-expanded-header' : '',
+          isHeaderElevated ? 'is-elevated' : '',
+        ].filter(Boolean).join(' ')}
+        style={{ paddingTop: '0.65rem' }}
+      >
+        <div ref={metaLeadingRef} className="now-card-meta-leading">
           <span className="now-card-date">{formatNowDate(entry.date)}</span>
+          <h3 className="now-card-title now-card-header-title">{entry.title}</h3>
         </div>
         <div className="now-card-meta-actions"></div>
         <div className="now-card-meta-trailing">
@@ -214,8 +200,6 @@ export function NowCard({
       </div>
 
       <div className={`now-card-content ${isExpanded ? 'is-expanded-content' : ''}`}>
-        <h3 className="now-card-title">{entry.title}</h3>
-
         {entry.image && !isRightImageEntry && !isLeftWrapImageEntry && (
           <figure className="now-card-image-wrap">
             <img
@@ -269,9 +253,11 @@ export function NowCard({
           {isExpanded ? (
             renderRichBlocks(entry, 'now-card-body', visibleBlocks)
           ) : (
-            <p ref={collapsedPreviewRef} className="now-card-collapsed-preview">
-              {collapsedPreviewText || collapsedFullText}
-            </p>
+            renderRichBlocks(
+              entry,
+              'now-card-body now-card-collapsed-preview',
+              previewBlocks,
+            )
           )}
         </div>
 

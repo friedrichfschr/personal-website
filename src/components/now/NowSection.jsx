@@ -374,10 +374,14 @@ export function NowSection() {
     clearAnimationTimers();
     setRestoringEntryId(null);
     const sourceRect = card.getBoundingClientRect();
+    const sourceTitleWidth = card
+      .querySelector('.now-card-header-title')
+      ?.offsetWidth;
     const sourceTransform = window.getComputedStyle(card).transform;
     setExpandedCard({
       entryId: entry.id,
       sourceRect,
+      sourceTitleWidth,
       targetRect: getExpandedTargetRect(),
       sourceTransform: sourceTransform === 'none' ? 'rotate(0deg)' : sourceTransform,
       phase: 'entering',
