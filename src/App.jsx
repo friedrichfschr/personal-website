@@ -3,7 +3,6 @@ import SongPlayer from './components/SongPlayer';
 import { NowSection } from './components/now/NowSection';
 import { SocialLinks } from './components/SocialLinks';
 import { CvButton } from './components/CvButton';
-import { AmbientParticles } from './components/AmbientParticles';
 import { Footer } from './components/Footer';
 import { LegalPage } from './components/LegalPage';
 
@@ -19,6 +18,7 @@ function App() {
   const songNotesRef = useRef(new Map());
   const startTimerRef = useRef(null);
   const [isPianoSceneReady, setIsPianoSceneReady] = useState(false);
+  const [isSongPlaying, setIsSongPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [page, setPage] = useState(getCurrentPage);
@@ -123,20 +123,25 @@ function App() {
 
   return (
     <main className={`site-shell min-h-screen bg-[#070b14] text-paper ${hasStarted ? '' : 'is-entry-locked'} ${isStarting ? 'is-entering' : ''}`}>
-      <AmbientParticles />
+
       <section className="hero-scene relative w-full overflow-hidden bg-[#070b14]">
-        <div className="relative h-[clamp(340px,48vh,540px)] w-full overflow-hidden">
-          <div className="absolute inset-x-0 top-0 h-[clamp(430px,68vh,820px)]">
+        <div className="hero-scene-frame relative w-full overflow-hidden">
+          <div className="hero-scene-canvas absolute inset-x-0 top-0">
             <Suspense fallback={null}>
               <RealityPianoScene
                 songNotesRef={songNotesRef}
+                isSongPlaying={isSongPlaying}
                 onSceneReady={() => setIsPianoSceneReady(true)}
               />
             </Suspense>
           </div>
         </div>
-        <AmbientParticles className="hero-particles" />
-        <SongPlayer activeNotesRef={songNotesRef} autoPlayWhenReady={isPianoSceneReady && hasStarted} />
+
+        <SongPlayer
+          activeNotesRef={songNotesRef}
+          autoPlayWhenReady={isPianoSceneReady && hasStarted}
+          onPlaybackChange={setIsSongPlaying}
+        />
       </section>
 
       <div className="page-scroll-panel">

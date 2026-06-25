@@ -45,6 +45,14 @@
   background: var(--ink-bg);
 }
 
+.hero-scene-frame {
+  height: clamp(340px, 48vh, 540px);
+}
+
+.hero-scene-canvas {
+  height: clamp(430px, 68vh, 820px);
+}
+
 .page-scroll-panel {
   position: relative;
   z-index: 6;
@@ -77,11 +85,10 @@
   opacity: calc(1 - (var(--about-depth-progress) * 0.58));
   filter: blur(calc(var(--about-depth-progress) * 0.95px));
   transform:
-    perspective(1200px)
-    translate3d(0, calc(var(--about-depth-progress) * -0.85rem), calc(var(--about-depth-progress) * -140px))
-    scale(calc(1 - (var(--about-depth-progress) * 0.045)));
+    perspective(1200px) translate3d(0, calc(var(--about-depth-progress) * -0.85rem), calc(var(--about-depth-progress) * -140px)) scale(calc(1 - (var(--about-depth-progress) * 0.045)));
   transform-origin: top center;
   will-change: transform, opacity, filter;
+
 }
 
 .intro-content::before {
@@ -129,11 +136,9 @@
   width: 100vw;
   background:
     radial-gradient(circle at 50% 20%, rgba(223, 201, 159, 0.05), transparent 36%),
-    linear-gradient(
-      180deg,
+    linear-gradient(180deg,
       rgba(7, 11, 20, calc(var(--about-depth-progress) * 0.62)),
-      rgba(7, 11, 20, calc(var(--about-depth-progress) * 0.95))
-    );
+      rgba(7, 11, 20, calc(var(--about-depth-progress) * 0.95)));
   opacity: var(--about-depth-progress);
   box-shadow: 0 1.2rem 2.4rem rgba(0, 0, 0, 0.14);
   transform: translateX(-50%);
@@ -229,8 +234,7 @@
   will-change: auto;
 }
 
-.now-content::before {
-}
+.now-content::before {}
 
 .now-content>.now-section {
   width: 100%;
@@ -253,23 +257,49 @@
 }
 
 @media (max-width: 767px) {
+  .hero-scene::after {
+    height: 4.75rem;
+  }
+
+  .hero-scene-frame {
+    height: clamp(300px, 42svh, 380px);
+  }
+
+  .hero-scene-canvas {
+    top: -0.35rem;
+    height: clamp(380px, 58svh, 520px);
+  }
+
+  .page-scroll-panel {
+    background:
+      linear-gradient(180deg, rgba(7, 11, 20, 0.97), rgba(17, 16, 24, 0.98) 3.5rem, var(--ink-bg) 100%),
+      var(--ink-bg);
+  }
+
   .intro-content {
     min-height: auto;
-    padding-top: clamp(3.75rem, 9vh, 5.75rem);
+    padding-top: clamp(2.35rem, 6vh, 3.6rem);
     padding-bottom: clamp(2.5rem, 7vh, 4.5rem);
+    filter: none;
+    will-change: transform, opacity;
   }
 
   .intro-content .intro-statement::before {
-    top: calc(clamp(3.75rem, 9vh, 5.75rem) * -1);
+    top: calc(clamp(2.35rem, 6vh, 3.6rem) * -1);
   }
 
   .now-content {
     margin-top: 0;
     padding-top: clamp(2rem, 5vh, 3rem);
   }
+
+  .now-content>.now-section {
+    will-change: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .intro-content,
   .now-content>.now-section {
     opacity: 1;

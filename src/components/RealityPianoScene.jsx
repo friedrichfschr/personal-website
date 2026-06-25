@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Center, Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
@@ -26,10 +26,40 @@ function findPlayableKey(object) {
   return null;
 }
 
-function createWoodTexture(baseColor, grainColor) {
+function getPrefersLeanScene() {
+  if (typeof window === 'undefined') return false;
+
+  const isTouchOrSmallScreen = window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
+  const hasLimitedMemory = Boolean(navigator.deviceMemory && navigator.deviceMemory <= 4);
+
+  return isTouchOrSmallScreen || hasLimitedMemory;
+}
+
+function usePrefersLeanScene() {
+  const [prefersLeanScene, setPrefersLeanScene] = useState(getPrefersLeanScene);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px), (pointer: coarse)');
+    const update = () => setPrefersLeanScene(getPrefersLeanScene());
+
+    update();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', update);
+      return () => mediaQuery.removeEventListener('change', update);
+    }
+
+    mediaQuery.addListener(update);
+    return () => mediaQuery.removeListener(update);
+  }, []);
+
+  return prefersLeanScene;
+}
+
+function createWoodTexture(baseColor, grainColor, width = 1024) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 256;
+  canvas.width = width;
+  canvas.height = Math.max(128, Math.round(width / 4));
   const context = canvas.getContext('2d');
   const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
 
@@ -64,12 +94,40 @@ function createWoodTexture(baseColor, grainColor) {
   return texture;
 }
 
-function WoodenPlank() {
+function createSoftShadowTexture(size = 256) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+  const gradient = context.createRadialGradient(
+    size / 2,
+    size / 2,
+    size * 0.08,
+    size / 2,
+    size / 2,
+    size * 0.5,
+  );
+
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0.62)');
+  gradient.addColorStop(0.48, 'rgba(0, 0, 0, 0.26)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, size, size);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function WoodenPlank({ enableShadows, textureSize }) {
   const { position, scale, color, grainColor } = pianoSceneConfig.stage.plank;
-  const woodTexture = useMemo(() => createWoodTexture(color, grainColor), [color, grainColor]);
+  const woodTexture = useMemo(
+    () => createWoodTexture(color, grainColor, textureSize),
+    [color, grainColor, textureSize],
+  );
 
   return (
-    <mesh castShadow receiveShadow position={position}>
+    <mesh castShadow={enableShadows} receiveShadow={enableShadows} position={position}>
       <boxGeometry args={scale} />
       <meshStandardMaterial
         map={woodTexture}
@@ -81,15 +139,59 @@ function WoodenPlank() {
   );
 }
 
-function ImportedProp({ config }) {
+function SoftShadowBlob({
+  position,
+  scale,
+  opacity,
+  rotation = [-Math.PI / 2, 0, 0],
+}) {
+  const texture = useMemo(() => createSoftShadowTexture(), []);
+
+  return (
+    <mesh position={position} rotation={rotation} scale={scale} renderOrder={1}>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        toneMapped={false}
+      />
+    </mesh>
+  );
+}
+
+function LeanSceneShadows() {
+  return (
+    <>
+      <SoftShadowBlob
+        position={[0, 0.215, -4.35]}
+        scale={[8.8, 3.15, 1]}
+        opacity={0.42}
+      />
+      <SoftShadowBlob
+        position={[-5.05, 0.215, -3.08]}
+        scale={[1.65, 1.15, 1]}
+        opacity={0.3}
+      />
+      <SoftShadowBlob
+        position={[4.25, 0.215, -3.62]}
+        scale={[2.05, 1.25, 1]}
+        opacity={0.34}
+      />
+    </>
+  );
+}
+
+function ImportedProp({ config, enableShadows }) {
   const gltf = useGLTF(config.url);
   const { scene, offset, fittedScale } = useMemo(() => {
     const clone = gltf.scene.clone(true);
 
     clone.traverse((object) => {
       if (!object.isMesh) return;
-      object.castShadow = true;
-      object.receiveShadow = true;
+      object.castShadow = enableShadows;
+      object.receiveShadow = enableShadows;
 
       if (object.material) {
         object.material = object.material.clone();
@@ -108,7 +210,7 @@ function ImportedProp({ config }) {
       offset: [-center.x, -box.min.y, -center.z],
       fittedScale: normalizedScale,
     };
-  }, [config.fitHeight, config.scale, gltf.scene]);
+  }, [config.fitHeight, config.scale, enableShadows, gltf.scene]);
 
   return (
     <group position={config.position} rotation={config.rotation} scale={fittedScale}>
@@ -117,7 +219,7 @@ function ImportedProp({ config }) {
   );
 }
 
-function LampLighting() {
+function LampLighting({ enableShadows, shadowMapSize }) {
   const lightRef = useRef();
   const targetRef = useRef();
   const lamp = pianoSceneConfig.stage.lamp;
@@ -132,7 +234,7 @@ function LampLighting() {
       <object3D ref={targetRef} position={lamp.lightTarget} />
       <spotLight
         ref={lightRef}
-        castShadow
+        castShadow={enableShadows}
         position={lamp.lightPosition}
         color={lamp.lightColor}
         intensity={lamp.lightIntensity}
@@ -142,7 +244,7 @@ function LampLighting() {
         decay={1.9}
         shadow-bias={-0.0008}
         shadow-radius={6}
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[shadowMapSize, shadowMapSize]}
       />
       <pointLight
         position={lamp.lightPosition}
@@ -155,10 +257,12 @@ function LampLighting() {
   );
 }
 
-function RealityPianoModel({ songNotesRef }) {
+function RealityPianoModel({ songNotesRef, enableShadows, onManualActivityChange }) {
   const collada = useLoader(ColladaLoader, pianoSceneConfig.modelUrl);
+  const { invalidate } = useThree();
   const groupRef = useRef();
   const keyRefs = useRef([]);
+  const keyByNameRef = useRef(new Map());
   const audioContextRef = useRef();
   const activePointerKeyRef = useRef();
   const pressedKeysRef = useRef(new Set());
@@ -172,11 +276,12 @@ function RealityPianoModel({ songNotesRef }) {
     const editableKeys = [];
 
     scene.traverse((object) => {
-      object.castShadow = true;
-      object.receiveShadow = true;
+      object.castShadow = enableShadows;
+      object.receiveShadow = enableShadows;
 
       if (/^_\d+$/.test(object.name)) {
         object.rotation.x = pianoSceneConfig.animation.keyIdleRotation;
+        object.userData.lastAmount = 0;
         editableKeys.push(object);
       }
 
@@ -192,8 +297,9 @@ function RealityPianoModel({ songNotesRef }) {
     });
 
     keyRefs.current = editableKeys;
+    keyByNameRef.current = new Map(editableKeys.map((key) => [key.name, key]));
     return scene;
-  }, [collada.scene]);
+  }, [collada.scene, enableShadows]);
 
   const playNote = useCallback((keyName) => {
     if (!pianoSceneConfig.audio.enabled) return;
@@ -238,9 +344,10 @@ function RealityPianoModel({ songNotesRef }) {
 
   const pressKey = useCallback(
     (keyName, shouldPlaySound = true) => {
-      const key = keyRefs.current.find((item) => item.name === keyName);
+      const key = keyByNameRef.current.get(keyName);
       if (!key) return;
 
+      const wasIdle = pressedKeysRef.current.size === 0;
       key.userData.isPressed = true;
 
       if (shouldPlaySound && !pressedKeysRef.current.has(keyName)) {
@@ -248,28 +355,40 @@ function RealityPianoModel({ songNotesRef }) {
       }
 
       pressedKeysRef.current.add(keyName);
+
+      if (wasIdle && pressedKeysRef.current.size > 0) {
+        onManualActivityChange?.(true);
+      }
+
+      invalidate();
     },
-    [playNote],
+    [invalidate, onManualActivityChange, playNote],
   );
 
   const releaseKey = useCallback((keyName) => {
-    const key = keyRefs.current.find((item) => item.name === keyName);
+    const key = keyByNameRef.current.get(keyName);
     if (key) {
       key.userData.isPressed = false;
     }
 
     pressedKeysRef.current.delete(keyName);
-  }, []);
+
+    if (pressedKeysRef.current.size === 0) {
+      onManualActivityChange?.(false);
+    }
+
+    invalidate();
+  }, [invalidate, onManualActivityChange]);
 
   useEffect(() => {
     function handleKeyDown(event) {
-      const keyName = pianoSceneConfig.keyboard[event.key.toLowerCase()];
+      const keyName = pianoSceneConfig.keyboard?.[event.key.toLowerCase()];
       if (!keyName || event.repeat) return;
       pressKey(keyName);
     }
 
     function handleKeyUp(event) {
-      const keyName = pianoSceneConfig.keyboard[event.key.toLowerCase()];
+      const keyName = pianoSceneConfig.keyboard?.[event.key.toLowerCase()];
       if (!keyName) return;
       releaseKey(keyName);
     }
@@ -290,6 +409,13 @@ function RealityPianoModel({ songNotesRef }) {
       const manualAmount = key.userData.isPressed ? 1 : 0;
       const songAmount = songNotesRef?.current.get(key.name) ?? 0;
       const amount = Math.max(manualAmount, songAmount);
+      const previousAmount = key.userData.lastAmount ?? 0;
+
+      if (Math.abs(amount - previousAmount) < 0.001) {
+        return;
+      }
+
+      key.userData.lastAmount = amount;
 
       key.rotation.x = mix(
         config.keyIdleRotation,
@@ -341,23 +467,23 @@ function RealityPianoModel({ songNotesRef }) {
 
 function ResponsivePianoScale({ children }) {
   const groupRef = useRef();
-  const { size } = useThree();
+  const { invalidate, size } = useThree();
 
   useEffect(() => {
     if (!groupRef.current) return;
 
     const { desktopScale, tabletScale, mobileScale } = pianoSceneConfig.model;
-    let scale =
+    const scale =
       size.width < 640 ? mobileScale : size.width < 1024 ? tabletScale : desktopScale;
-    scale = desktopScale
     groupRef.current.scale.setScalar(scale);
-  }, [size.width]);
+    invalidate();
+  }, [invalidate, size.width]);
 
   return <group ref={groupRef}>{children}</group>;
 }
 
 function ResponsiveCamera() {
-  const { camera, size } = useThree();
+  const { camera, invalidate, size } = useThree();
 
   useEffect(() => {
     const config = pianoSceneConfig.camera;
@@ -372,87 +498,201 @@ function ResponsiveCamera() {
     camera.fov = config.fov;
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
-  }, [camera, size.width]);
+    invalidate();
+  }, [camera, invalidate, size.width]);
 
   return null;
 }
 
-function SceneActivityController() {
-  const { gl, invalidate, setFrameloop } = useThree();
+function SceneActivityController({ isActive, targetFps }) {
+  const { gl, invalidate } = useThree();
 
   useEffect(() => {
-    let isInViewport = true;
+    let timeoutId = 0;
+    let animationFrameId = 0;
+    let isCanvasVisible = true;
 
-    const updateFrameloop = () => {
-      const shouldAnimate = isInViewport && document.visibilityState === 'visible';
-      setFrameloop(shouldAnimate ? 'always' : 'never');
+    const isActuallyVisible = () => {
+      const rect = gl.domElement.getBoundingClientRect();
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-      if (shouldAnimate) {
-        invalidate();
+      if (
+        rect.bottom <= 0 ||
+        rect.right <= 0 ||
+        rect.top >= viewportHeight ||
+        rect.left >= viewportWidth
+      ) {
+        return false;
+      }
+
+      const points = [
+        [rect.left + rect.width * 0.5, rect.top + rect.height * 0.5],
+        [rect.left + rect.width * 0.35, rect.top + rect.height * 0.35],
+        [rect.left + rect.width * 0.65, rect.top + rect.height * 0.35],
+      ];
+
+      return points.some(([x, y]) => {
+        const element = document.elementFromPoint(
+          Math.min(Math.max(x, 0), viewportWidth - 1),
+          Math.min(Math.max(y, 0), viewportHeight - 1),
+        );
+
+        return element === gl.domElement || gl.domElement.contains(element);
+      });
+    };
+
+    const shouldRenderContinuously = () => (
+      isActive &&
+      isCanvasVisible &&
+      document.visibilityState === 'visible'
+    );
+
+    const clearLoop = () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+        timeoutId = 0;
       }
     };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isInViewport = entry?.isIntersecting ?? true;
-        updateFrameloop();
-      },
-      { threshold: 0.01 },
-    );
+    const scheduleLoop = () => {
+      clearLoop();
 
-    observer.observe(gl.domElement);
-    document.addEventListener('visibilitychange', updateFrameloop);
+      if (!shouldRenderContinuously()) {
+        return;
+      }
+
+      timeoutId = window.setTimeout(() => {
+        timeoutId = 0;
+        invalidate();
+        scheduleLoop();
+      }, Math.round(1000 / targetFps));
+    };
+
+    const refreshVisibility = () => {
+      animationFrameId = 0;
+      isCanvasVisible = isActuallyVisible();
+      invalidate();
+      scheduleLoop();
+    };
+
+    const requestVisibilityRefresh = () => {
+      if (animationFrameId) return;
+      animationFrameId = window.requestAnimationFrame(refreshVisibility);
+    };
+
+    const handleVisibilityChange = () => {
+      refreshVisibility();
+    };
+
+    refreshVisibility();
+    window.addEventListener('scroll', requestVisibilityRefresh, { passive: true });
+    window.addEventListener('resize', requestVisibilityRefresh);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      observer.disconnect();
-      document.removeEventListener('visibilitychange', updateFrameloop);
+      clearLoop();
+
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+
+      window.removeEventListener('scroll', requestVisibilityRefresh);
+      window.removeEventListener('resize', requestVisibilityRefresh);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [gl.domElement, invalidate, setFrameloop]);
+  }, [gl.domElement, invalidate, isActive, targetFps]);
 
   return null;
 }
 
-export default function RealityPianoScene({ songNotesRef, onSceneReady }) {
+function RendererQuality({ enableShadows }) {
+  const { gl, invalidate } = useThree();
+
+  useEffect(() => {
+    gl.shadowMap.enabled = enableShadows;
+    gl.shadowMap.type = THREE.PCFSoftShadowMap;
+    invalidate();
+  }, [enableShadows, gl, invalidate]);
+
+  return null;
+}
+
+export default function RealityPianoScene({ songNotesRef, isSongPlaying = false, onSceneReady }) {
+  const sceneTransform = pianoSceneConfig.scene ?? {};
   const { atmosphere } = pianoSceneConfig;
+  const prefersLeanScene = usePrefersLeanScene();
+  const [hasManualKeyActivity, setHasManualKeyActivity] = useState(false);
+  const hasLimitedMemory = Boolean(
+    typeof navigator !== 'undefined' && navigator.deviceMemory && navigator.deviceMemory <= 4,
+  );
+  const enableShadows = !prefersLeanScene;
+  const targetFps = prefersLeanScene ? 24 : 30;
+  const shadowMapSize = prefersLeanScene ? 512 : 1024;
+  const leanDpr = hasLimitedMemory ? [1, 1.05] : [1, 1.16];
 
   return (
     <Canvas
       camera={{ position: pianoSceneConfig.camera.desktopPosition, fov: pianoSceneConfig.camera.fov }}
-      dpr={[1, 1.35]}
-      shadows
+      dpr={prefersLeanScene ? leanDpr : [1, 1.25]}
+      frameloop="demand"
+      shadows={enableShadows}
       gl={{
-        antialias: true,
+        antialias: !prefersLeanScene,
         outputColorSpace: THREE.SRGBColorSpace,
+        powerPreference: prefersLeanScene ? 'low-power' : 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: atmosphere.exposure,
       }}
       onCreated={({ gl }) => {
-        gl.shadowMap.enabled = true;
+        gl.shadowMap.enabled = enableShadows;
         gl.shadowMap.type = THREE.PCFSoftShadowMap;
         window.requestAnimationFrame(() => {
           onSceneReady?.();
         });
       }}
     >
-      <SceneActivityController />
+      <RendererQuality enableShadows={enableShadows} />
+      <SceneActivityController
+        isActive={isSongPlaying || hasManualKeyActivity}
+        targetFps={targetFps}
+      />
       <ResponsiveCamera />
       <color attach="background" args={[atmosphere.background]} />
       <fog attach="fog" args={[atmosphere.fogColor, atmosphere.fogNear, atmosphere.fogFar]} />
       <ambientLight color={atmosphere.ambientColor} intensity={atmosphere.ambientIntensity} />
+      {prefersLeanScene ? (
+        <hemisphereLight
+          color="#f1e6b7"
+          groundColor="#160d09"
+          intensity={0.28}
+        />
+      ) : null}
       <directionalLight
-        castShadow
+        castShadow={enableShadows}
         position={atmosphere.moonPosition}
         color={atmosphere.moonColor}
         intensity={atmosphere.moonIntensity}
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[shadowMapSize, shadowMapSize]}
       />
-      <LampLighting />
-      <WoodenPlank />
-      <RealityPianoModel songNotesRef={songNotesRef} />
-      <ImportedProp config={pianoSceneConfig.stage.plant} />
-      <ImportedProp config={pianoSceneConfig.stage.sheetMusic} />
-      <ImportedProp config={pianoSceneConfig.stage.lamp} />
-      <Environment preset="night" />
+      <group
+        position={sceneTransform.position ?? [0, 0, 0]}
+        rotation={sceneTransform.rotation ?? [0, 0, 0]}
+        scale={sceneTransform.scale ?? 1}
+      >
+        <LampLighting enableShadows={enableShadows} shadowMapSize={shadowMapSize} />
+        <WoodenPlank enableShadows={enableShadows} textureSize={prefersLeanScene ? 512 : 1024} />
+        {prefersLeanScene ? <LeanSceneShadows /> : null}
+        <RealityPianoModel
+          songNotesRef={songNotesRef}
+          enableShadows={enableShadows}
+          onManualActivityChange={setHasManualKeyActivity}
+        />
+        <ImportedProp config={pianoSceneConfig.stage.plant} enableShadows={enableShadows} />
+        <ImportedProp config={pianoSceneConfig.stage.sheetMusic} enableShadows={enableShadows} />
+        <ImportedProp config={pianoSceneConfig.stage.lamp} enableShadows={enableShadows} />
+      </group>
+      {!prefersLeanScene ? <Environment preset="night" /> : null}
       {/* <OrbitControls
         target={pianoSceneConfig.controls.target}
         enablePan={pianoSceneConfig.controls.enablePan}

@@ -30,7 +30,11 @@ function findFirstNoteIndexAtOrAfter(notes, time) {
   return low;
 }
 
-export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }) {
+export default function SongPlayer({
+  activeNotesRef,
+  autoPlayWhenReady = false,
+  onPlaybackChange,
+}) {
   const songs = pianoSceneConfig.songs;
   const defaultSongId = songs.find((song) => song.id === 'clair-de-lune')?.id ?? songs[0]?.id;
   const [selectedSongId, setSelectedSongId] = useState(defaultSongId);
@@ -39,7 +43,7 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef(null);
-  const rafRef = useRef();
+  const updateTimerRef = useRef();
   const lastUiUpdateRef = useRef(0);
   const autoplayAttemptedRef = useRef(false);
   const noteCursorRef = useRef(0);
@@ -51,6 +55,10 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
     () => songs.find((song) => song.id === selectedSongId) ?? songs[0],
     [selectedSongId, songs],
   );
+
+  useEffect(() => {
+    onPlaybackChange?.(isPlaying);
+  }, [isPlaying, onPlaybackChange]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -170,18 +178,45 @@ export default function SongPlayer({ activeNotesRef, autoPlayWhenReady = false }
       }
 
       if (!audio.paused && !audio.ended) {
-        rafRef.current = requestAnimationFrame(updateActiveNotes);
+        updateTimerRef.current = window.setTimeout(updateActiveNotes, 33);
       }
     }
 
     if (isPlaying) {
-      rafRef.current = requestAnimationFrame(updateActiveNotes);
+      updateActiveNotes();
     }
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      window.clearTimeout(updateTimerRef.current);
     };
   }, [activeNotesRef, isPlaying, notes, selectedSong]);
+
+  useEffect(() => {
+    function pauseWhenTabIsInactive() {
+      const audio = audioRef.current;
+      const isTabInactive = document.visibilityState === 'hidden' || !document.hasFocus();
+
+      if (!isTabInactive || !audio || audio.paused) {
+        return;
+      }
+
+      audio.pause();
+      window.clearTimeout(updateTimerRef.current);
+      setIsPlaying(false);
+      activeNotesRef.current.clear();
+      activeSongNotesRef.current.clear();
+      previousSongTimeRef.current = 0;
+      setCurrentTime(audio.currentTime);
+    }
+
+    document.addEventListener('visibilitychange', pauseWhenTabIsInactive);
+    window.addEventListener('blur', pauseWhenTabIsInactive);
+
+    return () => {
+      document.removeEventListener('visibilitychange', pauseWhenTabIsInactive);
+      window.removeEventListener('blur', pauseWhenTabIsInactive);
+    };
+  }, [activeNotesRef]);
 
   function clearActiveNotes() {
     activeNotesRef.current.clear();

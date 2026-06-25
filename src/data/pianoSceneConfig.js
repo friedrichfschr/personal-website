@@ -1,17 +1,22 @@
 export const pianoSceneConfig = {
   modelUrl: '/models/reality3d-piano.dae',
+  scene: {
+    position: [0, -0.4, 0],
+    rotation: [0, 0, 0],
+    scale: 1.05,
+  },
   camera: {
     desktopPosition: [0, 5.2, 12],
     tabletPosition: [0, 5.8, 14],
-    mobilePosition: [0, 6.4, 16],
-    fov: 42,
+    mobilePosition: [0, 6.4, 15.5],
+    fov: 38,
   },
   model: {
     position: [0, -0.15, 0],
     rotation: [ -0.25 * Math.PI, 0, 0],
     desktopScale: 1.9,
     tabletScale: 1.65,
-    mobileScale: 1.35,
+    mobileScale: 1.6,
   },
   controls: {
     target: [0, 0, 0],
@@ -66,7 +71,7 @@ export const pianoSceneConfig = {
     },
   },
   animation: {
-    activeColor: '#000000',
+    activeColor: '#ac2a2a',
     keyIdleRotation: -Math.PI / 4,
     keyPressedRotation: -0.72,
     keyAttackSpeed: 8,
