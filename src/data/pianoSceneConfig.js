@@ -1,22 +1,24 @@
 export const pianoSceneConfig = {
   modelUrl: '/models/reality3d-piano.dae',
   scene: {
-    position: [0, -0.4, 0],
+    position: [0, -0.2, 0.5],
     rotation: [0, 0, 0],
-    scale: 1.05,
+    scale: 0.98,
   },
   camera: {
-    desktopPosition: [0, 5.2, 12],
+    desktopPosition: [0, 7.2, 14],
     tabletPosition: [0, 5.8, 14],
-    mobilePosition: [0, 6.4, 15.5],
-    fov: 38,
+    mobilePosition: [0, 6.0, 15.5],
+    desktopFov: 30,
+    tabletFov: 33,
+    mobileFov: 33,
   },
   model: {
     position: [0, -0.15, 0],
     rotation: [ -0.25 * Math.PI, 0, 0],
     desktopScale: 1.9,
     tabletScale: 1.65,
-    mobileScale: 1.6,
+    mobileScale: 1.75,
   },
   controls: {
     target: [0, 0, 0],

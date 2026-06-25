@@ -487,15 +487,23 @@ function ResponsiveCamera() {
 
   useEffect(() => {
     const config = pianoSceneConfig.camera;
+    const isMobile = size.width < 640;
+    const isTablet = size.width < 1024;
     const position =
-      size.width < 640
+      isMobile
         ? config.mobilePosition
-        : size.width < 1024
+        : isTablet
           ? config.tabletPosition
           : config.desktopPosition;
+    const fov =
+      isMobile
+        ? (config.mobileFov ?? config.fov)
+        : isTablet
+          ? (config.tabletFov ?? config.fov)
+          : (config.desktopFov ?? config.fov);
 
     camera.position.set(...position);
-    camera.fov = config.fov;
+    camera.fov = fov;
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
     invalidate();
@@ -633,7 +641,10 @@ export default function RealityPianoScene({ songNotesRef, isSongPlaying = false,
 
   return (
     <Canvas
-      camera={{ position: pianoSceneConfig.camera.desktopPosition, fov: pianoSceneConfig.camera.fov }}
+      camera={{
+        position: pianoSceneConfig.camera.desktopPosition,
+        fov: pianoSceneConfig.camera.desktopFov ?? pianoSceneConfig.camera.fov,
+      }}
       dpr={prefersLeanScene ? leanDpr : [1, 1.25]}
       frameloop="demand"
       shadows={enableShadows}
